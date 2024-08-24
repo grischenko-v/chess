@@ -21,15 +21,12 @@ type TFigurePosition = {
 
 type TFigureColor = 'white' | 'black';
 
-// сделать observeble.
 abstract class FigureBase {
     mesh: Group;
-    position: TFigurePosition;
     color: TFigureColor;
 
     constructor(group: Group, position: TFigurePosition = {x: 0, y: 0, z: 0}, color: string = 'white') {
         this.mesh = group;
-        this.position = position;
         this.mesh.position.set(position.x, 0.5, position.z);
     }
 
@@ -37,12 +34,11 @@ abstract class FigureBase {
 
 class FigurePawn extends FigureBase {
     move = (position: any) => {
-        gsap.to( this.mesh.position, {
+    gsap.to(this.mesh.position, {
 		duration: 1,
 		x: position.x,
         z: position.z,
-	} );
-        
-        // this.mesh.position.set(position.x, 0.5, position.z);
+        onComplete: () => this.mesh.position.set(position.x, 0.5, position.z),
+	});
     };
 }
