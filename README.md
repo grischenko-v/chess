@@ -5,5 +5,6 @@ tech stack:
 - ThreeJS
 
 Now in progress:
+
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
