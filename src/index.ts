@@ -1,6 +1,7 @@
-import Board from './board/Board';
-import { createFigureFactory } from './figures/FiguresFactory';
-import Scene from './global/Scene';
+import { BoardState } from './domain/Board';
+import Board from './ui/board/Board';
+import { createFigureFactory } from './ui/figures/FiguresFactory';
+import Scene from './ui/global/Scene';
 
 const scene = new Scene();
 scene.animate();
@@ -39,3 +40,9 @@ declare global {
 setInterval(animate, 6000)
 
 window.animate = animate;
+
+const boardState = new BoardState();
+
+console.log(boardState.getBoard())
+const cell = boardState.getCell('a7');
+console.log(cell.getFigure().getType());
