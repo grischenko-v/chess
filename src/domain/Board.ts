@@ -74,7 +74,7 @@ export class Board {
         for(let [x, row] of rows.entries()) {
             this.#state.push([]);
             for(let [z, column] of columns.entries()) {
-                const color = (x + z) % 2 ? 'black' : 'white';
+                const color = (x + z) % 2 ? 'white' : 'black';
                 const cellGeometry = new CellGeometry(
                     {x: x - 3.5, z: z - 3.5}, color, `${column}${row}`
                 );
