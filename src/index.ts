@@ -1,23 +1,6 @@
-import { BoardState } from './domain/Board';
-// import Scene from './domain/Scene';
-// import Board from './ui/board/Board';
-// import { createFigureFactory } from './ui/figures/FiguresFactory';
+import { Board } from './domain/Board';
 
-const boardState = new BoardState();
-
-
-// const positiona2 = board.getCellByName('a2');
-// const pawna2 = createFigureFactory({type: 'pawn' , position: positiona2});
-// scene.addObj(pawna2);
-
-// const positionb2 = board.getCellByName('b2');
-// const pawnb2 = createFigureFactory({type: 'pawn' , position: positionb2});
-// scene.addObj(pawnb2);
-
-// const positionf7 = board.getCellByName('f7');
-// const pawnf7 = createFigureFactory({type: 'pawn' , position: positionf7});
-// scene.addObj(pawnf7);
-
+new Board();
 
 // const animate = () => {
 //     setTimeout(() => pawnf7.move(board.getCellByName('f6')), 1000);
@@ -36,11 +19,3 @@ const boardState = new BoardState();
 // setInterval(animate, 6000)
 
 // window.animate = animate;
-
-
-
-console.log(boardState.getBoard())
-const cell = boardState.getCell('a7');
-console.log(cell.getFigure().getType());
-
-

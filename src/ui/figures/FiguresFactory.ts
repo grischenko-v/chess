@@ -21,13 +21,17 @@ type TFigurePosition = {
 
 type TFigureColor = 'white' | 'black';
 
-abstract class FigureBase {
+export abstract class FigureBase {
     mesh: Group;
     color: TFigureColor;
 
     constructor(group: Group, position: TFigurePosition = {x: 0, y: 0, z: 0}, color: string = 'white') {
         this.mesh = group;
         this.mesh.position.set(position.x, 0.5, position.z);
+    }
+
+    getMesh() {
+        return this.mesh;
     }
 
 }

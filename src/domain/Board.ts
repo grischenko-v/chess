@@ -1,7 +1,10 @@
-import { Group } from 'three';
+import { Group, Object3D } from 'three';
 import { Figure } from './Figure';
 import { CellGeometry } from '../ui/board/CellGeometry';
 import Scene from './Scene';
+import Plane from '../ui/board/Plane';
+import BorderLarge from '../ui/board/BorderLarge';
+import BorderSmall from '../ui/board/BorderSmall';
 
 const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const rows = ['8', '7', '6', '5', '4', '3', '2', '1'];
@@ -31,6 +34,14 @@ class BoardCell {
         return this.#figure;
     }
 
+    getFigureMesh(): Object3D | null {
+        const figure = this.getFigure();
+        if(figure) {
+            return figure.getMesh();
+        }
+        return null;
+    }
+
     getCellName() {
         return this.#coordinates;
     }
@@ -41,7 +52,7 @@ class BoardCell {
 
 }
 
-export class BoardState {
+export class Board {
     #state: string[][] = [];
     #board: Record<string, BoardCell> = {};
     #bordUI: Group;
@@ -51,12 +62,14 @@ export class BoardState {
         this.#scene = new Scene();
         this.#bordUI = new Group();
         this.#bordUI.receiveShadow = true;
-        this.generateInitialBoard();
+        this.generateBoardUI();
         this.initFigures();
         this.animate();
     }
 
-    private generateInitialBoard() {
+    private generateBoardUI() {
+        this.#bordUI.add(new Plane().getMesh());
+
         let counter = 0;
         for(let [x, row] of rows.entries()) {
             this.#state.push([]);
@@ -70,6 +83,12 @@ export class BoardState {
             }
             counter++;
         }
+
+        this.#bordUI.add(new BorderLarge(({x: 0, z: 4.25})).getMesh());
+        this.#bordUI.add(new BorderLarge(({x: 0, z: -4.25})).getMesh());
+
+        this.#bordUI.add(new BorderSmall(({x: 4.25, z: 0})).getMesh());
+        this.#bordUI.add(new BorderSmall(({x: -4.25, z: 0})).getMesh());
         this.#scene.addObj(this.#bordUI);
     }
 
@@ -77,8 +96,16 @@ export class BoardState {
         INITIAL_BLACK_PAWN_POSITIONS.forEach(pownCell => {
             const cell = this.getCell(pownCell);
             const position = cell.getCellCenter();
-            cell.setFigure(new Figure(position, 'black', 'Pawn'))
-        })
+            cell.setFigure(new Figure(position, 'black', 'Pawn'));
+            this.#scene.addObj(cell.getFigureMesh())
+        });
+
+        INITIAL_WHITE_PAWN_POSITIONS.forEach(pownCell => {
+            const cell = this.getCell(pownCell);
+            const position = cell.getCellCenter();
+            cell.setFigure(new Figure(position, 'white', 'Pawn'));
+            this.#scene.addObj(cell.getFigureMesh())
+        });
     }
 
     private animate() {

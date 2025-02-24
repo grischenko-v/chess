@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { createFigureFactory } from "../ui/figures/FiguresFactory";
+import { createFigureFactory, FigureBase } from "../ui/figures/FiguresFactory";
 
 type FigureColor = 'white' | 'black';
 type FigureType = 'Pawn';
@@ -8,17 +8,21 @@ export class Figure {
     #position: Vector3;
     #color: FigureColor;
     #type: FigureType
-    #figureGroup: any
+    #figure: FigureBase;
     #starage: MoveStrategy;
 
     constructor(position: Vector3, color: FigureColor, type: FigureType) {
         this.#position = position;
         this.#color = color;
         this.#type = type;
-        this.#figureGroup = createFigureFactory({
+        this.#figure = createFigureFactory({
             type: this.#type,
             position: this.#position,
         })
+    }
+
+    getMesh() {
+        return this.#figure.getMesh();
     }
 
     getType() {
