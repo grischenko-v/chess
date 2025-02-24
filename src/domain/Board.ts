@@ -9,6 +9,30 @@ import BorderSmall from '../ui/board/BorderSmall';
 const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const rows = ['8', '7', '6', '5', '4', '3', '2', '1'];
 
+
+
+const getBoardMatrix = (): string[][] => {
+    const boardMatrix = [];
+    let counter = 0;
+    for(let [x, row] of rows.entries()) {
+        boardMatrix.push([]);
+        for(let [z, column] of columns.entries()) {
+            boardMatrix[counter].push(`${column}${row}`);
+        }
+        counter++;
+    }
+    return boardMatrix;
+}
+
+const boardMatrix = getBoardMatrix();
+console.log(boardMatrix);
+
+const getSublings = (cellName: string) => {
+    // boardMatrix// find cell indexes. then get siblings
+    return {}
+}
+
+
 // Black
 const INITIAL_BLACK_PAWN_POSITIONS = ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'];
 //White
@@ -55,7 +79,6 @@ class BoardCell {
 }
 
 export class Board {
-    #state: string[][] = [];
     #cells: Record<string, BoardCell> = {};
     #ui: Group;
     #scene: Scene;
@@ -73,9 +96,7 @@ export class Board {
     private generateBoardUI() {
         this.#ui.add(new Plane().getMesh());
 
-        let counter = 0;
         for(let [x, row] of rows.entries()) {
-            this.#state.push([]);
             for(let [z, column] of columns.entries()) {
                 const color = (x + z) % 2 ? 'white' : 'black';
                 const cellGeometry = new CellGeometry(
@@ -84,7 +105,6 @@ export class Board {
                 this.#cells[`${column}${row}`] = new BoardCell(`${column}${row}`, cellGeometry);
                 this.#ui.add(cellGeometry.getMesh());
             }
-            counter++;
         }
 
         this.#ui.add(new BorderLarge(({x: 0, z: 4.25})).getMesh());
