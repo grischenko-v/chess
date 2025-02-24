@@ -6,8 +6,6 @@ import Scene from './ui/global/Scene';
 const scene = new Scene();
 const boardState = new BoardState();
 scene.animate();
-// const board = new Board();
-
 scene.addObj({mesh: boardState.boardUI()})
 
 

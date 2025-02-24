@@ -53,12 +53,10 @@ export class BoardState {
             this.#state.push([]);
             for(let [z, column] of columns.entries()) {
                 const color = (x + z) % 2 ? 'black' : 'white';
-                console.log(color);
                 const cellGeometry = new CellGeometry(
                     {x: x - 3.5, z: z - 3.5}, color, `${column}${row}`
                 );
                 this.#board[`${column}${row}`] = new BoardCell(`${column}${row}`, cellGeometry);
-                console.log(this.#bordUI.add(cellGeometry.getMesh()))
             }
             counter++;
         }
