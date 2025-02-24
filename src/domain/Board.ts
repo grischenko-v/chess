@@ -124,4 +124,20 @@ export class Board {
     unSelectFigure() {
         this.#selectedFigure = null;
     }
+
+    moveFigure(start: string, end: string) {
+        const endCell = this.getCell(end);
+        const endCellCenter = endCell.getCellCenter();
+
+        const startCell = this.getCell(start);
+        const figure = startCell.getFigure();
+
+        if(!figure) {
+            return;
+        }
+
+        figure.move(endCellCenter);
+        startCell.setFigure(null);
+        endCell.setFigure(figure);
+    }
 }
