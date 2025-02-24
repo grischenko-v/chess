@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 
 type figureType = 'Pawn';
 
-export const createFigureFactory = ({ type, position, color }: {type: figureType, position?: TFigurePosition, color: TFigureColor} ) => {
+export const createFigureFactory = ({ type, position, color }: {type: figureType, position: Vector3, color: TFigureColor} ) => {
     switch(type) {
         case 'Pawn':
             const pawn = createPawn(color);
@@ -12,19 +12,13 @@ export const createFigureFactory = ({ type, position, color }: {type: figureType
     }
 }
 
-type TFigurePosition = {
-    x: number,
-    y: number,
-    z: number,
-};
-
 type TFigureColor = 'white' | 'black';
 
 export abstract class FigureBase {
     mesh: Group;
     color: TFigureColor;
 
-    constructor(group: Group, position: TFigurePosition = {x: 0, y: 0, z: 0}, color: TFigureColor) {
+    constructor(group: Group, position: Vector3, color: TFigureColor) {
         this.mesh = group;
         this.mesh.position.set(position.x, 0.5, position.z);
         this.color = color;
