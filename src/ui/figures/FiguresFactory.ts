@@ -34,7 +34,7 @@ export abstract class FigureBase {
         return this.mesh;
     }
 
-    move = (position: Vector3) => {}
+    abstract move: (position: Vector3) => void;
 }
 
 class FigurePawn extends FigureBase {
