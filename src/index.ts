@@ -1,21 +1,18 @@
 import { Board } from './domain/Board';
 
-new Board();
+const board = new Board();
 
-// const animate = () => {
-//     setTimeout(() => pawnf7.move(board.getCellByName('f6')), 1000);
-//     setTimeout(() => pawnb2.move(board.getCellByName('b4')), 2000);
+const a7Cell = board.getCell('a7');
 
-//     setTimeout(() => pawnf7.move(board.getCellByName('f7')), 4000);
-//     setTimeout(() => pawnb2.move(board.getCellByName('b2')), 5000);
-// }
+const figure = a7Cell.getFigure();
 
-// declare global {
-//     interface Window {
-//         animate:any;
-//     }
-// }
+const a6Cell = board.getCell('a6');
 
-// setInterval(animate, 6000)
 
-// window.animate = animate;
+const animate = () => {
+    setTimeout(() => figure.move(a6Cell.getCellCenter()), 0);
+    setTimeout(() => figure.move(a7Cell.getCellCenter()), 2000);
+}
+
+setInterval(animate, 2000)
+

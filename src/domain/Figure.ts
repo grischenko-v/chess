@@ -32,6 +32,7 @@ export class Figure {
 
     move(newPosition: Vector3) {
         this.#position = newPosition;
+        this.#figure.move(newPosition);
     }
 
     setMoveStrategy(strategy: MoveStrategy) {

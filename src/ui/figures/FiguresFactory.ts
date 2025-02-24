@@ -1,4 +1,4 @@
-import {Group} from 'three';
+import {Group, Vector3} from 'three';
 import {createPawn} from './Pawn';
 import { gsap } from 'gsap';
 
@@ -34,15 +34,16 @@ export abstract class FigureBase {
         return this.mesh;
     }
 
+    move = (position: Vector3) => {}
 }
 
 class FigurePawn extends FigureBase {
-    move = (position: any) => {
-    gsap.to(this.mesh.position, {
-		duration: 1,
-		x: position.x,
-        z: position.z,
-        onComplete: () => this.mesh.position.set(position.x, 0.5, position.z),
-	});
+    move = (position: Vector3) => {
+        gsap.to(this.mesh.position, {
+            duration: 1,
+            x: position.x,
+            z: position.z,
+            onComplete: () => this.mesh.position.set(position.x, 0.5, position.z),
+        });
     };
 }
