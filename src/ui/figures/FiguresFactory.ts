@@ -28,6 +28,10 @@ export abstract class FigureBase {
         return this.mesh;
     }
 
+    getPosition() {
+        return this.mesh.position;
+    }
+
     abstract move: (position: Vector3) => void;
 }
 

@@ -57,6 +57,7 @@ export class Board {
     #board: Record<string, BoardCell> = {};
     #bordUI: Group;
     #scene: Scene;
+    #selectedFigure: Figure | null;
 
     constructor() {
         this.#scene = new Scene();
@@ -112,15 +113,15 @@ export class Board {
         this.#scene.animate();
     }
 
-    getBoard() {
-        return this.#board;
-    }
-
     getCell(coordinate: string): BoardCell {
         return this.#board[coordinate];
     }
 
-    boardUI() {
-        return this.#bordUI;
+    setSelectedFigure(figure: Figure) {
+        this.#selectedFigure = figure;
+    }
+
+    unSelectFigure() {
+        this.#selectedFigure = null;
     }
 }

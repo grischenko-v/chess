@@ -5,19 +5,17 @@ export type FigureColor = 'white' | 'black';
 type FigureType = 'Pawn';
 
 export class Figure {
-    #position: Vector3;
     #color: FigureColor;
     #type: FigureType
     #figure: FigureBase;
     #starage: MoveStrategy;
 
     constructor(position: Vector3, color: FigureColor, type: FigureType) {
-        this.#position = position;
         this.#color = color;
         this.#type = type;
         this.#figure = createFigureFactory({
             type: this.#type,
-            position: this.#position,
+            position: position,
             color: this.#color,
         })
     }
@@ -31,8 +29,11 @@ export class Figure {
     }
 
     move(newPosition: Vector3) {
-        this.#position = newPosition;
         this.#figure.move(newPosition);
+    }
+
+    getPosition() {
+        return this.#figure.getPosition();
     }
 
     setMoveStrategy(strategy: MoveStrategy) {
@@ -51,15 +52,3 @@ class PawnMoveStrategy extends MoveStrategy{
         return ['e4'];
     }
 }
-
-
-// a b c d e f g h
-// 8
-// 7
-// 6
-// 5
-// 4
-// 3
-// 2
-// 1
-
