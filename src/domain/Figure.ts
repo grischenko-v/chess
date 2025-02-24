@@ -1,7 +1,7 @@
 import { Vector3 } from "three";
 import { createFigureFactory, FigureBase } from "../ui/figures/FiguresFactory";
 
-type FigureColor = 'white' | 'black';
+export type FigureColor = 'white' | 'black';
 type FigureType = 'Pawn';
 
 export class Figure {
@@ -18,6 +18,7 @@ export class Figure {
         this.#figure = createFigureFactory({
             type: this.#type,
             position: this.#position,
+            color: this.#color,
         })
     }
 

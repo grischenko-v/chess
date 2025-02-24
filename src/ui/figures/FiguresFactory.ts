@@ -2,14 +2,13 @@ import {Group} from 'three';
 import {createPawn} from './Pawn';
 import { gsap } from 'gsap';
 
-
 type figureType = 'Pawn';
 
-export const createFigureFactory = ({ type, position }: {type: figureType, position?: TFigurePosition} ) => {
+export const createFigureFactory = ({ type, position, color }: {type: figureType, position?: TFigurePosition, color: TFigureColor} ) => {
     switch(type) {
         case 'Pawn':
-            const pawn = createPawn();
-            return new FigurePawn(pawn, position);
+            const pawn = createPawn(color);
+            return new FigurePawn(pawn, position, color);
     }
 }
 
@@ -25,9 +24,10 @@ export abstract class FigureBase {
     mesh: Group;
     color: TFigureColor;
 
-    constructor(group: Group, position: TFigurePosition = {x: 0, y: 0, z: 0}, color: string = 'white') {
+    constructor(group: Group, position: TFigurePosition = {x: 0, y: 0, z: 0}, color: TFigureColor) {
         this.mesh = group;
         this.mesh.position.set(position.x, 0.5, position.z);
+        this.color = color;
     }
 
     getMesh() {

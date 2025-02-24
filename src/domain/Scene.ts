@@ -74,7 +74,7 @@ class Scene {
 		this.renderer.domElement.addEventListener( 'click', raycast.bind(this), false );
 
 		function raycast (event: any) {
-            console.log(123);
+            console.log('raycast');
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 			this.raycaster.setFromCamera(mouse, this.camera);
@@ -82,7 +82,7 @@ class Scene {
             const intersects = this.raycaster.intersectObjects(this.scene.children);
             const intersect = intersects.length && intersects[0];
 
-            console.log(intersect);
+            console.log({intersect});
             if(intersect && intersect.object.parent && intersect.object.parent.name !== '') {
                 console.log(intersect.object.parent);
                 this.selectedFigure = intersect.object.parent;
