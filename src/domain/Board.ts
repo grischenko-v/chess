@@ -47,19 +47,21 @@ const getSublings = (cellName: string): TSiblings => {
         }
     }
 
+
+
     return {
-        bottom: boardMatrix[cellI + 1][cellJ] ?? null,
-        top: boardMatrix[cellI - 1][cellJ] ?? null,
+        bottom: boardMatrix[cellI + 1] ? boardMatrix[cellI + 1][cellJ] : null,
+        top: boardMatrix[cellI - 1] ? boardMatrix[cellI - 1][cellJ] : null,
         left: boardMatrix[cellI][cellJ - 1] ?? null,
         right: boardMatrix[cellI][cellJ + 1] ?? null,
-        bottomLeft:  boardMatrix[cellI + 1][cellJ - 1],
-        bottomRight:  boardMatrix[cellI + 1][cellJ + 1],
-        topLeft:  boardMatrix[cellI - 1][cellJ - 1],
-        topRight:  boardMatrix[cellI - 1][cellJ + 1],
+        bottomLeft:  boardMatrix[cellI + 1] ? boardMatrix[cellI + 1][cellJ - 1] : null,
+        bottomRight:  boardMatrix[cellI + 1] ? boardMatrix[cellI + 1][cellJ + 1] : null,
+        topLeft:  boardMatrix[cellI - 1] ? boardMatrix[cellI - 1][cellJ - 1] : null,
+        topRight:  boardMatrix[cellI - 1] ? boardMatrix[cellI - 1][cellJ + 1] : null,
     }
 }
 
-console.log(getSublings('a3'));
+console.log(getSublings('a1'));
 
 // Black
 const INITIAL_BLACK_PAWN_POSITIONS = ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'];
