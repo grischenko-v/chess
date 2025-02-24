@@ -3,11 +3,11 @@ import {createPawn} from './Pawn';
 import { gsap } from 'gsap';
 
 
-type figureType = 'pawn';
+type figureType = 'Pawn';
 
 export const createFigureFactory = ({ type, position }: {type: figureType, position?: TFigurePosition} ) => {
     switch(type) {
-        case 'pawn':
+        case 'Pawn':
             const pawn = createPawn();
             return new FigurePawn(pawn, position);
     }

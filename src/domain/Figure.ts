@@ -1,24 +1,31 @@
+import { Vector3 } from "three";
+import { createFigureFactory } from "../ui/figures/FiguresFactory";
 
 type FigureColor = 'white' | 'black';
 type FigureType = 'Pawn';
 
 export class Figure {
-    #position: string;
+    #position: Vector3;
     #color: FigureColor;
     #type: FigureType
+    #figureGroup: any
     #starage: MoveStrategy;
 
-    constructor(position: string, color: FigureColor, type: FigureType) {
+    constructor(position: Vector3, color: FigureColor, type: FigureType) {
         this.#position = position;
         this.#color = color;
         this.#type = type;
+        this.#figureGroup = createFigureFactory({
+            type: this.#type,
+            position: this.#position,
+        })
     }
 
     getType() {
         return this.#type;
     }
 
-    move(newPosition: string) {
+    move(newPosition: Vector3) {
         this.#position = newPosition;
     }
 

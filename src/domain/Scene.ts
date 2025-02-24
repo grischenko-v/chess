@@ -10,6 +10,7 @@ import {
     Raycaster,
     Vector2,
     Vector3,
+    Object3D,
 } from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -97,8 +98,8 @@ class Scene {
 		}
     }
 
-    addObj(obj: any) {   
-        this.scene.add(obj.mesh);
+    addObj(mesh: Object3D) {   
+        this.scene.add(mesh);
         this.update();
     }
 

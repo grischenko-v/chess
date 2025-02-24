@@ -1,12 +1,9 @@
 import { BoardState } from './domain/Board';
+// import Scene from './domain/Scene';
 // import Board from './ui/board/Board';
 // import { createFigureFactory } from './ui/figures/FiguresFactory';
-import Scene from './ui/global/Scene';
 
-const scene = new Scene();
 const boardState = new BoardState();
-scene.animate();
-scene.addObj({mesh: boardState.boardUI()})
 
 
 // const positiona2 = board.getCellByName('a2');
