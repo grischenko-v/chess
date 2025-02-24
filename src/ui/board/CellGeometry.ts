@@ -2,6 +2,7 @@ import {
     BoxGeometry,
     MeshStandardMaterial,
     Mesh,
+    Object3D,
 } from 'three';
 
 const CELL_COLOR = {
@@ -12,9 +13,10 @@ const CELL_COLOR = {
 export type CELL_COLOR_TYPE = keyof typeof CELL_COLOR;
 
 export class CellGeometry {
-    #geometry;
-    #material;
-    #mesh;
+    #geometry: BoxGeometry;
+    #material: MeshStandardMaterial;
+    #mesh: Object3D;
+    #name: string
 
     constructor(position: any, color: CELL_COLOR_TYPE, name: string) {
         this.#geometry = new BoxGeometry( 1, 1, 1 );
@@ -23,10 +25,15 @@ export class CellGeometry {
         this.#mesh.position.x = position.x;
         this.#mesh.position.z = position.z;
         this.#mesh.receiveShadow = true;
+        this.#name = name;
     }
 
     getPosition() {
         return this.#mesh.position;
+    }
+
+    getName() {
+        return this.#name;
     }
 
     getMesh() {
