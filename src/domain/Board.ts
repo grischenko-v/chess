@@ -17,12 +17,12 @@ const INITIAL_WHITE_PAWN_POSITIONS = ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 
 
 
 class BoardCell {
-    #coordinates: string;
+    #name: string;
     #figure: Figure | null;
     #cellGeometry: CellGeometry;
 
-    constructor(coordinates: string, group: CellGeometry) {
-        this.#coordinates = coordinates;
+    constructor(name: string, group: CellGeometry) {
+        this.#name = name;
         this.#cellGeometry = group;
     }
 
@@ -43,7 +43,7 @@ class BoardCell {
     }
 
     getCellName() {
-        return this.#coordinates;
+        return this.#name;
     }
 
     getCellCenter() {
