@@ -9,8 +9,6 @@ import BorderSmall from '../ui/board/BorderSmall';
 const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 const rows = ['8', '7', '6', '5', '4', '3', '2', '1'];
 
-
-
 const getBoardMatrix = (): string[][] => {
     const boardMatrix = [];
     let counter = 0;
@@ -27,11 +25,41 @@ const getBoardMatrix = (): string[][] => {
 const boardMatrix = getBoardMatrix();
 console.log(boardMatrix);
 
-const getSublings = (cellName: string) => {
-    // boardMatrix// find cell indexes. then get siblings
-    return {}
+type TSiblings = {
+    bottom: string | null,
+    top: string | null,
+    left: string | null,
+    right: string | null,
+    bottomLeft:  string | null,
+    bottomRight:  string | null,
+    topLeft: string | null,
+    topRight: string | null,
 }
 
+const getSublings = (cellName: string): TSiblings => {
+    let cellI, cellJ;
+    for(let i = 0; i < boardMatrix.length; i++) {
+        for(let j = 0; j < boardMatrix[i].length; j++) {
+            if(boardMatrix[i][j] === cellName) {
+                cellI = i;
+                cellJ = j;
+            }
+        }
+    }
+
+    return {
+        bottom: boardMatrix[cellI + 1][cellJ] ?? null,
+        top: boardMatrix[cellI - 1][cellJ] ?? null,
+        left: boardMatrix[cellI][cellJ - 1] ?? null,
+        right: boardMatrix[cellI][cellJ + 1] ?? null,
+        bottomLeft:  boardMatrix[cellI + 1][cellJ - 1],
+        bottomRight:  boardMatrix[cellI + 1][cellJ + 1],
+        topLeft:  boardMatrix[cellI - 1][cellJ - 1],
+        topRight:  boardMatrix[cellI - 1][cellJ + 1],
+    }
+}
+
+console.log(getSublings('a3'));
 
 // Black
 const INITIAL_BLACK_PAWN_POSITIONS = ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'];
@@ -43,14 +71,12 @@ class BoardCell {
     #name: string;
     #figure: Figure | null;
     #cellGeometry: CellGeometry;
-    #topSibling: string;
-    #bottomSibling: string;
-    #leftSibling: string;
-    #rightSibling: string;
+    #siblings: TSiblings;
 
     constructor(name: string, group: CellGeometry) {
         this.#name = name;
         this.#cellGeometry = group;
+        this.#siblings = getSublings(name);
     }
 
     setFigure(figure: Figure | null) {
