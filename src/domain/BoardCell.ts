@@ -87,6 +87,13 @@ export class BoardCell {
         return !!this.#figure;
     }
 
+    hasFigureColor() {
+        if(!this.hasFigure()) {
+            return '';
+        }
+        return this.#figure.getColor();
+    }
+
     getFigure(): Figure | null {
         return this.#figure;
     }

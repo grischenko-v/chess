@@ -99,13 +99,13 @@ class PawnMoveStrategy extends MoveStrategy {
         }
         const topLeftSiblingName = figure.getColor() === 'white' ? currentCell.getTopLeftSibling() : currentCell.getBottomRightSibling();
         const topLeftCell = cellRepository.getCell(topLeftSiblingName);
-        if(topLeftCell && topLeftCell.hasFigure()) {
+        if(topLeftCell && topLeftCell.hasFigure() && topLeftCell.hasFigureColor() !== figure.getColor()) {
             result.push(topLeftCell);
         }
 
         const topRightSiblingName = figure.getColor() === 'white' ? currentCell.getTopRightSibling() : currentCell.getBottomLeftSibling();
         const topRightCell = cellRepository.getCell(topRightSiblingName);
-        if(topRightCell && topRightCell.hasFigure()) {
+        if(topRightCell && topRightCell.hasFigure() && topRightCell.hasFigureColor() !== figure.getColor()) {
             result.push(topRightCell);
         }
         return result;
