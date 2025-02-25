@@ -2,10 +2,9 @@ import {
     BoxGeometry,
     MeshStandardMaterial,
     Mesh,
-    Object3D,
 } from 'three';
 
-const CELL_COLOR = {
+export const CELL_COLOR = {
     black: 0x231F20,
     white: 0xEFE6DD
 } as const;
@@ -15,7 +14,7 @@ export type CELL_COLOR_TYPE = keyof typeof CELL_COLOR;
 export class CellGeometry {
     #geometry: BoxGeometry;
     #material: MeshStandardMaterial;
-    #mesh: Object3D;
+    #mesh: Mesh<BoxGeometry, MeshStandardMaterial>;
     #name: string
 
     constructor(position: any, color: CELL_COLOR_TYPE, name: string) {

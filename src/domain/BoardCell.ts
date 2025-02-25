@@ -1,5 +1,5 @@
 import { Figure } from './Figure';
-import { CellGeometry } from '../ui/board/CellGeometry';
+import { CELL_COLOR, CELL_COLOR_TYPE, CellGeometry } from '../ui/board/CellGeometry';
 import { getCellSublings } from '../utils/getCellSiblings';
 
 export type TSiblings = {
@@ -18,14 +18,36 @@ export class BoardCell {
     #figure: Figure | null;
     #cellGeometry: CellGeometry;
     #siblings: TSiblings;
+    #canmove =false;
+    #color: CELL_COLOR_TYPE;
 
     constructor(name: string, boardCoords: {x: number, z: number}) {
         this.#name = name;
-        const color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
+        this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
         this.#cellGeometry = new CellGeometry(
-            {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, color, name
+            {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, this.#color, name
         );
         this.#siblings = getCellSublings(name);
+    }
+
+    getTopSibling() {
+        return this.#siblings.top;
+    }
+
+    setCanMove(canMove: boolean) {
+        this.#canmove = canMove;
+        
+        if(this.#canmove) {
+            this.changeColor(0xf70);
+            return;
+        }
+
+        this.changeColor(CELL_COLOR[this.#color]);
+    }
+
+    changeColor(color: number) {
+        const mesh = this.getMesh();
+        mesh.material.color.setHex(color);
     }
 
     setFigure(figure: Figure | null) {

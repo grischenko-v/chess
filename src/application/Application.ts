@@ -37,6 +37,9 @@ export class Application {
         eventBus.subscribe('intercect', (data) => {
             const { detail } = data;
             if(!detail) {
+                if(this.#selectedFigure) {
+                    this.unSelectFigure();
+                }
                 return;
             }
 
@@ -48,19 +51,33 @@ export class Application {
             }
 
             if(this.#selectedFigure && this.#selectedFigure.getName() === figureName) {
-                this.#selectedFigure.unselect();
-                this.#selectedFigure = null;
+                this.unSelectFigure();
                 return;
             }
 
             if(this.#selectedFigure) {
-                this.#selectedFigure.unselect();
-                this.#selectedFigure = null;
+                this.unSelectFigure();
             }
 
             this.#selectedFigure = figure;
             figure.select();
+
+            const figureCell = figure.getCurrentCell();
+            const topSiblingName = figureCell.getTopSibling();
+            const topSiblingCell = this.#cellRepository.getCell(topSiblingName);
+            console.log(topSiblingCell);
+            topSiblingCell.setCanMove(true);
         });
+    }
+
+    private unSelectFigure() {
+        const figureCell = this.#selectedFigure.getCurrentCell();
+        const topSiblingName = figureCell.getTopSibling();
+        const topSiblingCell = this.#cellRepository.getCell(topSiblingName);
+        topSiblingCell.setCanMove(false);
+
+        this.#selectedFigure.unselect();
+        this.#selectedFigure = null;
     }
 
     private initFigures() {
