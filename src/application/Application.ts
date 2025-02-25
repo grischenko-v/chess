@@ -1,3 +1,4 @@
+import { Object3D } from "three";
 import { RaycastAdapter } from "../adapters/RaycastAdapter";
 import { SceneAdapter } from "../adapters/SceneAdapter";
 import { columns, rows } from "../constants";
@@ -5,6 +6,7 @@ import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
 import { eventBus } from "../infra/EventBus";
 import { ICellRepository } from "../repository/CellRepository";
+import { IFigureRepository } from "../repository/FiguresRepository";
 import { createBoard } from "../utils/createBoard";
 
 // Black
@@ -17,9 +19,12 @@ export class Application {
     #sceneAdapter: SceneAdapter;
 
     #cellRepository: ICellRepository;
+    #figureRepository: IFigureRepository;
+    #selectedFigure: Figure | null;
 
-    constructor(cellRepository: ICellRepository) {
+    constructor(cellRepository: ICellRepository, figureRepository: IFigureRepository) {
         this.#cellRepository = cellRepository;
+        this.#figureRepository = figureRepository;
 
         this.#raycastAdapter = new RaycastAdapter();
         this.#sceneAdapter = new SceneAdapter();
@@ -29,7 +34,33 @@ export class Application {
     
         this.#sceneAdapter.animate();
 
-        eventBus.subscribe('intercect', console.log)
+        eventBus.subscribe('intercect', (data) => {
+            const { detail } = data;
+            if(!detail) {
+                return;
+            }
+
+            const figureName = detail.object.parent.name
+
+            const figure = this.#figureRepository.getFigure(figureName);
+            if(!figure) {
+                return; 
+            }
+
+            if(this.#selectedFigure && this.#selectedFigure.getName() === figureName) {
+                this.#selectedFigure.unselect();
+                this.#selectedFigure = null;
+                return;
+            }
+
+            if(this.#selectedFigure) {
+                this.#selectedFigure.unselect();
+                this.#selectedFigure = null;
+            }
+
+            this.#selectedFigure = figure;
+            figure.select();
+        });
     }
 
     private initFigures() {
@@ -39,6 +70,7 @@ export class Application {
             const figure = new Figure(position, 'black', 'Pawn', cell)
             cell.setFigure(figure);
             this.#sceneAdapter.draw(figure.getMesh())
+            this.#figureRepository.addFigure(figure);
         });
         
         INITIAL_WHITE_PAWN_POSITIONS.forEach(pownCell => {
@@ -47,6 +79,7 @@ export class Application {
             const figure = new Figure(position, 'white', 'Pawn', cell)
             cell.setFigure(figure);
             this.#sceneAdapter.draw(figure.getMesh())
+            this.#figureRepository.addFigure(figure);
         });
     }
 

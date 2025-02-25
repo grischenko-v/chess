@@ -22,14 +22,12 @@ export class RaycastAdapter {
     }
 
     private raycast(event: any) {
-        console.log('raycast');
         this.#mouseCoordVector.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.#mouseCoordVector.y = -(event.clientY / window.innerHeight) * 2 + 1;
         this.#raycaster.setFromCamera(this.#mouseCoordVector, this.#camera);
         
         const intersects = this.#raycaster.intersectObjects(this.#globalScene.getScene().children);
         const intersect = intersects.length && intersects[0];
-
         eventBus.dispatchEvent('intercect', intersect);
     }
 }
