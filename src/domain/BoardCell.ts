@@ -38,6 +38,14 @@ export class BoardCell {
         return this.#siblings.bottom;
     }
 
+    getTopLeftSibling() {
+        return this.#siblings.topLeft;
+    }
+
+    getTopRightSibling() {
+        return this.#siblings.topRight;
+    }
+
     getCanMove() {
         return this.#canmove;
     }
@@ -45,6 +53,11 @@ export class BoardCell {
     setCanMove(canMove: boolean) {
         this.#canmove = canMove;
         
+        if(this.#canmove && this.hasFigure()) {
+            this.changeColor(0xf75632);
+            return;
+        }
+
         if(this.#canmove) {
             this.changeColor(0xf70);
             return;
@@ -60,6 +73,10 @@ export class BoardCell {
 
     setFigure(figure: Figure | null) {
         this.#figure = figure;
+    }
+
+    hasFigure() {
+        return !!this.#figure;
     }
 
     getFigure(): Figure | null {

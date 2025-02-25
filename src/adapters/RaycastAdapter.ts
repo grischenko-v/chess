@@ -37,8 +37,12 @@ export class RaycastAdapter {
 
         if(intersect && intersect.object) {
             intercectName = intersect.object.parent.name || intersect.object.name;
-            intercectType = isBoardCell(intercectName) ? 'cell' : 'figure';
         }
+        if(!intercectName) {
+             eventBus.dispatchEvent('outBoardClick', {});
+        }
+
+        intercectType = isBoardCell(intercectName) ? 'cell' : intercectName ? 'figure' : '';
 
         switch(intercectType) {
             case 'cell': {

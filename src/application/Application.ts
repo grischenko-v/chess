@@ -46,13 +46,12 @@ export class Application {
             this.unSelectFigure();
             return;
         }
+
         this.#selectedFigure = figure;
         figure.select();
 
-        const figureCell = figure.getCurrentCell();
-        const topSiblingName = figure.getColor() === 'white' ? figureCell.getTopSibling(): figureCell.getBottomSibling();
-        const topSiblingCell = this.#cellRepository.getCell(topSiblingName);
-        topSiblingCell.setCanMove(true);
+        const avalibleCells = figure.getAvalibleMoveCells();
+        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(true));
     }
 
     onCellClick(data: any) {
@@ -63,12 +62,14 @@ export class Application {
         }
 
         const currentCell = this.#selectedFigure.getCurrentCell();
+        const avalibleCells = this.#selectedFigure.getAvalibleMoveCells();
         if(cell.getCanMove()) {
             this.moveFigure(currentCell, cell, this.#selectedFigure)
+            this.#selectedFigure.unselect();
+            this.#selectedFigure = null;
         }
-        this.unSelectFigure();
-        cell.setCanMove(false);
-        return;
+        
+        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
     }
 
     getSelectedFigure() {
@@ -79,10 +80,9 @@ export class Application {
         if(!this.getSelectedFigure()) {
             return;
         }
-        const figureCell = this.#selectedFigure.getCurrentCell();
-        const topSiblingName = figureCell.getTopSibling();
-        const topSiblingCell = this.#cellRepository.getCell(topSiblingName);
-        topSiblingCell.setCanMove(false);
+
+        const avalibleCells = this.#selectedFigure.getAvalibleMoveCells();
+        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
 
         this.#selectedFigure.unselect();
         this.#selectedFigure = null;
