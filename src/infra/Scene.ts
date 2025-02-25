@@ -11,7 +11,15 @@ import {
 } from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-class Scene {
+export interface IScene {
+    addObject: (mesh: Object3D) => void,
+    animate: () => void,
+    getRenderer: () => WebGLRenderer,
+    getCamera: () =>  PerspectiveCamera,
+    getScene: () => ThreeScene,
+}
+
+class Scene implements IScene{
     #scene: ThreeScene;
     #camera: PerspectiveCamera;
     #renderer: WebGLRenderer;
@@ -65,12 +73,12 @@ class Scene {
         this.#renderer.render(this.#scene, this.#camera);
     }
 
-    addObj(mesh: Object3D) {
+    addObject(mesh: Object3D) {
         this.#scene.add(mesh);
         this.update();
     }
 
-    update() {
+    private update() {
         this.#renderer.render(this.#scene, this.#camera);
         this.controls.update();
     }
@@ -93,4 +101,4 @@ class Scene {
     }
 }
 
-export default Scene;
+export const scene = new Scene();

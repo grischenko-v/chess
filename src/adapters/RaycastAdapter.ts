@@ -1,15 +1,16 @@
 import { PerspectiveCamera, Raycaster, Renderer, Vector2, Scene as ThreeScene, } from "three";
-import Scene from "../domain/Scene";
+import { eventBus } from "../infra/EventBus";
+import { IScene, scene } from "../infra/Scene";
 
 export class RaycastAdapter {
     #renderer: Renderer;
     #raycaster = new Raycaster();
     #camera: PerspectiveCamera;
     #mouseCoordVector = new Vector2()
-    #scene: ThreeScene;
+    #globalScene: IScene;
     
-    constructor(scene: Scene) {
-        this.#scene = scene.getScene();
+    constructor() {
+        this.#globalScene = scene;
         this.#renderer = scene.getRenderer();
         this.#camera = scene.getCamera();
 
@@ -26,9 +27,9 @@ export class RaycastAdapter {
         this.#mouseCoordVector.y = -(event.clientY / window.innerHeight) * 2 + 1;
         this.#raycaster.setFromCamera(this.#mouseCoordVector, this.#camera);
         
-        const intersects = this.#raycaster.intersectObjects(this.#scene.children);
+        const intersects = this.#raycaster.intersectObjects(this.#globalScene.getScene().children);
         const intersect = intersects.length && intersects[0];
-        
-        return {intersect}
+
+        eventBus.dispatchEvent('intercect', intersect);
     }
 }

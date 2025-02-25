@@ -22,9 +22,12 @@ export class BoardCell {
     #cellGeometry: CellGeometry;
     #siblings: TSiblings;
 
-    constructor(name: string, group: CellGeometry) {
+    constructor(name: string, boardCoords: {x: number, z: number}) {
         this.#name = name;
-        this.#cellGeometry = group;
+        const color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
+        this.#cellGeometry = new CellGeometry(
+            {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, color, name
+        );;
         this.#siblings = getCellSublings(name);
     }
 
@@ -34,6 +37,10 @@ export class BoardCell {
 
     getFigure(): Figure | null {
         return this.#figure;
+    }
+
+    getMesh() {
+        return this.#cellGeometry.getMesh();
     }
 
     getFigureMesh(): Object3D | null {
