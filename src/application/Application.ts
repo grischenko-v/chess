@@ -39,7 +39,7 @@ export class Application {
         eventBus.subscribe('outBoardClick', this.unSelectFigure.bind(this));
     }
 
-    onFigureClick(data: any) {
+    onFigureClick(data: { detail: { figure: Figure } }) {
         const { detail } = data;
         const { figure } = detail;
         if(this.getSelectedFigure()) {
@@ -54,7 +54,7 @@ export class Application {
         avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(true));
     }
 
-    onCellClick(data: any) {
+    onCellClick(data: { detail: { cell: BoardCell } }) {
         const { detail } = data;
         const { cell } = detail;
         if(!this.#selectedFigure) {
