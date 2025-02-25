@@ -11,4 +11,8 @@ export class SceneAdapter {
     animate() {
         this.#scene.animate();
     }
+
+    remove(obj: Object3D) {
+        this.#scene.remove(obj);
+    }
 }

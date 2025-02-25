@@ -63,6 +63,19 @@ export class Application {
 
         const currentCell = this.#selectedFigure.getCurrentCell();
         const avalibleCells = this.#selectedFigure.getAvalibleMoveCells();
+
+        if(cell.getCanMove() && cell.hasFigure() && cell.hasFigureColor() !== this.#selectedFigure.getColor()) {
+            const destroyedFigure = cell.getFigure();
+            this.#sceneAdapter.remove(destroyedFigure.getMesh());
+            this.#figureRepository.deleteFigure(destroyedFigure);
+
+            this.moveFigure(currentCell, cell, this.#selectedFigure)
+            this.#selectedFigure.unselect();
+            this.#selectedFigure = null;
+            avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
+            return;
+        }
+
         if(cell.getCanMove()) {
             this.moveFigure(currentCell, cell, this.#selectedFigure)
             this.#selectedFigure.unselect();

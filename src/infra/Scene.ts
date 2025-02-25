@@ -99,6 +99,10 @@ class Scene implements IScene{
     getScene() {
         return this.#scene;
     }
+
+    remove(obj: Object3D) {
+        this.#scene.remove(obj);
+    }
 }
 
 export const scene = new Scene();

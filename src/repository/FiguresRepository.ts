@@ -1,8 +1,9 @@
 import { Figure } from "../domain/Figure";
 
 export interface IFigureRepository {
-    addFigure: (cell: Figure) => void,
-    getFigure: (name: string) => Figure 
+    addFigure: (figure: Figure) => void,
+    getFigure: (name: string) => Figure,
+    deleteFigure: (figure: Figure) => void;
 }
 
 export class FigureRepository implements IFigureRepository {
@@ -17,8 +18,9 @@ export class FigureRepository implements IFigureRepository {
         return this.#cells[name];
     }
 
-    deleteFigure(name: string) {
-        delete this.#cells[name];
+    deleteFigure(figure: Figure) {
+        const figureName = figure.getName();
+        delete this.#cells[figureName];
     }
 }
 
