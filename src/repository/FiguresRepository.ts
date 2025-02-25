@@ -16,6 +16,10 @@ export class FigureRepository implements IFigureRepository {
     getFigure(name: string): Figure {
         return this.#cells[name];
     }
+
+    deleteFigure(name: string) {
+        delete this.#cells[name];
+    }
 }
 
 export const figureRepository = new FigureRepository();
