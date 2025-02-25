@@ -43,6 +43,18 @@ export class Application {
                 return;
             }
 
+            if(this.#selectedFigure) {
+                const cellName = detail.object.name;
+                const destinationCell = this.#cellRepository.getCell(cellName);
+                const currentCell = this.#selectedFigure.getCurrentCell();
+                if(destinationCell.getCanMove()) {
+                    this.moveFigure(currentCell, destinationCell, this.#selectedFigure)
+                }
+                this.unSelectFigure();
+                destinationCell.setCanMove(false);
+                return;
+            }
+
             const figureName = detail.object.parent.name
 
             const figure = this.#figureRepository.getFigure(figureName);
@@ -114,17 +126,13 @@ export class Application {
         }
     }
 
-    moveFigure(from: string, to: string) {
-        const startCell = this.#cellRepository.getCell(to);
-        const figure = startCell.getFigure();
-        const endCell = this.#cellRepository.getCell(from);
-
+    moveFigure(currentCell: BoardCell, destinationCell: BoardCell, figure: Figure) {
         if(!figure) {
             return;
         }
 
-        figure.move(endCell);
-        startCell.setFigure(null);
-        endCell.setFigure(figure);
+        figure.move(destinationCell);
+        currentCell.setFigure(null);
+        destinationCell.setFigure(figure);
     }
 }

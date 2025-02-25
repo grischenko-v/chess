@@ -15,7 +15,6 @@ export class CellGeometry {
     #geometry: BoxGeometry;
     #material: MeshStandardMaterial;
     #mesh: Mesh<BoxGeometry, MeshStandardMaterial>;
-    #name: string
 
     constructor(position: any, color: CELL_COLOR_TYPE, name: string) {
         this.#geometry = new BoxGeometry( 1, 1, 1 );
@@ -24,7 +23,7 @@ export class CellGeometry {
         this.#mesh.position.x = position.x;
         this.#mesh.position.z = position.z;
         this.#mesh.receiveShadow = true;
-        this.#name = name;
+        this.#mesh.name = name;
     }
 
     getPosition() {
@@ -32,7 +31,7 @@ export class CellGeometry {
     }
 
     getName() {
-        return this.#name;
+        return this.#mesh.name;
     }
 
     getMesh() {

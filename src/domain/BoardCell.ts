@@ -34,6 +34,10 @@ export class BoardCell {
         return this.#siblings.top;
     }
 
+    getCanMove() {
+        return this.#canmove;
+    }
+
     setCanMove(canMove: boolean) {
         this.#canmove = canMove;
         
