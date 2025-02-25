@@ -1,4 +1,4 @@
-export type EventTypes = 'intercect';
+export type EventTypes = 'intercect' | 'cellClick' | 'figureClick';
 
 interface IEventBus {
     dispatchEvent: (eventType: EventTypes, message: any) => void,

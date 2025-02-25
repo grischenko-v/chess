@@ -1,6 +1,9 @@
-import { PerspectiveCamera, Raycaster, Renderer, Vector2, Scene as ThreeScene, } from "three";
+import { PerspectiveCamera, Raycaster, Renderer, Vector2, Scene as ThreeScene, Intersection, } from "three";
 import { eventBus } from "../infra/EventBus";
 import { IScene, scene } from "../infra/Scene";
+import { isBoardCell } from "../utils/isBoardCell";
+import { cellRepository } from "../repository/CellRepository";
+import { figureRepository } from "../repository/FiguresRepository";
 
 export class RaycastAdapter {
     #renderer: Renderer;
@@ -28,6 +31,31 @@ export class RaycastAdapter {
         
         const intersects = this.#raycaster.intersectObjects(this.#globalScene.getScene().children);
         const intersect = intersects.length && intersects[0];
-        eventBus.dispatchEvent('intercect', intersect);
+
+        let intercectType = '';
+        let intercectName = '';
+
+        if(intersect && intersect.object) {
+            intercectName = intersect.object.parent.name || intersect.object.name;
+            intercectType = isBoardCell(intercectName) ? 'cell' : 'figure';
+        }
+
+        switch(intercectType) {
+            case 'cell': {
+                const cell = cellRepository.getCell(intercectName);
+                eventBus.dispatchEvent('cellClick', {
+                    cell
+                });
+                return;
+            };
+            case 'figure': {
+                const figure = figureRepository.getFigure(intercectName);
+                eventBus.dispatchEvent('figureClick', {
+                    figure
+                });
+                return
+            };
+            default: () => {};
+        }
     }
 }

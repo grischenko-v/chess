@@ -34,56 +34,44 @@ export class Application {
     
         this.#sceneAdapter.animate();
 
-        eventBus.subscribe('intercect', (data) => {
-            const { detail } = data;
-            if(!detail) {
-                if(this.#selectedFigure) {
-                    this.unSelectFigure();
-                }
-                return;
-            }
+        eventBus.subscribe('cellClick', this.onCellClick.bind(this));
+        eventBus.subscribe('figureClick', this.onFigureClick.bind(this));
+    }
 
-            if(this.#selectedFigure) {
-                const cellName = detail.object.name;
-                const destinationCell = this.#cellRepository.getCell(cellName);
-                const currentCell = this.#selectedFigure.getCurrentCell();
-                if(!destinationCell){
-                    this.unSelectFigure();
-                    return;
-                }
-                if(destinationCell.getCanMove()) {
-                    this.moveFigure(currentCell, destinationCell, this.#selectedFigure)
-                }
-                this.unSelectFigure();
-                destinationCell.setCanMove(false);
-                return;
-            }
+    onFigureClick(data: any) {
+        const { detail } = data;
+        const { figure } = detail;
+        if(this.getSelectedFigure()) {
+            this.unSelectFigure();
+            return;
+        }
+        this.#selectedFigure = figure;
+        figure.select();
 
-            const figureName = detail.object.parent.name || detail.object.name
+        const figureCell = figure.getCurrentCell();
+        const topSiblingName = figure.getColor() === 'white' ? figureCell.getTopSibling(): figureCell.getBottomSibling();
+        const topSiblingCell = this.#cellRepository.getCell(topSiblingName);
+        topSiblingCell.setCanMove(true);
+    }
 
-            const figure = this.#figureRepository.getFigure(figureName);
-            if(!figure) {
-                return; 
-            }
+    onCellClick(data: any) {
+        const { detail } = data;
+        const { cell } = detail;
+        if(!this.#selectedFigure) {
+            return;
+        }
 
-            if(this.#selectedFigure && this.#selectedFigure.getName() === figureName) {
-                this.unSelectFigure();
-                return;
-            }
+        const currentCell = this.#selectedFigure.getCurrentCell();
+        if(cell.getCanMove()) {
+            this.moveFigure(currentCell, cell, this.#selectedFigure)
+        }
+        this.unSelectFigure();
+        cell.setCanMove(false);
+        return;
+    }
 
-            if(this.#selectedFigure) {
-                this.unSelectFigure();
-            }
-
-            this.#selectedFigure = figure;
-            figure.select();
-
-            const figureCell = figure.getCurrentCell();
-            const topSiblingName = figure.getColor() === 'white' ? figureCell.getTopSibling(): figureCell.getBottomSibling();
-            const topSiblingCell = this.#cellRepository.getCell(topSiblingName);
-            console.log(topSiblingCell);
-            topSiblingCell.setCanMove(true);
-        });
+    getSelectedFigure() {
+        return this.#selectedFigure;
     }
 
     private unSelectFigure() {
