@@ -47,6 +47,10 @@ export class Application {
                 const cellName = detail.object.name;
                 const destinationCell = this.#cellRepository.getCell(cellName);
                 const currentCell = this.#selectedFigure.getCurrentCell();
+                if(!destinationCell){
+                    this.unSelectFigure();
+                    return;
+                }
                 if(destinationCell.getCanMove()) {
                     this.moveFigure(currentCell, destinationCell, this.#selectedFigure)
                 }
@@ -55,7 +59,7 @@ export class Application {
                 return;
             }
 
-            const figureName = detail.object.parent.name
+            const figureName = detail.object.parent.name || detail.object.name
 
             const figure = this.#figureRepository.getFigure(figureName);
             if(!figure) {
@@ -75,7 +79,7 @@ export class Application {
             figure.select();
 
             const figureCell = figure.getCurrentCell();
-            const topSiblingName = figureCell.getTopSibling();
+            const topSiblingName = figure.getColor() === 'white' ? figureCell.getTopSibling(): figureCell.getBottomSibling();
             const topSiblingCell = this.#cellRepository.getCell(topSiblingName);
             console.log(topSiblingCell);
             topSiblingCell.setCanMove(true);

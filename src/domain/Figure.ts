@@ -25,6 +25,10 @@ export class Figure {
         this.#currentCell = cell;
     }
 
+    getColor() {
+        return this.#color;
+    }
+
     getMesh() {
         return this.#figure.getMesh();
     }
