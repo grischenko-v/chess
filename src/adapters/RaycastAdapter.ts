@@ -29,9 +29,6 @@ export class RaycastAdapter {
         const intersects = this.#raycaster.intersectObjects(this.#scene.children);
         const intersect = intersects.length && intersects[0];
         
-        console.log({ intersect });
-        if (intersect && intersect.object.parent && intersect.object.parent.name !== '') {
-            console.log(intersect.object.parent);
-        }
+        return {intersect}
     }
 }

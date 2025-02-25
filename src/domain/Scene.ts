@@ -17,7 +17,6 @@ class Scene {
     #renderer: WebGLRenderer;
     controls: any;
     raycaster: Raycaster;
-    selectedFigure: any;
 
     constructor() {
         this.#scene = new ThreeScene();

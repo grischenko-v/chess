@@ -95,4 +95,8 @@ export class Board {
         startCell.setFigure(null);
         endCell.setFigure(figure);
     }
+
+    getScene() {
+        return this.#scene;
+    }
 }
