@@ -43,6 +43,10 @@ export class Figure {
         return this.#name;
     }
 
+    getStepNumber() {
+        return this.#stepNumber;
+    }
+
     move(newCell: BoardCell) {
         this.#figure.move(newCell.getCellCenter());
         this.setCurrentCell(newCell);
@@ -50,7 +54,7 @@ export class Figure {
     }
 
     getAvalibleMoveCells() {
-        return PawnMoveStrategy.getAvalibleCells(this.#currentCell, this.#stepNumber);
+        return PawnMoveStrategy.getAvalibleCells(this.#currentCell, this);
     }
 
     getPosition() {
@@ -76,30 +80,30 @@ export class Figure {
 }
 
 abstract class MoveStrategy {
-    static getAvalibleCells: (currentCell: BoardCell, stepNumber?: number) => BoardCell[];
+    static getAvalibleCells: (currentCell: BoardCell, figure: Figure) => BoardCell[];
 }
 
 class PawnMoveStrategy extends MoveStrategy {
 
-    static getAvalibleCells(currentCell: BoardCell, stepNumber: number): BoardCell[] {
+    static getAvalibleCells(currentCell: BoardCell, figure: Figure): BoardCell[] {
         const result = [];
-        const topCellName = currentCell.getTopSibling();
+        const topCellName = figure.getColor() === 'white' ? currentCell.getTopSibling() : currentCell.getBottomSibling();
         const topCell = cellRepository.getCell(topCellName);
         if(topCell && !topCell.hasFigure()) {
             result.push(topCell);
         }
-        if(stepNumber === 0 ) {
-            const topTopCellName = topCell.getTopSibling();
+        if(figure.getStepNumber() === 0 ) {
+            const topTopCellName = figure.getColor() === 'white' ? topCell.getTopSibling() : topCell.getBottomSibling();
             const topTopCell = cellRepository.getCell(topTopCellName);
             result.push(topTopCell);
         }
-        const topLeftSiblingName = currentCell.getTopLeftSibling();
+        const topLeftSiblingName = figure.getColor() === 'white' ? currentCell.getTopLeftSibling() : currentCell.getBottomRightSibling();
         const topLeftCell = cellRepository.getCell(topLeftSiblingName);
         if(topLeftCell && topLeftCell.hasFigure()) {
             result.push(topLeftCell);
         }
 
-        const topRightSiblingName = currentCell.getTopRightSibling();
+        const topRightSiblingName = figure.getColor() === 'white' ? currentCell.getTopRightSibling() : currentCell.getBottomLeftSibling();
         const topRightCell = cellRepository.getCell(topRightSiblingName);
         if(topRightCell && topRightCell.hasFigure()) {
             result.push(topRightCell);
