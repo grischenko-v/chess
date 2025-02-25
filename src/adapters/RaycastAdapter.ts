@@ -55,7 +55,9 @@ export class RaycastAdapter {
                 });
                 return
             };
-            default: () => {};
+            default: {
+                eventBus.dispatchEvent('outBoardClick', {});
+            };
         }
     }
 }

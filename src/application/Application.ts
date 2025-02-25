@@ -36,6 +36,7 @@ export class Application {
 
         eventBus.subscribe('cellClick', this.onCellClick.bind(this));
         eventBus.subscribe('figureClick', this.onFigureClick.bind(this));
+        eventBus.subscribe('outBoardClick', this.unSelectFigure.bind(this));
     }
 
     onFigureClick(data: any) {
@@ -75,6 +76,9 @@ export class Application {
     }
 
     private unSelectFigure() {
+        if(!this.getSelectedFigure()) {
+            return;
+        }
         const figureCell = this.#selectedFigure.getCurrentCell();
         const topSiblingName = figureCell.getTopSibling();
         const topSiblingCell = this.#cellRepository.getCell(topSiblingName);
