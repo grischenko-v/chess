@@ -1,7 +1,8 @@
 import { Application } from './application/Application';
 import { Board } from './domain/Board';
+import { cellRepository } from './repository/CellRepository';
 
-const app = new Application();
+const app = new Application(cellRepository);
 
 const animate = () => {
     setTimeout(() => app.moveFigure('f7', 'f5'), 0);

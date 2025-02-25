@@ -1,4 +1,3 @@
-import { Object3D } from 'three';
 import { Figure } from './Figure';
 import { CellGeometry } from '../ui/board/CellGeometry';
 import { getCellSublings } from '../utils/getCellSiblings';
@@ -14,8 +13,6 @@ export type TSiblings = {
     topRight: string | null,
 }
 
-console.log(getCellSublings('a1'));
-
 export class BoardCell {
     #name: string;
     #figure: Figure | null;
@@ -27,7 +24,7 @@ export class BoardCell {
         const color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
         this.#cellGeometry = new CellGeometry(
             {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, color, name
-        );;
+        );
         this.#siblings = getCellSublings(name);
     }
 
@@ -41,14 +38,6 @@ export class BoardCell {
 
     getMesh() {
         return this.#cellGeometry.getMesh();
-    }
-
-    getFigureMesh(): Object3D | null {
-        const figure = this.getFigure();
-        if(figure) {
-            return figure.getMesh();
-        }
-        return null;
     }
 
     getCellName() {

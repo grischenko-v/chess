@@ -1,8 +1,11 @@
 import { RaycastAdapter } from "../adapters/RaycastAdapter";
-import { Board } from "../domain/Board";
+import { SceneAdapter } from "../adapters/SceneAdapter";
+import { columns, rows } from "../constants";
+import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
 import { eventBus } from "../infra/EventBus";
-import { scene, IScene } from "../infra/Scene";
+import { ICellRepository } from "../repository/CellRepository";
+import { createBoard } from "../utils/createBoard";
 
 // Black
 const INITIAL_BLACK_PAWN_POSITIONS = ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'];
@@ -11,40 +14,60 @@ const INITIAL_WHITE_PAWN_POSITIONS = ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 
 
 export class Application {
     #raycastAdapter: RaycastAdapter;
-    #board: Board;
-    #scene: IScene
+    #sceneAdapter: SceneAdapter;
 
-    constructor() {
-        this.#scene = scene;
-        this.#board = new Board();
+    #cellRepository: ICellRepository;
+
+    constructor(cellRepository: ICellRepository) {
+        this.#cellRepository = cellRepository;
+
         this.#raycastAdapter = new RaycastAdapter();
+        this.#sceneAdapter = new SceneAdapter();
 
+        this.createBoard();
         this.initFigures();
-        this.#scene.animate();
+    
+        this.#sceneAdapter.animate();
 
         eventBus.subscribe('intercect', console.log)
     }
 
     private initFigures() {
         INITIAL_BLACK_PAWN_POSITIONS.forEach(pownCell => {
-            const cell = this.#board.getCell(pownCell);
+            const cell = this.#cellRepository.getCell(pownCell);
             const position = cell.getCellCenter();
-            cell.setFigure(new Figure(position, 'black', 'Pawn', cell));
-            this.#scene.addObject(cell.getFigureMesh())
+            const figure = new Figure(position, 'black', 'Pawn', cell)
+            cell.setFigure(figure);
+            this.#sceneAdapter.draw(figure.getMesh())
         });
         
         INITIAL_WHITE_PAWN_POSITIONS.forEach(pownCell => {
-            const cell = this.#board.getCell(pownCell);
+            const cell = this.#cellRepository.getCell(pownCell);
             const position = cell.getCellCenter();
-            cell.setFigure(new Figure(position, 'white', 'Pawn', cell));
-            this.#scene.addObject(cell.getFigureMesh())
+            const figure = new Figure(position, 'white', 'Pawn', cell)
+            cell.setFigure(figure);
+            this.#sceneAdapter.draw(figure.getMesh())
         });
     }
 
+    private createBoard() {
+        const board = createBoard();
+        this.#sceneAdapter.draw(board);
+
+
+        for(let [x, row] of rows.entries()) {
+            for(let [z, column] of columns.entries()) {
+                const cell = new BoardCell(`${column}${row}`, {x, z});
+                this.#cellRepository.addCell(cell)
+                this.#sceneAdapter.draw(cell.getMesh());
+            }
+        }
+    }
+
     moveFigure(from: string, to: string) {
-        const startCell = this.#board.getCell(to);
+        const startCell = this.#cellRepository.getCell(to);
         const figure = startCell.getFigure();
-        const endCell = this.#board.getCell(from);
+        const endCell = this.#cellRepository.getCell(from);
 
         if(!figure) {
             return;
