@@ -1,5 +1,6 @@
 import { Vector3 } from "three";
 import { createFigureFactory, FigureBase } from "../ui/figures/FiguresFactory";
+import { BoardCell } from "./BoardCell";
 
 export type FigureColor = 'white' | 'black';
 type FigureType = 'Pawn';
@@ -8,9 +9,9 @@ export class Figure {
     #color: FigureColor;
     #type: FigureType
     #figure: FigureBase;
-    #starage: MoveStrategy;
+    #currentCell: BoardCell;
 
-    constructor(position: Vector3, color: FigureColor, type: FigureType) {
+    constructor(position: Vector3, color: FigureColor, type: FigureType, cell: BoardCell) {
         this.#color = color;
         this.#type = type;
         this.#figure = createFigureFactory({
@@ -18,6 +19,7 @@ export class Figure {
             position: position,
             color: this.#color,
         })
+        this.#currentCell = cell;
     }
 
     getMesh() {
@@ -28,27 +30,21 @@ export class Figure {
         return this.#type;
     }
 
-    move(newPosition: Vector3) {
-        this.#figure.move(newPosition);
+    move(newCell: BoardCell) {
+        this.#figure.move(newCell.getCellCenter());
+        this.setCurrentCell(newCell);
     }
 
     getPosition() {
         return this.#figure.getPosition();
     }
 
-    setMoveStrategy(strategy: MoveStrategy) {
-        this.#starage = strategy;
+    getCurrentCell() {
+        return this.#currentCell;
     }
-}
 
-class MoveStrategy {
-    canMove() {
-        
+    setCurrentCell(cell: BoardCell) {
+        this.#currentCell = cell;
     }
-}
 
-class PawnMoveStrategy extends MoveStrategy{
-    canmove(): string[] {
-        return ['e4'];
-    }
 }
