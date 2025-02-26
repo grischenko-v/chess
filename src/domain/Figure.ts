@@ -54,7 +54,7 @@ export class Figure {
     }
 
     getAvalibleMoveCells() {
-        return moveStrategyMap[this.#type].getAvalibleCells(this.#currentCell, this);
+        return moveStrategy[this.#type](this.#currentCell, this);
     }
 
     getPosition() {
@@ -82,41 +82,33 @@ export class Figure {
     }
 }
 
-
-
-abstract class MoveStrategy {
-    static getAvalibleCells: (currentCell: BoardCell, figure: Figure) => BoardCell[];
-}
-
-class PawnMoveStrategy extends MoveStrategy {
-
-    static getAvalibleCells(currentCell: BoardCell, figure: Figure): BoardCell[] {
-        const result = [];
-        const topCellName = figure.getColor() === 'white' ? currentCell.getTopSibling() : currentCell.getBottomSibling();
-        const topCell = cellRepository.getCell(topCellName);
-        if(topCell && !topCell.hasFigure()) {
-            result.push(topCell);
-        }
-        if(figure.getStepNumber() === 0 ) {
-            const topTopCellName = figure.getColor() === 'white' ? topCell.getTopSibling() : topCell.getBottomSibling();
-            const topTopCell = cellRepository.getCell(topTopCellName);
-            result.push(topTopCell);
-        }
-        const topLeftSiblingName = figure.getColor() === 'white' ? currentCell.getTopLeftSibling() : currentCell.getBottomRightSibling();
-        const topLeftCell = cellRepository.getCell(topLeftSiblingName);
-        if(topLeftCell && topLeftCell.hasFigure() && topLeftCell.hasFigureColor() !== figure.getColor()) {
-            result.push(topLeftCell);
-        }
-
-        const topRightSiblingName = figure.getColor() === 'white' ? currentCell.getTopRightSibling() : currentCell.getBottomLeftSibling();
-        const topRightCell = cellRepository.getCell(topRightSiblingName);
-        if(topRightCell && topRightCell.hasFigure() && topRightCell.hasFigureColor() !== figure.getColor()) {
-            result.push(topRightCell);
-        }
-        return result;
+const getPawnAvalibleCells = (currentCell: BoardCell, figure: Figure): BoardCell[] => {
+    const result = [];
+    const topCellName = figure.getColor() === 'white' ? currentCell.getTopSibling() : currentCell.getBottomSibling();
+    const topCell = cellRepository.getCell(topCellName);
+    if(topCell && !topCell.hasFigure()) {
+        result.push(topCell);
     }
+    if(figure.getStepNumber() === 0 ) {
+        const topTopCellName = figure.getColor() === 'white' ? topCell.getTopSibling() : topCell.getBottomSibling();
+        const topTopCell = cellRepository.getCell(topTopCellName);
+        result.push(topTopCell);
+    }
+    
+    const topLeftSiblingName = figure.getColor() === 'white' ? currentCell.getTopLeftSibling() : currentCell.getBottomRightSibling();
+    const topLeftCell = cellRepository.getCell(topLeftSiblingName);
+    if(topLeftCell && topLeftCell.hasFigure() && topLeftCell.hasFigureColor() !== figure.getColor()) {
+        result.push(topLeftCell);
+    }
+
+    const topRightSiblingName = figure.getColor() === 'white' ? currentCell.getTopRightSibling() : currentCell.getBottomLeftSibling();
+    const topRightCell = cellRepository.getCell(topRightSiblingName);
+    if(topRightCell && topRightCell.hasFigure() && topRightCell.hasFigureColor() !== figure.getColor()) {
+        result.push(topRightCell);
+    }
+    return result;
 }
 
-const moveStrategyMap = {
-    'Pawn': PawnMoveStrategy,
+const moveStrategy = {
+    'Pawn': getPawnAvalibleCells,
 }

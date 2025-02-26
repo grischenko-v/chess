@@ -5,6 +5,19 @@ import { isBoardCell } from "../utils/isBoardCell";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 
+const dispatchEventStrategy = {
+    '': (intercectName: string) => eventBus.dispatchEvent('outsideClick', {}),
+    'figure': (intercectName: string) => {
+        const figure = figureRepository.getFigure(intercectName);
+        console.log(figure);
+        eventBus.dispatchEvent('figureClick', { figure });
+    },
+    'cell': (intercectName: string) => {
+        const cell = cellRepository.getCell(intercectName);
+        eventBus.dispatchEvent('cellClick', { cell });
+    },
+}
+
 export class RaycastAdapter {
     #renderer: Renderer;
     #raycaster = new Raycaster();
@@ -52,24 +65,6 @@ export class RaycastAdapter {
         const intercectName = this.getIntercectName(intersect);
         const intercectType = this.getIntercectType(intercectName);
 
-        switch(intercectType) {
-            case 'cell': {
-                const cell = cellRepository.getCell(intercectName);
-                eventBus.dispatchEvent('cellClick', {
-                    cell
-                });
-                return;
-            };
-            case 'figure': {
-                const figure = figureRepository.getFigure(intercectName);
-                eventBus.dispatchEvent('figureClick', {
-                    figure
-                });
-                return
-            };
-            default: {
-                eventBus.dispatchEvent('outsideClick', {});
-            };
-        }
+        dispatchEventStrategy[intercectType](intercectName);
     }
 }
