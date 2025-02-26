@@ -42,6 +42,10 @@ export class Application {
     onFigureClick(data: { detail: { figure: Figure } }) {
         const { detail } = data;
         const { figure } = detail;
+        if(this.getSelectedFigure() && figure.getCurrentCell().getCanMove()) {
+            this.caputerFigure(this.getSelectedFigure().getCurrentCell(), figure.getCurrentCell())
+            return;
+        }
         if(this.getSelectedFigure()) {
             this.#selectedFigure.unselect();
             return;
