@@ -9,6 +9,7 @@ import {
     Raycaster,
     Object3D,
     Color,
+    Fog,
 } from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -29,13 +30,20 @@ class Scene implements IScene{
 
     constructor() {
         this.#scene = new ThreeScene();
-        this.#camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.#camera.position.z = 15;
+        this.#scene.fog = new Fog( "white", 0, 100 );
+
+        this.#camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.#camera.position.y = 12;
+        this.#camera.position.z = 12;
+        this.#camera.position.x = 12;
+        
         this.#renderer = new WebGLRenderer({
             antialias: true,
             alpha: true,
         });
+        
         this.controls = new OrbitControls(this.#camera, this.#renderer.domElement);
+        this.controls.enableZoom = false;
 
         this.setup();
         this.animate();
