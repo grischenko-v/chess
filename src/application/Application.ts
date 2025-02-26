@@ -4,7 +4,7 @@ import { SceneAdapter } from "../adapters/SceneAdapter";
 import { columns, rows } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
-import { eventBus } from "../infra/EventBus";
+import { IEventBus } from "../infra/EventBus";
 import { ICellRepository } from "../repository/CellRepository";
 import { IFigureRepository } from "../repository/FiguresRepository";
 import { createBoard } from "../utils/createBoard";
@@ -20,17 +20,20 @@ export class Application {
 
     #cellRepository: ICellRepository;
     #figureRepository: IFigureRepository;
+    #eventBus: IEventBus;
     #selectedFigure: Figure | null;
 
-    constructor(cellRepository: ICellRepository, figureRepository: IFigureRepository) {
+    constructor(cellRepository: ICellRepository, figureRepository: IFigureRepository, eventBus: IEventBus) {
         this.#cellRepository = cellRepository;
         this.#figureRepository = figureRepository;
+        this.#eventBus = eventBus;
 
         this.#raycastAdapter = new RaycastAdapter();
         this.#sceneAdapter = new SceneAdapter();
-        eventBus.subscribe('cellClick', this.onCellClick.bind(this));
-        eventBus.subscribe('figureClick', this.onFigureClick.bind(this));
-        eventBus.subscribe('outsideClick', this.onOutsideClick.bind(this));
+
+        this.#eventBus.subscribe('cellClick', this.onCellClick.bind(this));
+        this.#eventBus.subscribe('figureClick', this.onFigureClick.bind(this));
+        this.#eventBus.subscribe('outsideClick', this.onOutsideClick.bind(this));
     }
 
     run() {

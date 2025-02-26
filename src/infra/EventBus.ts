@@ -1,6 +1,6 @@
 export type EventTypes = 'outsideClick' | 'cellClick' | 'figureClick';
 
-interface IEventBus {
+export interface IEventBus {
     dispatchEvent: (eventType: EventTypes, message: any) => void,
     subscribe: (eventType: EventTypes, cb: (args: any) => void) => void,
 }

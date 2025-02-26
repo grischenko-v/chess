@@ -8,6 +8,7 @@ import {
     BasicShadowMap,
     Raycaster,
     Object3D,
+    Color,
 } from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
@@ -41,8 +42,9 @@ class Scene implements IScene{
     }
 
     setup() {
-        const axesHelper = new AxesHelper(15);
-        this.#scene.add(axesHelper);
+       //axis helperif need
+        // const axesHelper = new AxesHelper(15);
+        // this.#scene.add(axesHelper);
 
         this.initLights();
         this.setupRenderer();
@@ -59,10 +61,15 @@ class Scene implements IScene{
         directionalLight.position.set(15, 15, 15);
         this.#scene.add(directionalLight);
 
-        const directionalLight2 = new DirectionalLight('white', 3);
+        const directionalLight2 = new DirectionalLight('white', 1.5);
         directionalLight2.castShadow = true;
         directionalLight2.position.set(11, 12, 10);
         this.#scene.add(directionalLight2);
+
+        const directionalLight3 = new DirectionalLight('white', 1.3);
+        directionalLight3.castShadow = true;
+        directionalLight3.position.set(-11, 12, 10);
+        this.#scene.add(directionalLight3);
     }
 
     private setupRenderer() {
