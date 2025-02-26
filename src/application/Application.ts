@@ -46,6 +46,14 @@ export class Application {
     onFigureClick(data: { detail: { figure: Figure } }) {
         const { detail } = data;
         const { figure } = detail;
+
+        if(this.getSelectedFigure() && this.getSelectedFigure().getName() !== figure.getName() ) {
+            this.#selectedFigure.unselect();
+            this.#selectedFigure = figure;
+            this.#selectedFigure.select();
+            return;
+        }
+
         if(this.getSelectedFigure() && figure.getCurrentCell().getCanMove()) {
             this.caputerFigure(this.getSelectedFigure().getCurrentCell(), figure.getCurrentCell())
             return;
@@ -75,6 +83,7 @@ export class Application {
 
         if(destinationCell.getCanMove()) {
             this.moveFigure(currentCell, destinationCell);
+            return;
         }
     }
 

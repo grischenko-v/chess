@@ -7,8 +7,8 @@ export type TSiblings = {
     top: string | null,
     left: string | null,
     right: string | null,
-    bottomLeft:  string | null,
-    bottomRight:  string | null,
+    bottomLeft: string | null,
+    bottomRight: string | null,
     topLeft: string | null,
     topRight: string | null,
 }
@@ -18,7 +18,7 @@ export class BoardCell {
     #figure: Figure | null;
     #cellGeometry: CellGeometry;
     #siblings: TSiblings;
-    #canmove =false;
+    #canmove = false;
     #color: CELL_COLOR_TYPE;
 
     constructor(name: string, boardCoords: {x: number, z: number}) {
