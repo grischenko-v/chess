@@ -2,13 +2,13 @@ import {Group, Vector3} from 'three';
 import {createPawn} from './Pawn';
 import { gsap } from 'gsap';
 import { getFigureColor } from '../../utils/getFigureColor';
+import { FigureColor } from '../../domain/Figure';
 
 type figureType = 'Pawn';
 
-
 type TFigureParams = {
     position: Vector3,
-    color: TFigureColor,
+    color: FigureColor,
     name: string
 }
 
@@ -19,15 +19,13 @@ export const figureUIFactory: Record<figureType, any> = {
     }
 };
 
-type TFigureColor = 'white' | 'black';
-
 const SELECTED_COLOR = 0x0000F7;
 
 export class FigureUI {
     mesh: any;
-    color: TFigureColor;
+    color: FigureColor;
 
-    constructor(group: Group, position: Vector3, color: TFigureColor) {
+    constructor(group: Group, position: Vector3, color: FigureColor) {
         this.mesh = group;
         this.mesh.position.set(position.x, 0.5, position.z);
         this.color = color;
