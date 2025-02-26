@@ -53,12 +53,8 @@ export class Figure {
         this.#stepNumber++;
     }
 
-    getAvalibleMoveCells() {
+    private getAvalibleMoveCells() {
         return moveStrategy[this.#type](this.#currentCell, this);
-    }
-
-    getPosition() {
-        return this.#figure.getPosition();
     }
 
     getCurrentCell() {
