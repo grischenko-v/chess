@@ -54,7 +54,7 @@ export class Figure {
     }
 
     getAvalibleMoveCells() {
-        return PawnMoveStrategy.getAvalibleCells(this.#currentCell, this);
+        return moveStrategyMap[this.#type].getAvalibleCells(this.#currentCell, this);
     }
 
     getPosition() {
@@ -81,6 +81,8 @@ export class Figure {
         this.#figure.unselect();
     }
 }
+
+
 
 abstract class MoveStrategy {
     static getAvalibleCells: (currentCell: BoardCell, figure: Figure) => BoardCell[];
@@ -113,4 +115,8 @@ class PawnMoveStrategy extends MoveStrategy {
         }
         return result;
     }
+}
+
+const moveStrategyMap = {
+    'Pawn': PawnMoveStrategy,
 }
