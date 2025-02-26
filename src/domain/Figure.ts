@@ -71,12 +71,15 @@ export class Figure {
 
     select() {
         this.#figure.select();
+        const avalibleCells = this.getAvalibleMoveCells();
+        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(true));
     }
 
     unselect() {
+        const avalibleCells = this.getAvalibleMoveCells();
+        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
         this.#figure.unselect();
     }
-
 }
 
 abstract class MoveStrategy {

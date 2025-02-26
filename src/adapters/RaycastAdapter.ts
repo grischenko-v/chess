@@ -24,6 +24,23 @@ export class RaycastAdapter {
         this.#renderer.domElement.addEventListener('click', this.raycast.bind(this), false);
     }
 
+    getIntercectType = (intercectName: string): 'cell' | 'figure' | '' => {
+        if(isBoardCell(intercectName)) {
+            return'cell';
+        }
+        if(intercectName) {
+            return 'figure';
+        }
+        return '';
+    }
+
+    getIntercectName = (intercect: Intersection) => {
+        if(intercect && intercect.object) {
+            return intercect.object.parent.name || intercect.object.name;
+        }
+        return '';
+    }
+
     private raycast(event: any) {
         this.#mouseCoordVector.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.#mouseCoordVector.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -32,17 +49,8 @@ export class RaycastAdapter {
         const intersects = this.#raycaster.intersectObjects(this.#globalScene.getScene().children);
         const intersect = intersects.length && intersects[0];
 
-        let intercectType = '';
-        let intercectName = '';
-
-        if(intersect && intersect.object) {
-            intercectName = intersect.object.parent.name || intersect.object.name;
-        }
-        if(!intercectName) {
-             eventBus.dispatchEvent('outBoardClick', {});
-        }
-
-        intercectType = isBoardCell(intercectName) ? 'cell' : intercectName ? 'figure' : '';
+        const intercectName = this.getIntercectName(intersect);
+        const intercectType = this.getIntercectType(intercectName);
 
         switch(intercectType) {
             case 'cell': {
@@ -60,7 +68,7 @@ export class RaycastAdapter {
                 return
             };
             default: {
-                eventBus.dispatchEvent('outBoardClick', {});
+                eventBus.dispatchEvent('outsideClick', {});
             };
         }
     }

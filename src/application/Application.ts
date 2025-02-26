@@ -36,69 +36,68 @@ export class Application {
 
         eventBus.subscribe('cellClick', this.onCellClick.bind(this));
         eventBus.subscribe('figureClick', this.onFigureClick.bind(this));
-        eventBus.subscribe('outBoardClick', this.unSelectFigure.bind(this));
+        eventBus.subscribe('outsideClick', this.onOutsideClick.bind(this));
     }
 
     onFigureClick(data: { detail: { figure: Figure } }) {
         const { detail } = data;
         const { figure } = detail;
         if(this.getSelectedFigure()) {
-            this.unSelectFigure();
+            this.#selectedFigure.unselect();
             return;
         }
 
         this.#selectedFigure = figure;
-        figure.select();
-
-        const avalibleCells = figure.getAvalibleMoveCells();
-        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(true));
+        this.#selectedFigure.select();
     }
 
     onCellClick(data: { detail: { cell: BoardCell } }) {
         const { detail } = data;
-        const { cell } = detail;
+        const { cell: destinationCell } = detail;
         if(!this.#selectedFigure) {
             return;
         }
 
         const currentCell = this.#selectedFigure.getCurrentCell();
-        const avalibleCells = this.#selectedFigure.getAvalibleMoveCells();
 
-        if(cell.getCanMove() && cell.hasFigure() && cell.hasFigureColor() !== this.#selectedFigure.getColor()) {
-            const destroyedFigure = cell.getFigure();
-            this.#sceneAdapter.remove(destroyedFigure.getMesh());
-            this.#figureRepository.deleteFigure(destroyedFigure);
-
-            this.moveFigure(currentCell, cell, this.#selectedFigure)
-            this.#selectedFigure.unselect();
-            this.#selectedFigure = null;
-            avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
+        if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
+            this.caputerFigure(currentCell, destinationCell)
             return;
         }
 
-        if(cell.getCanMove()) {
-            this.moveFigure(currentCell, cell, this.#selectedFigure)
+        if(destinationCell.getCanMove()) {
+            this.moveFigure(currentCell, destinationCell);
+        }
+    }
+
+    onOutsideClick() {
+        if(this.getSelectedFigure()) {
             this.#selectedFigure.unselect();
             this.#selectedFigure = null;
         }
-        
-        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
     }
 
     getSelectedFigure() {
         return this.#selectedFigure;
     }
 
-    private unSelectFigure() {
-        if(!this.getSelectedFigure()) {
+    moveFigure(currentCell: BoardCell, destinationCell: BoardCell) {
+        if(!this.#selectedFigure) {
             return;
         }
-
-        const avalibleCells = this.#selectedFigure.getAvalibleMoveCells();
-        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
-
         this.#selectedFigure.unselect();
+        this.#selectedFigure.move(destinationCell);
+        currentCell.setFigure(null);
+        destinationCell.setFigure(this.#selectedFigure);
         this.#selectedFigure = null;
+    }
+
+    caputerFigure(currentCell: BoardCell, destinationCell: BoardCell) {
+        const capturedFigure = destinationCell.getFigure();
+        this.#sceneAdapter.remove(capturedFigure.getMesh());
+        this.#figureRepository.deleteFigure(capturedFigure);
+
+        this.moveFigure(currentCell, destinationCell);
     }
 
     private initFigures() {
@@ -125,7 +124,6 @@ export class Application {
         const board = createBoard();
         this.#sceneAdapter.draw(board);
 
-
         for(let [x, row] of rows.entries()) {
             for(let [z, column] of columns.entries()) {
                 const cell = new BoardCell(`${column}${row}`, {x, z});
@@ -133,15 +131,5 @@ export class Application {
                 this.#sceneAdapter.draw(cell.getMesh());
             }
         }
-    }
-
-    moveFigure(currentCell: BoardCell, destinationCell: BoardCell, figure: Figure) {
-        if(!figure) {
-            return;
-        }
-
-        figure.move(destinationCell);
-        currentCell.setFigure(null);
-        destinationCell.setFigure(figure);
     }
 }
