@@ -1,5 +1,5 @@
 import { Vector3 } from "three";
-import { createFigureFactory, FigureBase } from "../ui/figures/FiguresFactory";
+import { FigureUI, figureUIFactory } from "../ui/figures/FiguresFactory";
 import { BoardCell } from "./BoardCell";
 import { cellRepository } from "../repository/CellRepository";
 
@@ -9,7 +9,7 @@ type FigureType = 'Pawn';
 export class Figure {
     #color: FigureColor;
     #type: FigureType
-    #figure: FigureBase;
+    #figure: FigureUI;
     #currentCell: BoardCell;
     #name: string;
     #stepNumber = 0;
@@ -18,8 +18,7 @@ export class Figure {
         this.#color = color;
         this.#type = type;
         this.#name = `Pawn_${cell.getCellName()}`
-        this.#figure = createFigureFactory({
-            type: this.#type,
+        this.#figure = figureUIFactory[type]({
             position: position,
             color: this.#color,
             name: this.#name

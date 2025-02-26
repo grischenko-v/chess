@@ -5,20 +5,25 @@ import { getFigureColor } from '../../utils/getFigureColor';
 
 type figureType = 'Pawn';
 
-export const createFigureFactory = (
-    { type, position, color, name }: {type: figureType, position: Vector3, color: TFigureColor, name: string} ) => {
-    switch(type) {
-        case 'Pawn':
-            const pawn = createPawn(color, name);
-            return new FigurePawn(pawn, position, color);
-    }
+
+type TFigureParams = {
+    position: Vector3,
+    color: TFigureColor,
+    name: string
 }
+
+export const figureUIFactory: Record<figureType, any> = {
+    'Pawn': (params: TFigureParams) => {
+        const pawn = createPawn(params.color, params.name);
+        return new FigureUI(pawn, params.position, params.color);
+    }
+};
 
 type TFigureColor = 'white' | 'black';
 
 const SELECTED_COLOR = 0x0000F7;
 
-export abstract class FigureBase {
+export class FigureUI {
     mesh: any;
     color: TFigureColor;
 
@@ -51,10 +56,6 @@ export abstract class FigureBase {
           }
     }
 
-    abstract move: (position: Vector3) => void;
-}
-
-class FigurePawn extends FigureBase {
     move = (position: Vector3) => {
         gsap.to(this.mesh.position, {
             duration: 1,
