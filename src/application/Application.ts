@@ -28,15 +28,16 @@ export class Application {
 
         this.#raycastAdapter = new RaycastAdapter();
         this.#sceneAdapter = new SceneAdapter();
-
-        this.createBoard();
-        this.initFigures();
-    
-        this.#sceneAdapter.animate();
-
         eventBus.subscribe('cellClick', this.onCellClick.bind(this));
         eventBus.subscribe('figureClick', this.onFigureClick.bind(this));
         eventBus.subscribe('outsideClick', this.onOutsideClick.bind(this));
+    }
+
+    run() {
+        this.createBoard();
+        this.initFigures();
+
+        this.#sceneAdapter.animate();
     }
 
     onFigureClick(data: { detail: { figure: Figure } }) {
