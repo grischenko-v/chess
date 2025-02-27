@@ -114,7 +114,7 @@ export class BoardCell {
         return this.#name;
     }
 
-    getCellCenter() {
+    getCellPosition() {
         return this.#cellGeometry.getPosition();
     }
 }

@@ -46,7 +46,7 @@ export class Figure {
     }
 
     move(newCell: BoardCell) {
-        this.#figure.move(newCell.getCellCenter());
+        this.#figure.move(newCell.getCellPosition());
         this.setCurrentCell(newCell);
         this.#stepNumber++;
     }

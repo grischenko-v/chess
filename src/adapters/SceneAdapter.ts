@@ -41,7 +41,7 @@ class SceneAdapter {
 
     private initFigure(cellName: string, color: FigureColor, type: FigureType) {
         const cell = cellRepository.getCell(cellName);
-        const position = cell.getCellCenter();
+        const position = cell.getCellPosition();
         const figure = new Figure(position, color, type, cell)
         cell.setFigure(figure);
         this.draw(figure.getFigure())
