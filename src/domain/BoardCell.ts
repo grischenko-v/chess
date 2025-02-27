@@ -54,6 +54,14 @@ export class BoardCell {
         return this.#siblings.bottomRight;
     }
 
+    getLeftSibling() {
+        return this.#siblings.left;
+    }
+
+    getRightSibling() {
+        return this.#siblings.right;
+    }
+
     getCanMove() {
         return this.#canmove;
     }

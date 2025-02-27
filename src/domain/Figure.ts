@@ -84,7 +84,7 @@ const getPawnAvalibleCells = (currentCell: BoardCell, figure: Figure): BoardCell
     if(topCell && !topCell.hasFigure()) {
         result.push(topCell);
     }
-    if(figure.getStepNumber() === 0 ) {
+    if(figure.getStepNumber() === 0 && topCell && !topCell.hasFigure()) {
         const topTopCellName = figure.getColor() === 'white' ? topCell.getTopSibling() : topCell.getBottomSibling();
         const topTopCell = cellRepository.getCell(topTopCellName);
         result.push(topTopCell);
@@ -104,8 +104,71 @@ const getPawnAvalibleCells = (currentCell: BoardCell, figure: Figure): BoardCell
     return result;
 }
 
+const getCellsByDirection = (currentCell: BoardCell, figure: Figure, cb: (currentCell: BoardCell) => string) => {
+    const result = [];
+    let cellName = cb(currentCell);
+    let cell = cellRepository.getCell(cellName);
+    let nextCellName = cb(currentCell);
+    let nextCell = cellRepository.getCell(nextCellName);
+    while(cell && !cell.hasFigure() || cell && cell.hasFigure() && cell.getFigure().getColor() !== figure.getColor()) {
+        result.push(cell);
+        if(cell && cell.hasFigure() && cell.getFigure().getColor() !== figure.getColor() || !nextCell) {
+            break;
+        }
+        cell = nextCell;
+        nextCellName = cb(cell);
+        nextCell = cellRepository.getCell(nextCellName);
+    }
+    return result;
+}
+
+type TGetCellStrategy = 'line' | 'diagonale';
+
+const getCellsStrategy: Record<TGetCellStrategy, (currentCell: BoardCell, figure: Figure) => BoardCell[]> = {
+    'line': (currentCell: BoardCell, figure: Figure) => {
+        const cellsOnTop = getCellsByDirection(
+            currentCell,
+            figure,
+            (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getTopSibling() : currentCell.getBottomSibling());
+    
+        const cellsOnBottom = getCellsByDirection(
+            currentCell,
+            figure,
+            (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getBottomSibling() : currentCell.getTopSibling());
+        const cellsOnLeft = getCellsByDirection(
+                currentCell,
+                figure,
+                (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getLeftSibling() : currentCell.getRightSibling());
+        const cellsOnRight = getCellsByDirection(
+                currentCell,
+                figure,
+                (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getRightSibling() : currentCell.getLeftSibling());
+        return [...cellsOnTop, ...cellsOnBottom, ...cellsOnLeft, ...cellsOnRight];
+    },
+    'diagonale': (currentCell: BoardCell, figure: Figure) => {
+        const cellsOnTopLeft = getCellsByDirection(
+            currentCell,
+            figure,
+            (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getTopLeftSibling() : currentCell.getBottomLeftSibling());
+        const cellsOnTopRight = getCellsByDirection(
+            currentCell,
+            figure,
+            (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getTopRightSibling() : currentCell.getBottomRightSibling());
+        const cellsOnBottomLeft = getCellsByDirection(
+            currentCell,
+            figure,
+            (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getBottomLeftSibling() : currentCell.getTopLeftSibling());
+        const cellsOnBottomRight = getCellsByDirection(
+            currentCell,
+            figure,
+            (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getBottomRightSibling() : currentCell.getTopRightSibling());
+        return [...cellsOnTopLeft, ...cellsOnTopRight, ...cellsOnBottomRight, ...cellsOnBottomLeft];
+    },
+} as const;
+
+
 const moveStrategy: Record<FigureType, (currentCell: BoardCell, figure: Figure) => BoardCell[]> = {
     'Pawn': getPawnAvalibleCells,
-    'Rook': getPawnAvalibleCells,
-    'Bishop': getPawnAvalibleCells,
+    'Rook': getCellsStrategy['line'],
+    'Bishop': getCellsStrategy['diagonale'],
 }
