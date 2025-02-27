@@ -13,7 +13,7 @@ const INITIAL_BLACK_PAWN_POSITIONS = ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 
 const INITIAL_BLACK_ROOK_POSITIONS = ['a8', 'h8'];
 const INITIAL_BLACK_BISHOP_POSITIONS = ['b8', 'g8'];
 //White
-const INITIAL_WHITE_PAWN_POSITIONS = ['b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'];
+const INITIAL_WHITE_PAWN_POSITIONS = ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'];
 const INITIAL_WHITE_ROOK_POSITIONS = ['a1', 'h1'];
 const INITIAL_WHITE_BISHOP_POSITIONS = ['b1', 'g1'];
 
