@@ -1,12 +1,12 @@
 import {Group, Vector3} from 'three';
 import {createPawn} from './createPawn';
 import { gsap } from 'gsap';
-import { getFigureColor } from '../../utils/getFigureColor';
 import { FigureColor, FigureType } from '../../domain/Figure';
 import { createRook } from './createRook';
 import { createBishop } from './createBishop';
 import { createKight } from './createKnight';
 import { createQueen } from './createQueen';
+import { FIGURE_COLOR } from '../../constants';
 
 type TFigureParams = {
     position: Vector3,
@@ -37,8 +37,6 @@ export const figureUIFactory: Record<FigureType, any> = {
     }
 };
 
-const SELECTED_COLOR = 0x0000F7;
-
 export class FigureUI {
     mesh: any;
     color: FigureColor;
@@ -58,12 +56,12 @@ export class FigureUI {
     }
 
     unselect() {
-        const defualtColor = getFigureColor(this.color);
+        const defualtColor = FIGURE_COLOR[this.color];
         this.changeFigureColor(defualtColor);
     }
 
     select() {
-        this.changeFigureColor(SELECTED_COLOR);
+        this.changeFigureColor(FIGURE_COLOR.selected);
     }
 
     private changeFigureColor(color: number) {

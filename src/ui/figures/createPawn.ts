@@ -7,11 +7,11 @@ import {
     CapsuleGeometry
 } from 'three';
 import { FigureColor } from '../../domain/Figure';
-import { getFigureColor } from '../../utils/getFigureColor';
+import { FIGURE_COLOR } from '../../constants';
 
 export const createPawn = (figureColor: FigureColor, name: string): Group => {
     const group = new Group();
-    const color = getFigureColor(figureColor)
+    const color = FIGURE_COLOR[figureColor]
 
     const geometry = new TorusGeometry( 1, 0.5, 17, 30 );
     const material = new MeshStandardMaterial( { color: color, wireframe: false } ); 

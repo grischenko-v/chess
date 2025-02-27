@@ -10,11 +10,11 @@ const dispatchEventStrategy = {
     'figure': (intercectName: string) => {
         const figure = figureRepository.getFigure(intercectName);
         console.log(figure);
-        eventBus.dispatchEvent(eventTypes.figureClick, { figure });
+        eventBus.dispatchEvent(eventTypes.figureClick, { clickedFigure: figure });
     },
     'cell': (intercectName: string) => {
         const cell = cellRepository.getCell(intercectName);
-        eventBus.dispatchEvent(eventTypes.cellClick, { cell });
+        eventBus.dispatchEvent(eventTypes.cellClick, { clickedCell: cell });
     },
 }
 

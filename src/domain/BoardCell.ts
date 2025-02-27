@@ -1,6 +1,7 @@
 import { Figure } from './Figure';
-import { CELL_COLOR, CELL_COLOR_TYPE, CellGeometry } from '../ui/board/CellGeometry';
+import { CELL_COLOR_TYPE, CellGeometry } from '../ui/board/CellGeometry';
 import { getCellSublings } from '../utils/getCellSiblings';
+import { BOARD_CELL_COLOR } from '../constants';
 
 export type TSiblings = {
     bottom: string | null,
@@ -70,16 +71,16 @@ export class BoardCell {
         this.#canmove = canMove;
         
         if(this.#canmove && this.hasFigure()) {
-            this.changeColor(0xf75632);
+            this.changeColor(BOARD_CELL_COLOR.capture);
             return;
         }
 
         if(this.#canmove) {
-            this.changeColor(0xf70);
+            this.changeColor(BOARD_CELL_COLOR.canMove);
             return;
         }
 
-        this.changeColor(CELL_COLOR[this.#color]);
+        this.changeColor(BOARD_CELL_COLOR[this.#color]);
     }
 
     changeColor(color: number) {

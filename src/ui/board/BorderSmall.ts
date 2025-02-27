@@ -1,4 +1,5 @@
 import { BoxGeometry, MeshStandardMaterial, Mesh } from 'three';
+import { BOARD_BOX_COLOR } from '../../constants';
 
 class BorderSmall {
     geometry;
@@ -7,7 +8,7 @@ class BorderSmall {
 
     constructor(position: any) {
         this.geometry = new BoxGeometry( 0.5, 1.2, 9 );
-        this.material = new MeshStandardMaterial( {color: 0xCE8D66} );
+        this.material = new MeshStandardMaterial( {color: BOARD_BOX_COLOR} );
         this.mesh = new Mesh( this.geometry, this.material );
         this.mesh.position.x = position.x;
         this.mesh.position.z = position.z;

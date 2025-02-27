@@ -3,13 +3,9 @@ import {
     MeshStandardMaterial,
     Mesh,
 } from 'three';
+import { BOARD_CELL_COLOR } from '../../constants';
 
-export const CELL_COLOR = {
-    black: 0x231F20,
-    white: 0xEFE6DD
-} as const;
-
-export type CELL_COLOR_TYPE = keyof typeof CELL_COLOR;
+export type CELL_COLOR_TYPE = keyof typeof BOARD_CELL_COLOR;
 
 export class CellGeometry {
     #geometry: BoxGeometry;
@@ -18,7 +14,7 @@ export class CellGeometry {
 
     constructor(position: any, color: CELL_COLOR_TYPE, name: string) {
         this.#geometry = new BoxGeometry( 1, 1, 1 );
-        this.#material = new MeshStandardMaterial( { color: CELL_COLOR[color] } );
+        this.#material = new MeshStandardMaterial( { color: BOARD_CELL_COLOR[color] } );
         this.#mesh = new Mesh( this.#geometry, this.#material );
         this.#mesh.position.x = position.x;
         this.#mesh.position.z = position.z;
