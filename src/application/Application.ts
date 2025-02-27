@@ -1,28 +1,24 @@
 import { UIAdater } from "../adapters/SceneAdapter";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
-import { eventTypes, IEventBus } from "../infra/EventBus";
-import { IFigureRepository } from "../repository/FiguresRepository";
+import { eventBus, eventTypes } from "../infra/EventBus";
+import { figureRepository } from "../repository/FiguresRepository";
 import { FigureMoveService } from "../service/FigureMoveService";
 
 export class Application {
     #UIAdater: UIAdater;
 
-    #figureRepository: IFigureRepository;
-    #eventBus: IEventBus;
     #selectedFigure: Figure | null;
     #figureMoveService: FigureMoveService;
 
-    constructor(figureRepository: IFigureRepository, eventBus: IEventBus, UIAdater: UIAdater) {
-        this.#figureRepository = figureRepository;
-        this.#eventBus = eventBus;
+    constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
 
         this.#figureMoveService = new FigureMoveService();
 
-        this.#eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
-        this.#eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
-        this.#eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
+        eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
+        eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
+        eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
     }
 
     private onFigureClick(data: { detail: { clickedFigure: Figure } }) {
@@ -105,7 +101,7 @@ export class Application {
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {
         const capturedFigure = destinationCell.getFigure();
         this.#UIAdater.remove(capturedFigure.getFigure());
-        this.#figureRepository.deleteFigure(capturedFigure);
+        figureRepository.deleteFigure(capturedFigure);
 
         this.moveFigure(currentCell, destinationCell);
     }
