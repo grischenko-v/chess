@@ -13,7 +13,7 @@ export const createRook = (figureColor: FigureColor, name: string): Group => {
     const group = new Group();
     const color = getFigureColor(figureColor)
 
-    const geometry = new TorusGeometry( 1, 0.75, 17, 30 );
+    const geometry = new TorusGeometry( 1, 0.6, 17, 30 );
     const material = new MeshStandardMaterial( { color: color, wireframe: false } ); 
     const torus = new Mesh( geometry, material );
     torus.rotateX(Math.PI/2);
