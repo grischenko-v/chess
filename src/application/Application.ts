@@ -1,7 +1,7 @@
 import { UIAdater } from "../adapters/SceneAdapter";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
-import { IEventBus } from "../infra/EventBus";
+import { eventTypes, IEventBus } from "../infra/EventBus";
 import { IFigureRepository } from "../repository/FiguresRepository";
 import { FigureMoveService } from "../service/FigureMoveService";
 
@@ -20,24 +20,24 @@ export class Application {
 
         this.#figureMoveService = new FigureMoveService();
 
-        this.#eventBus.subscribe('cellClick', this.onCellClick.bind(this));
-        this.#eventBus.subscribe('figureClick', this.onFigureClick.bind(this));
-        this.#eventBus.subscribe('outsideClick', this.onOutsideClick.bind(this));
+        this.#eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
+        this.#eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
+        this.#eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
     }
 
-    private onFigureClick(data: { detail: { figure: Figure } }) {
+    private onFigureClick(data: { detail: { clickedFigure: Figure } }) {
         const { detail } = data;
-        const { figure } = detail;
+        const { clickedFigure } = detail;
 
-        if(this.getSelectedFigure() && figure.getCurrentCell().getCanMove()) {
-            this.captureFigure(this.getSelectedFigure().getCurrentCell(), figure.getCurrentCell())
+        if(this.getSelectedFigure() && clickedFigure.getCurrentCell().getCanMove()) {
+            this.captureFigure(this.getSelectedFigure().getCurrentCell(), clickedFigure.getCurrentCell())
             return;
         }
 
-        if(this.getSelectedFigure() && this.getSelectedFigure().getName() !== figure.getName() ) {
+        if(this.getSelectedFigure() && this.getSelectedFigure().getName() !== clickedFigure.getName() ) {
             this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
-            this.#selectedFigure = figure;
+            this.#selectedFigure = clickedFigure;
             this.#selectedFigure.select();
             this.#figureMoveService.highliteMoves(this.#selectedFigure);
             return;
@@ -49,14 +49,14 @@ export class Application {
             return;
         }
 
-        this.#selectedFigure = figure;
+        this.#selectedFigure = clickedFigure;
         this.#selectedFigure.select();
         this.#figureMoveService.highliteMoves(this.#selectedFigure);
     }
 
-    private onCellClick(data: { detail: { cell: BoardCell } }) {
+    private onCellClick(data: { detail: { clickedCell: BoardCell } }) {
         const { detail } = data;
-        const { cell: destinationCell } = detail;
+        const { clickedCell: destinationCell } = detail;
         if(!this.#selectedFigure) {
             return;
         }

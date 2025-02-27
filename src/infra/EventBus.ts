@@ -1,18 +1,24 @@
-export type EventTypes = 'outsideClick' | 'cellClick' | 'figureClick';
+export const eventTypes = {
+    outsideClick: 'outsideClick',
+    cellClick: 'cellClick',
+    figureClick: 'figureClick'
+} as const;
+
+export type EventTypes = keyof typeof eventTypes;
 
 export interface IEventBus {
-    dispatchEvent: (eventType: EventTypes, message: any) => void,
-    subscribe: (eventType: EventTypes, cb: (args: any) => void) => void,
+    dispatchEvent: (eventType: EventTypes, message: unknown) => void,
+    subscribe: (eventType: EventTypes, cb: (args: unknown) => void) => void,
 }
 
 class EventBus implements IEventBus {
-    dispatchEvent(eventType: EventTypes, message: any) {
+    dispatchEvent(eventType: EventTypes, message: unknown) {
         window.dispatchEvent(new CustomEvent(eventType, { 
             detail: message, 
         }))
     }
 
-    subscribe(eventType: EventTypes, cb: (args: any) => void) {
+    subscribe(eventType: EventTypes, cb: (args: unknown) => void) {
         window.addEventListener(eventType, cb)
     }
 }

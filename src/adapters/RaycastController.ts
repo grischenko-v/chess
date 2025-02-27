@@ -1,4 +1,4 @@
-import { PerspectiveCamera, Raycaster, Renderer, Vector2, Scene as ThreeScene, Intersection, } from "three";
+import { PerspectiveCamera, Raycaster, Renderer, Vector2, Intersection, } from "three";
 import { eventBus } from "../infra/EventBus";
 import { IScene, scene } from "../infra/Scene";
 import { isBoardCell } from "../utils/isBoardCell";

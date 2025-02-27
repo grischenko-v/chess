@@ -8,7 +8,6 @@ import {
     BasicShadowMap,
     Raycaster,
     Object3D,
-    Color,
     Fog,
 } from 'three';
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
@@ -49,7 +48,7 @@ class Scene implements IScene{
         this.animate();
     }
 
-    setup() {
+    private setup() {
        //axis helperif need
         // const axesHelper = new AxesHelper(15);
         // this.#scene.add(axesHelper);
