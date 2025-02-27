@@ -42,13 +42,6 @@ export const createKight = (figureColor: FigureColor, name: string): Group => {
     head.receiveShadow = true;
     head.castShadow = true;
     group.add(head);
-    // const capsulegeometry = new CapsuleGeometry( 0.5, 0.25, 4, 8 ); 
-    // const capsulematerial = new MeshStandardMaterial( { color: color, wireframe: false } ); 
-    // const capsule = new Mesh( capsulegeometry, capsulematerial );
-    // capsule.position.y = 3;
-    // capsule.receiveShadow = true;
-    // capsule.castShadow = true;
-    // group.add(capsule);
 
     group.position.y = 0.6;
     group.scale.set(0.25, 0.25, 0.25);
