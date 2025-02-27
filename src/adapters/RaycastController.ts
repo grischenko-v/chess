@@ -1,20 +1,20 @@
 import { PerspectiveCamera, Raycaster, Renderer, Vector2, Intersection, } from "three";
-import { eventBus } from "../infra/EventBus";
+import { eventBus, eventTypes } from "../infra/EventBus";
 import { IScene, scene } from "../infra/Scene";
 import { isBoardCell } from "../utils/isBoardCell";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 
 const dispatchEventStrategy = {
-    '': (_intercectName: string) => eventBus.dispatchEvent('outsideClick', {}),
+    '': (_intercectName: string) => eventBus.dispatchEvent(eventTypes.outsideClick, {}),
     'figure': (intercectName: string) => {
         const figure = figureRepository.getFigure(intercectName);
         console.log(figure);
-        eventBus.dispatchEvent('figureClick', { figure });
+        eventBus.dispatchEvent(eventTypes.figureClick, { figure });
     },
     'cell': (intercectName: string) => {
         const cell = cellRepository.getCell(intercectName);
-        eventBus.dispatchEvent('cellClick', { cell });
+        eventBus.dispatchEvent(eventTypes.cellClick, { cell });
     },
 }
 
