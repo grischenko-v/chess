@@ -18,7 +18,7 @@ const dispatchEventStrategy = {
     },
 }
 
-export class RaycastAdapter {
+export class RaycastController {
     #renderer: Renderer;
     #raycaster = new Raycaster();
     #camera: PerspectiveCamera;
@@ -37,7 +37,7 @@ export class RaycastAdapter {
         this.#renderer.domElement.addEventListener('click', this.raycast.bind(this), false);
     }
 
-    getIntercectType = (intercectName: string): 'cell' | 'figure' | '' => {
+    private getIntercectType = (intercectName: string): 'cell' | 'figure' | '' => {
         if(isBoardCell(intercectName)) {
             return'cell';
         }
@@ -47,7 +47,7 @@ export class RaycastAdapter {
         return '';
     }
 
-    getIntercectName = (intercect: Intersection) => {
+    private getIntercectName = (intercect: Intersection) => {
         if(intercect && intercect.object) {
             return intercect.object.parent.name || intercect.object.name;
         }

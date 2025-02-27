@@ -1,84 +1,60 @@
-import { RaycastAdapter } from "../adapters/RaycastAdapter";
-import { SceneAdapter } from "../adapters/SceneAdapter";
-import { columns, rows } from "../constants";
+import { UIAdater } from "../adapters/SceneAdapter";
 import { BoardCell } from "../domain/BoardCell";
-import { Figure, FigureColor, FigureType } from "../domain/Figure";
+import { Figure } from "../domain/Figure";
 import { IEventBus } from "../infra/EventBus";
-import { ICellRepository } from "../repository/CellRepository";
 import { IFigureRepository } from "../repository/FiguresRepository";
-import { createBoard } from "../utils/createBoard";
-
-const BLACK_FIGURES_INITIAL_POSITIONS: Record<FigureType, string[]> = {
-    'Pawn': ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'],
-    'Rook': ['a8', 'h8'],
-    'Bishop': ['b8', 'g8'],
-    'Knight': ['c8', 'f8'],
-    'Queen': ['e8'],
-}
-
-const WHITE_FIGURES_INITIAL_POSITIONS: Record<FigureType, string[]> = {
-    'Pawn': ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'],
-    'Rook': ['a1', 'h1'],
-    'Bishop': ['b1', 'g1'],
-    'Knight': ['c1', 'f1'],
-    'Queen': ['e1'],
-}
+import { FigureMoveService } from "../service/FigureMoveService";
 
 export class Application {
-    #raycastAdapter: RaycastAdapter;
-    #sceneAdapter: SceneAdapter;
+    #UIAdater: UIAdater;
 
-    #cellRepository: ICellRepository;
     #figureRepository: IFigureRepository;
     #eventBus: IEventBus;
     #selectedFigure: Figure | null;
+    #figureMoveService: FigureMoveService;
 
-    constructor(cellRepository: ICellRepository, figureRepository: IFigureRepository, eventBus: IEventBus) {
-        this.#cellRepository = cellRepository;
+    constructor(figureRepository: IFigureRepository, eventBus: IEventBus, UIAdater: UIAdater) {
         this.#figureRepository = figureRepository;
         this.#eventBus = eventBus;
+        this.#UIAdater = UIAdater;
 
-        this.#raycastAdapter = new RaycastAdapter();
-        this.#sceneAdapter = new SceneAdapter();
+        this.#figureMoveService = new FigureMoveService();
 
         this.#eventBus.subscribe('cellClick', this.onCellClick.bind(this));
         this.#eventBus.subscribe('figureClick', this.onFigureClick.bind(this));
         this.#eventBus.subscribe('outsideClick', this.onOutsideClick.bind(this));
     }
 
-    run() {
-        this.createBoard();
-        this.initFigures();
-
-        this.#sceneAdapter.animate();
-    }
-
-    onFigureClick(data: { detail: { figure: Figure } }) {
+    private onFigureClick(data: { detail: { figure: Figure } }) {
         const { detail } = data;
         const { figure } = detail;
 
         if(this.getSelectedFigure() && figure.getCurrentCell().getCanMove()) {
-            this.caputerFigure(this.getSelectedFigure().getCurrentCell(), figure.getCurrentCell())
+            this.captureFigure(this.getSelectedFigure().getCurrentCell(), figure.getCurrentCell())
             return;
         }
 
         if(this.getSelectedFigure() && this.getSelectedFigure().getName() !== figure.getName() ) {
+            this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
             this.#selectedFigure = figure;
             this.#selectedFigure.select();
+            this.#figureMoveService.highliteMoves(this.#selectedFigure);
             return;
         }
 
         if(this.getSelectedFigure()) {
+            this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
             return;
         }
 
         this.#selectedFigure = figure;
         this.#selectedFigure.select();
+        this.#figureMoveService.highliteMoves(this.#selectedFigure);
     }
 
-    onCellClick(data: { detail: { cell: BoardCell } }) {
+    private onCellClick(data: { detail: { cell: BoardCell } }) {
         const { detail } = data;
         const { cell: destinationCell } = detail;
         if(!this.#selectedFigure) {
@@ -88,7 +64,7 @@ export class Application {
         const currentCell = this.#selectedFigure.getCurrentCell();
 
         if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
-            this.caputerFigure(currentCell, destinationCell)
+            this.captureFigure(currentCell, destinationCell)
             return;
         }
 
@@ -97,25 +73,28 @@ export class Application {
             return;
         }
 
+        this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
         this.#selectedFigure = null;
     }
 
-    onOutsideClick() {
+    private onOutsideClick() {
         if(this.getSelectedFigure()) {
+            this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
             this.#selectedFigure = null;
         }
     }
 
-    getSelectedFigure() {
+    private getSelectedFigure() {
         return this.#selectedFigure;
     }
 
-    moveFigure(currentCell: BoardCell, destinationCell: BoardCell) {
+    private moveFigure(currentCell: BoardCell, destinationCell: BoardCell) {
         if(!this.#selectedFigure) {
             return;
         }
+        this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
         this.#selectedFigure.move(destinationCell);
         currentCell.setFigure(null);
@@ -123,42 +102,11 @@ export class Application {
         this.#selectedFigure = null;
     }
 
-    caputerFigure(currentCell: BoardCell, destinationCell: BoardCell) {
+    private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {
         const capturedFigure = destinationCell.getFigure();
-        this.#sceneAdapter.remove(capturedFigure.getFigure());
+        this.#UIAdater.remove(capturedFigure.getFigure());
         this.#figureRepository.deleteFigure(capturedFigure);
 
         this.moveFigure(currentCell, destinationCell);
-    }
-
-    private initFigure(cellName: string, color: FigureColor, type: FigureType) {
-        const cell = this.#cellRepository.getCell(cellName);
-        const position = cell.getCellCenter();
-        const figure = new Figure(position, color, type, cell)
-        cell.setFigure(figure);
-        this.#sceneAdapter.draw(figure.getFigure())
-        this.#figureRepository.addFigure(figure);
-    }
-
-    private initFigures() {
-        Object.keys(BLACK_FIGURES_INITIAL_POSITIONS).forEach((figureType: FigureType) => {
-            BLACK_FIGURES_INITIAL_POSITIONS[figureType].forEach(cellName => this.initFigure(cellName, 'black', figureType));
-        })
-        Object.keys(WHITE_FIGURES_INITIAL_POSITIONS).forEach((figureType: FigureType) => {
-            WHITE_FIGURES_INITIAL_POSITIONS[figureType].forEach(cellName => this.initFigure(cellName, 'white', figureType));
-        })
-    }
-
-    private createBoard() {
-        const board = createBoard();
-        this.#sceneAdapter.draw(board);
-
-        for(let [x, row] of rows.entries()) {
-            for(let [z, column] of columns.entries()) {
-                const cell = new BoardCell(`${column}${row}`, {x, z});
-                this.#cellRepository.addCell(cell)
-                this.#sceneAdapter.draw(cell);
-            }
-        }
     }
 }
