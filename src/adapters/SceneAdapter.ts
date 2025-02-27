@@ -1,18 +1,25 @@
-import { Object3D } from "three";
 import { scene } from "../infra/Scene";
+import { Figure } from "../domain/Figure";
+import { CellGeometry } from "../ui/board/CellGeometry";
+import { FigureUI } from "../ui/figures/FiguresFactory";
+import { Object3D } from "three";
+
+interface ISceenObject {
+    getMesh: () => Object3D;
+}
 
 export class SceneAdapter {
     #scene = scene
 
-    draw(obj: Object3D) {
-        this.#scene.addObject(obj);
+    draw(sceenObject: ISceenObject) {
+        this.#scene.addObject(sceenObject.getMesh());
     }
 
     animate() {
         this.#scene.animate();
     }
 
-    remove(obj: Object3D) {
-        this.#scene.remove(obj);
+    remove(deletedFigure: ISceenObject) {
+        this.#scene.remove(deletedFigure.getMesh());
     }
 }

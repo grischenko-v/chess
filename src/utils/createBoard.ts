@@ -13,5 +13,5 @@ export const createBoard = () => {
     group.add(new BorderSmall(({x: 4.25, z: 0})).getMesh());
     group.add(new BorderSmall(({x: -4.25, z: 0})).getMesh());
 
-    return group;
+    return {getMesh: () => group };
 }

@@ -6,7 +6,7 @@ import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 
 const dispatchEventStrategy = {
-    '': (intercectName: string) => eventBus.dispatchEvent('outsideClick', {}),
+    '': (_intercectName: string) => eventBus.dispatchEvent('outsideClick', {}),
     'figure': (intercectName: string) => {
         const figure = figureRepository.getFigure(intercectName);
         console.log(figure);

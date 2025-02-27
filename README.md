@@ -11,7 +11,6 @@ Now in progress:
 TODO:
 - Finish Queen, Knight and King figures
 - Figures move strategy for Knight, King
-- Fix capture figure bug
 - Add gameloop
 - Create moves history
 - Add move rollback function

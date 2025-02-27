@@ -30,8 +30,8 @@ export class Figure {
         return this.#color;
     }
 
-    getMesh() {
-        return this.#figure.getMesh();
+    getFigure() {
+        return this.#figure;
     }
 
     getType() {

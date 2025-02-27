@@ -57,6 +57,11 @@ export class Application {
         const { detail } = data;
         const { figure } = detail;
 
+        if(this.getSelectedFigure() && figure.getCurrentCell().getCanMove()) {
+            this.caputerFigure(this.getSelectedFigure().getCurrentCell(), figure.getCurrentCell())
+            return;
+        }
+
         if(this.getSelectedFigure() && this.getSelectedFigure().getName() !== figure.getName() ) {
             this.#selectedFigure.unselect();
             this.#selectedFigure = figure;
@@ -64,10 +69,6 @@ export class Application {
             return;
         }
 
-        if(this.getSelectedFigure() && figure.getCurrentCell().getCanMove()) {
-            this.caputerFigure(this.getSelectedFigure().getCurrentCell(), figure.getCurrentCell())
-            return;
-        }
         if(this.getSelectedFigure()) {
             this.#selectedFigure.unselect();
             return;
@@ -124,7 +125,7 @@ export class Application {
 
     caputerFigure(currentCell: BoardCell, destinationCell: BoardCell) {
         const capturedFigure = destinationCell.getFigure();
-        this.#sceneAdapter.remove(capturedFigure.getMesh());
+        this.#sceneAdapter.remove(capturedFigure.getFigure());
         this.#figureRepository.deleteFigure(capturedFigure);
 
         this.moveFigure(currentCell, destinationCell);
@@ -135,7 +136,7 @@ export class Application {
         const position = cell.getCellCenter();
         const figure = new Figure(position, color, type, cell)
         cell.setFigure(figure);
-        this.#sceneAdapter.draw(figure.getMesh())
+        this.#sceneAdapter.draw(figure.getFigure())
         this.#figureRepository.addFigure(figure);
     }
 
@@ -156,7 +157,7 @@ export class Application {
             for(let [z, column] of columns.entries()) {
                 const cell = new BoardCell(`${column}${row}`, {x, z});
                 this.#cellRepository.addCell(cell)
-                this.#sceneAdapter.draw(cell.getMesh());
+                this.#sceneAdapter.draw(cell);
             }
         }
     }
