@@ -29,10 +29,19 @@ export const createBishop = (figureColor: FigureColor, name: string): Group => {
     cylinder.castShadow = true;
     group.add(cylinder);
 
+    const topTorusgeometry = new TorusGeometry( 0.5, 0.25, 20, 30 );
+    const tourMaterial = new MeshStandardMaterial( { color: color, wireframe: false } ); 
+    const topTorus = new Mesh( topTorusgeometry, tourMaterial );
+    topTorus.rotateX(Math.PI/2);
+    topTorus.position.y = 3;
+    topTorus.receiveShadow = true;
+    topTorus.castShadow = true;
+    group.add(topTorus);
+
     const capsulegeometry = new CapsuleGeometry( 0.65, 0.4, 4, 8 ); 
     const capsulematerial = new MeshStandardMaterial( { color: color, wireframe: false } ); 
     const capsule = new Mesh( capsulegeometry, capsulematerial );
-    capsule.position.y = 3.5;
+    capsule.position.y = 4;
     capsule.receiveShadow = true;
     capsule.castShadow = true;
     group.add(capsule);
