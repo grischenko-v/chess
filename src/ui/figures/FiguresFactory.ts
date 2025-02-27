@@ -1,10 +1,10 @@
 import {Group, Vector3} from 'three';
-import {createPawn} from './Pawn';
+import {createPawn} from './createPawn';
 import { gsap } from 'gsap';
 import { getFigureColor } from '../../utils/getFigureColor';
-import { FigureColor } from '../../domain/Figure';
-
-type figureType = 'Pawn';
+import { FigureColor, FigureType } from '../../domain/Figure';
+import { createRook } from './createRook';
+import { createBishop } from './createBishop';
 
 type TFigureParams = {
     position: Vector3,
@@ -12,10 +12,18 @@ type TFigureParams = {
     name: string
 }
 
-export const figureUIFactory: Record<figureType, any> = {
+export const figureUIFactory: Record<FigureType, any> = {
     'Pawn': (params: TFigureParams) => {
         const pawn = createPawn(params.color, params.name);
         return new FigureUI(pawn, params.position, params.color);
+    },
+    'Rook': (params: TFigureParams) => {
+        const rook = createRook(params.color, params.name);
+        return new FigureUI(rook, params.position, params.color);
+    },
+    'Bishop': (params: TFigureParams) => {
+        const rook = createBishop(params.color, params.name);
+        return new FigureUI(rook, params.position, params.color);
     }
 };
 

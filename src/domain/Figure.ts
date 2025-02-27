@@ -4,7 +4,7 @@ import { BoardCell } from "./BoardCell";
 import { cellRepository } from "../repository/CellRepository";
 
 export type FigureColor = 'white' | 'black';
-type FigureType = 'Pawn';
+export type FigureType = 'Pawn' | 'Rook' | 'Bishop';
 
 export class Figure {
     #color: FigureColor;
@@ -17,7 +17,7 @@ export class Figure {
     constructor(position: Vector3, color: FigureColor, type: FigureType, cell: BoardCell) {
         this.#color = color;
         this.#type = type;
-        this.#name = `Pawn_${cell.getCellName()}`
+        this.#name = `${type}_${cell.getCellName()}`
         this.#figure = figureUIFactory[type]({
             position: position,
             color: this.#color,
@@ -104,6 +104,8 @@ const getPawnAvalibleCells = (currentCell: BoardCell, figure: Figure): BoardCell
     return result;
 }
 
-const moveStrategy = {
+const moveStrategy: Record<FigureType, (currentCell: BoardCell, figure: Figure) => BoardCell[]> = {
     'Pawn': getPawnAvalibleCells,
+    'Rook': getPawnAvalibleCells,
+    'Bishop': getPawnAvalibleCells,
 }
