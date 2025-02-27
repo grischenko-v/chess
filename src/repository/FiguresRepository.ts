@@ -6,7 +6,7 @@ export interface IFigureRepository {
     deleteFigure: (figure: Figure) => void;
 }
 
-export class FigureRepository implements IFigureRepository {
+class FigureRepository implements IFigureRepository {
     #cells: Record<string, Figure> = {};
 
     addFigure(figure: Figure) {

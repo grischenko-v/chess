@@ -5,7 +5,7 @@ export interface ICellRepository {
     getCell: (name: string) => BoardCell 
 }
 
-export class CellRepository implements ICellRepository {
+class CellRepository implements ICellRepository {
     #cells: Record<string, BoardCell> = {};
 
     addCell(cell: BoardCell) {
