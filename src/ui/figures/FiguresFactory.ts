@@ -5,6 +5,7 @@ import { getFigureColor } from '../../utils/getFigureColor';
 import { FigureColor, FigureType } from '../../domain/Figure';
 import { createRook } from './createRook';
 import { createBishop } from './createBishop';
+import { createKight } from './createKnight';
 
 type TFigureParams = {
     position: Vector3,
@@ -23,6 +24,10 @@ export const figureUIFactory: Record<FigureType, any> = {
     },
     'Bishop': (params: TFigureParams) => {
         const rook = createBishop(params.color, params.name);
+        return new FigureUI(rook, params.position, params.color);
+    },
+    'Knight': (params: TFigureParams) => {
+        const rook = createKight(params.color, params.name);
         return new FigureUI(rook, params.position, params.color);
     }
 };

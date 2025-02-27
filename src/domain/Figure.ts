@@ -4,7 +4,7 @@ import { BoardCell } from "./BoardCell";
 import { cellRepository } from "../repository/CellRepository";
 
 export type FigureColor = 'white' | 'black';
-export type FigureType = 'Pawn' | 'Rook' | 'Bishop';
+export type FigureType = 'Pawn' | 'Rook' | 'Bishop' | 'Knight';
 
 export class Figure {
     #color: FigureColor;
@@ -171,4 +171,5 @@ const moveStrategy: Record<FigureType, (currentCell: BoardCell, figure: Figure) 
     'Pawn': getPawnAvalibleCells,
     'Rook': getCellsStrategy['line'],
     'Bishop': getCellsStrategy['diagonale'],
+    'Knight': getCellsStrategy['diagonale'],
 }

@@ -2,20 +2,25 @@ import { RaycastAdapter } from "../adapters/RaycastAdapter";
 import { SceneAdapter } from "../adapters/SceneAdapter";
 import { columns, rows } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
-import { Figure } from "../domain/Figure";
+import { Figure, FigureColor, FigureType } from "../domain/Figure";
 import { IEventBus } from "../infra/EventBus";
 import { ICellRepository } from "../repository/CellRepository";
 import { IFigureRepository } from "../repository/FiguresRepository";
 import { createBoard } from "../utils/createBoard";
 
-// Black
-const INITIAL_BLACK_PAWN_POSITIONS = ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'];
-const INITIAL_BLACK_ROOK_POSITIONS = ['a8', 'h8'];
-const INITIAL_BLACK_BISHOP_POSITIONS = ['b8', 'g8'];
-//White
-const INITIAL_WHITE_PAWN_POSITIONS = ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'];
-const INITIAL_WHITE_ROOK_POSITIONS = ['a1', 'h1'];
-const INITIAL_WHITE_BISHOP_POSITIONS = ['b1', 'g1'];
+const BLACK_FIGURES_INITIAL_POSITIONS: Record<FigureType, string[]> = {
+    'Pawn': ['a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7'],
+    'Rook': ['a8', 'h8'],
+    'Bishop': ['b8', 'g8'],
+    'Knight': ['c8', 'f8'],
+}
+
+const WHITE_FIGURES_INITIAL_POSITIONS: Record<FigureType, string[]> = {
+    'Pawn': ['a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2'],
+    'Rook': ['a1', 'h1'],
+    'Bishop': ['b1', 'g1'],
+    'Knight': ['c1', 'f1'],
+}
 
 export class Application {
     #raycastAdapter: RaycastAdapter;
@@ -123,61 +128,22 @@ export class Application {
         this.moveFigure(currentCell, destinationCell);
     }
 
+    private initFigure(cellName: string, color: FigureColor, type: FigureType) {
+        const cell = this.#cellRepository.getCell(cellName);
+        const position = cell.getCellCenter();
+        const figure = new Figure(position, color, type, cell)
+        cell.setFigure(figure);
+        this.#sceneAdapter.draw(figure.getMesh())
+        this.#figureRepository.addFigure(figure);
+    }
+
     private initFigures() {
-        INITIAL_BLACK_PAWN_POSITIONS.forEach(pownCell => {
-            const cell = this.#cellRepository.getCell(pownCell);
-            const position = cell.getCellCenter();
-            const figure = new Figure(position, 'black', 'Pawn', cell)
-            cell.setFigure(figure);
-            this.#sceneAdapter.draw(figure.getMesh())
-            this.#figureRepository.addFigure(figure);
-        });
-
-        INITIAL_BLACK_ROOK_POSITIONS.forEach(rookCell => {
-            const cell = this.#cellRepository.getCell(rookCell);
-            const position = cell.getCellCenter();
-            const figure = new Figure(position, 'black', 'Rook', cell)
-            cell.setFigure(figure);
-            this.#sceneAdapter.draw(figure.getMesh())
-            this.#figureRepository.addFigure(figure);
-        });
-
-        INITIAL_BLACK_BISHOP_POSITIONS.forEach(bishopCell => {
-            const cell = this.#cellRepository.getCell(bishopCell);
-            const position = cell.getCellCenter();
-            const figure = new Figure(position, 'black', 'Bishop', cell)
-            cell.setFigure(figure);
-            this.#sceneAdapter.draw(figure.getMesh())
-            this.#figureRepository.addFigure(figure);
-        });
-
-        
-        INITIAL_WHITE_PAWN_POSITIONS.forEach(pownCell => {
-            const cell = this.#cellRepository.getCell(pownCell);
-            const position = cell.getCellCenter();
-            const figure = new Figure(position, 'white', 'Pawn', cell)
-            cell.setFigure(figure);
-            this.#sceneAdapter.draw(figure.getMesh())
-            this.#figureRepository.addFigure(figure);
-        });
-
-        INITIAL_WHITE_ROOK_POSITIONS.forEach(rookCell => {
-            const cell = this.#cellRepository.getCell(rookCell);
-            const position = cell.getCellCenter();
-            const figure = new Figure(position, 'white', 'Rook', cell)
-            cell.setFigure(figure);
-            this.#sceneAdapter.draw(figure.getMesh())
-            this.#figureRepository.addFigure(figure);
-        });
-
-        INITIAL_WHITE_BISHOP_POSITIONS.forEach(bishopCell => {
-            const cell = this.#cellRepository.getCell(bishopCell);
-            const position = cell.getCellCenter();
-            const figure = new Figure(position, 'white', 'Bishop', cell)
-            cell.setFigure(figure);
-            this.#sceneAdapter.draw(figure.getMesh())
-            this.#figureRepository.addFigure(figure);
-        });
+        Object.keys(BLACK_FIGURES_INITIAL_POSITIONS).forEach((figureType: FigureType) => {
+            BLACK_FIGURES_INITIAL_POSITIONS[figureType].forEach(cellName => this.initFigure(cellName, 'black', figureType));
+        })
+        Object.keys(WHITE_FIGURES_INITIAL_POSITIONS).forEach((figureType: FigureType) => {
+            WHITE_FIGURES_INITIAL_POSITIONS[figureType].forEach(cellName => this.initFigure(cellName, 'white', figureType));
+        })
     }
 
     private createBoard() {
