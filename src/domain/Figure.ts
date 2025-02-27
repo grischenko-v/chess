@@ -1,8 +1,9 @@
 import { Vector3 } from "three";
 import { FigureUI, figureUIFactory } from "../ui/figures/FiguresFactory";
 import { BoardCell } from "./BoardCell";
+import { FIGURE_COLOR } from "../constants";
 
-export type FigureColor = 'white' | 'black';
+export type FigureColor = keyof typeof FIGURE_COLOR;
 export type FigureType = 'Pawn' | 'Rook' | 'Bishop' | 'Knight' | 'Queen';
 
 export class Figure {
