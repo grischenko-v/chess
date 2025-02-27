@@ -13,6 +13,7 @@ const BLACK_FIGURES_INITIAL_POSITIONS: Record<FigureType, string[]> = {
     'Rook': ['a8', 'h8'],
     'Bishop': ['b8', 'g8'],
     'Knight': ['c8', 'f8'],
+    'Queen': ['e8'],
 }
 
 const WHITE_FIGURES_INITIAL_POSITIONS: Record<FigureType, string[]> = {
@@ -20,6 +21,7 @@ const WHITE_FIGURES_INITIAL_POSITIONS: Record<FigureType, string[]> = {
     'Rook': ['a1', 'h1'],
     'Bishop': ['b1', 'g1'],
     'Knight': ['c1', 'f1'],
+    'Queen': ['e1'],
 }
 
 export class Application {

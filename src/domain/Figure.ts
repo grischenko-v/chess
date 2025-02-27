@@ -4,7 +4,7 @@ import { BoardCell } from "./BoardCell";
 import { cellRepository } from "../repository/CellRepository";
 
 export type FigureColor = 'white' | 'black';
-export type FigureType = 'Pawn' | 'Rook' | 'Bishop' | 'Knight';
+export type FigureType = 'Pawn' | 'Rook' | 'Bishop' | 'Knight' | 'Queen';
 
 export class Figure {
     #color: FigureColor;
@@ -104,11 +104,11 @@ const getPawnAvalibleCells = (currentCell: BoardCell, figure: Figure): BoardCell
     return result;
 }
 
-const getCellsByDirection = (currentCell: BoardCell, figure: Figure, cb: (currentCell: BoardCell) => string) => {
+const getCellsByDirection = (currentCell: BoardCell, figure: Figure, getNextCell: (currentCell: BoardCell) => string) => {
     const result = [];
-    let cellName = cb(currentCell);
+    let cellName = getNextCell(currentCell);
     let cell = cellRepository.getCell(cellName);
-    let nextCellName = cb(currentCell);
+    let nextCellName = getNextCell(currentCell);
     let nextCell = cellRepository.getCell(nextCellName);
     while(cell && !cell.hasFigure() || cell && cell.hasFigure() && cell.getFigure().getColor() !== figure.getColor()) {
         result.push(cell);
@@ -116,13 +116,13 @@ const getCellsByDirection = (currentCell: BoardCell, figure: Figure, cb: (curren
             break;
         }
         cell = nextCell;
-        nextCellName = cb(cell);
+        nextCellName = getNextCell(cell);
         nextCell = cellRepository.getCell(nextCellName);
     }
     return result;
 }
 
-type TGetCellStrategy = 'line' | 'diagonale';
+type TGetCellStrategy = 'line' | 'diagonale' | 'all';
 
 const getCellsStrategy: Record<TGetCellStrategy, (currentCell: BoardCell, figure: Figure) => BoardCell[]> = {
     'line': (currentCell: BoardCell, figure: Figure) => {
@@ -164,6 +164,9 @@ const getCellsStrategy: Record<TGetCellStrategy, (currentCell: BoardCell, figure
             (currentCell: BoardCell) => figure.getColor() === 'white' ? currentCell.getBottomRightSibling() : currentCell.getTopRightSibling());
         return [...cellsOnTopLeft, ...cellsOnTopRight, ...cellsOnBottomRight, ...cellsOnBottomLeft];
     },
+    'all': (currentCell: BoardCell, figure: Figure) => {
+        return [...getCellsStrategy['line'](currentCell, figure), ...getCellsStrategy['diagonale'](currentCell, figure)];
+    }
 } as const;
 
 
@@ -172,4 +175,5 @@ const moveStrategy: Record<FigureType, (currentCell: BoardCell, figure: Figure) 
     'Rook': getCellsStrategy['line'],
     'Bishop': getCellsStrategy['diagonale'],
     'Knight': getCellsStrategy['diagonale'],
+    'Queen': getCellsStrategy['all'],
 }
