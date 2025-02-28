@@ -23,7 +23,7 @@ export class FigureMoveService implements IFigureMoveService {
     };
 }
 
-const canMove = (figureColor:  FigureColor, cell?: BoardCell) => cell && !cell.hasFigure();
+const canMove = (_figureColor:  FigureColor, cell?: BoardCell) => cell && !cell.hasFigure();
 
 const canCapture = (figureColor:  FigureColor, cell?: BoardCell) => cell && cell.hasFigure() && cell.getFigure().getColor() !== figureColor;
 
@@ -149,8 +149,8 @@ const getKingAvalibleCells = (figure: Figure): BoardCell[] => {
     if(canMoveOrCapture(figure.getColor(), topCell)) {
         result.push(topCell);
     }
-    const BotomCellName = figure.getColor() === 'white' ? currentCell.getBottomSibling() : currentCell.getTopSibling();
-    const bottomCell = cellRepository.getCell(BotomCellName);
+    const botomCellName = figure.getColor() === 'white' ? currentCell.getBottomSibling() : currentCell.getTopSibling();
+    const bottomCell = cellRepository.getCell(botomCellName);
     if(canMoveOrCapture(figure.getColor(), bottomCell)) {
         result.push(bottomCell);
     }
