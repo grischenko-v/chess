@@ -27,7 +27,7 @@ export const createKight = (figureColor: FigureColor, name: string): Group => {
     const cylindermaterial = new MeshStandardMaterial( { color: color, wireframe: false } ); 
     const cylinder = new Mesh( cylindergeometry, cylindermaterial );
     cylinder.position.y = 2;
-    cylinder.position.x = 0.45;
+    cylinder.position.x = figureColor === 'black' ? -0.45 : 0.45;
     cylinder.receiveShadow = true;
     cylinder.castShadow = true;
     group.add(cylinder);
@@ -40,7 +40,7 @@ export const createKight = (figureColor: FigureColor, name: string): Group => {
     head.rotateZ(figureColor === 'black' ? -Math.PI/2 : Math.PI/2);
     head.rotateY(figureColor === 'black' ? -Math.PI/2 : Math.PI/2);
     head.rotateX(-Math.PI/4);
-    head.position.x = figureColor === 'black' ? 0.75 : 0.1;
+    head.position.x = figureColor === 'black' ? -0.1 : 0.1;
     head.receiveShadow = true;
     head.castShadow = true;
     group.add(head);
