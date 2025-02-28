@@ -140,7 +140,6 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
         }
     }
 
-
     return result
 }
 
