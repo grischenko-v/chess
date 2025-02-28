@@ -1,5 +1,5 @@
 import { BoardCell } from "../domain/BoardCell";
-import { Figure, FigureType } from "../domain/Figure";
+import { Figure, FigureColor, FigureType } from "../domain/Figure";
 import { cellRepository } from "../repository/CellRepository";
 
 interface IFigureMoveService {
@@ -23,29 +23,37 @@ export class FigureMoveService implements IFigureMoveService {
     };
 }
 
+const canMove = (figureColor:  FigureColor, cell?: BoardCell) => cell && !cell.hasFigure();
+
+const canCapture = (figureColor:  FigureColor, cell?: BoardCell) => cell && cell.hasFigure() && cell.getFigure().getColor() !== figureColor;
+
+const canMoveOrCapture = (figureColor:  FigureColor, cell?: BoardCell) => canMove(figureColor, cell) || canCapture(figureColor,cell);
+
 const getPawnAvalibleCells = (figure: Figure): BoardCell[] => {
     const currentCell = figure.getCurrentCell();
     const result = [];
     const topCellName = figure.getColor() === 'white' ? currentCell.getTopSibling() : currentCell.getBottomSibling();
     const topCell = cellRepository.getCell(topCellName);
-    if(topCell && !topCell.hasFigure()) {
+    if(canMove(figure.getColor(), topCell)) {
         result.push(topCell);
     }
-    if(figure.getStepNumber() === 0 && topCell && !topCell.hasFigure()) {
+    if(figure.getStepNumber() === 0 && canMove(figure.getColor(), topCell)) {
         const topTopCellName = figure.getColor() === 'white' ? topCell.getTopSibling() : topCell.getBottomSibling();
         const topTopCell = cellRepository.getCell(topTopCellName);
-        result.push(topTopCell);
+        if(canMove(figure.getColor(), topTopCell)) {
+            result.push(topTopCell);
+        }
     }
     
     const topLeftSiblingName = figure.getColor() === 'white' ? currentCell.getTopLeftSibling() : currentCell.getBottomRightSibling();
     const topLeftCell = cellRepository.getCell(topLeftSiblingName);
-    if(topLeftCell && topLeftCell.hasFigure() && topLeftCell.hasFigureColor() !== figure.getColor()) {
+    if(canCapture(figure.getColor(), topLeftCell)) {
         result.push(topLeftCell);
     }
 
     const topRightSiblingName = figure.getColor() === 'white' ? currentCell.getTopRightSibling() : currentCell.getBottomLeftSibling();
     const topRightCell = cellRepository.getCell(topRightSiblingName);
-    if(topRightCell && topRightCell.hasFigure() && topRightCell.hasFigureColor() !== figure.getColor()) {
+    if(canCapture(figure.getColor(), topRightCell)) {
         result.push(topRightCell);
     }
     return result;
@@ -62,16 +70,13 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     if(topRightCell) {
         const topCellName = figure.getColor() === 'white' ? topRightCell.getTopSibling() : topRightCell.getBottomSibling();
         const topCell = cellRepository.getCell(topCellName);
-        if(topCell
-            && !topCell.hasFigure()
-        || topCell && topCell.hasFigure() && topCell.getFigure().getColor() !== figure.getColor()) {
+        if(canMoveOrCapture(figure.getColor(), topCell)) {
             result.push(topCell)
         }
 
         const rightCellName = figure.getColor() === 'white' ? topRightCell.getRightSibling() : topRightCell.getLeftSibling();
         const rightCell = cellRepository.getCell(rightCellName);
-        if(rightCell && !rightCell.hasFigure()
-        || rightCell && rightCell.hasFigure() && rightCell.getFigure().getColor() !== figure.getColor()) {
+        if(canMoveOrCapture(figure.getColor(), rightCell)) {
             result.push(rightCell)
         }
     }
@@ -83,15 +88,13 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     if(topLeftCell) {
         const topCellName2 = figure.getColor() === 'white' ? topLeftCell.getTopSibling() : topLeftCell.getBottomSibling();
         const topCell2 = cellRepository.getCell(topCellName2);
-        if(topCell2 && !topCell2.hasFigure()
-        || topCell2 && topCell2.hasFigure() && topCell2.getFigure().getColor() !== figure.getColor()) {
+        if(canMoveOrCapture(figure.getColor(), topCell2)) {
             result.push(topCell2)
         }
         
         const rightCellName2 = figure.getColor() === 'white' ? topLeftCell.getLeftSibling() : topLeftCell.getRightSibling();
         const rightCell2 = cellRepository.getCell(rightCellName2);
-        if(rightCell2 && !rightCell2.hasFigure()
-        || rightCell2 && rightCell2.hasFigure() && rightCell2.getFigure().getColor() !== figure.getColor()) {
+        if(canMoveOrCapture(figure.getColor(), rightCell2)) {
             result.push(rightCell2)
         }
     }
@@ -104,16 +107,13 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     
         const topCellName3 = figure.getColor() === 'white' ? bottomRightCell.getBottomSibling() : bottomRightCell.getTopSibling();
         const topCell3 = cellRepository.getCell(topCellName3);
-        if(topCell3
-            && !topCell3.hasFigure()
-        || topCell3 && topCell3.hasFigure() && topCell3.getFigure().getColor() !== figure.getColor()) {
+        if(canMoveOrCapture(figure.getColor(), topCell3)) {
             result.push(topCell3)
         }
 
         const rightCellName3 = figure.getColor() === 'white' ? bottomRightCell.getRightSibling() : bottomRightCell.getLeftSibling();
         const rightCell3 = cellRepository.getCell(rightCellName3);
-        if(rightCell3 && !rightCell3.hasFigure()
-        || rightCell3 && rightCell3.hasFigure() && rightCell3.getFigure().getColor() !== figure.getColor()) {
+        if(canMoveOrCapture(figure.getColor(), topCell3)) {
             result.push(rightCell3)
         }
     }
@@ -126,16 +126,13 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     
         const topCellName3 = figure.getColor() === 'white' ? bottomLeftCell.getBottomSibling() : bottomLeftCell.getTopSibling();
         const topCell3 = cellRepository.getCell(topCellName3);
-        if(topCell3
-            && !topCell3.hasFigure()
-        || topCell3 && topCell3.hasFigure() && topCell3.getFigure().getColor() !== figure.getColor()) {
+        if(canMoveOrCapture(figure.getColor(), topCell3)) {
             result.push(topCell3)
         }
 
         const rightCellName3 = figure.getColor() === 'white' ? bottomLeftCell.getLeftSibling() : bottomLeftCell.getRightSibling();
         const rightCell3 = cellRepository.getCell(rightCellName3);
-        if(rightCell3 && !rightCell3.hasFigure()
-        || rightCell3 && rightCell3.hasFigure() && rightCell3.getFigure().getColor() !== figure.getColor()) {
+        if(canMoveOrCapture(figure.getColor(), rightCell3)) {
             result.push(rightCell3)
         }
     }
@@ -147,7 +144,52 @@ const getKingAvalibleCells = (figure: Figure): BoardCell[] => {
     const result: BoardCell[] = [];
     const currentCell = figure.getCurrentCell();
 
-    return [];
+    const topCellName = figure.getColor() === 'white' ? currentCell.getTopSibling() : currentCell.getBottomSibling();
+    const topCell = cellRepository.getCell(topCellName);
+    if(canMoveOrCapture(figure.getColor(), topCell)) {
+        result.push(topCell);
+    }
+    const BotomCellName = figure.getColor() === 'white' ? currentCell.getBottomSibling() : currentCell.getTopSibling();
+    const bottomCell = cellRepository.getCell(BotomCellName);
+    if(canMoveOrCapture(figure.getColor(), bottomCell)) {
+        result.push(bottomCell);
+    }
+    const rightCellName = figure.getColor() === 'white' ? currentCell.getLeftSibling() : currentCell.getRightSibling();
+    const rightCell = cellRepository.getCell(rightCellName);
+    if(canMoveOrCapture(figure.getColor(), rightCell)) {
+        result.push(rightCell);
+    }
+    const leftCellName = figure.getColor() === 'white' ? currentCell.getRightSibling() : currentCell.getLeftSibling();
+    const leftCell = cellRepository.getCell(leftCellName);
+    if(canMoveOrCapture(figure.getColor(), leftCell)) {
+        result.push(leftCell);
+    }
+
+    const leftTopCellName = figure.getColor() === 'white' ? currentCell.getTopLeftSibling() : currentCell.getBottomRightSibling();
+    const leftTopCell = cellRepository.getCell(leftTopCellName);
+    if(canMoveOrCapture(figure.getColor(), leftTopCell)) {
+        result.push(leftTopCell);
+    }
+
+    const rightTopCellName = figure.getColor() === 'white' ? currentCell.getTopRightSibling() : currentCell.getBottomLeftSibling();
+    const rightTopCell = cellRepository.getCell(rightTopCellName);
+    if(canMoveOrCapture(figure.getColor(), rightTopCell)) {
+        result.push(rightTopCell);
+    }
+
+    const leftBottomCellName = figure.getColor() === 'white' ? currentCell.getBottomLeftSibling() : currentCell.getTopRightSibling();
+    const leftBottomCell = cellRepository.getCell(leftBottomCellName);
+    if(canMoveOrCapture(figure.getColor(), leftBottomCell)) {
+        result.push(leftBottomCell);
+    }
+
+    const rightBottomCellName = figure.getColor() === 'white' ? currentCell.getBottomRightSibling() : currentCell.getTopLeftSibling();
+    const rightBottomCell = cellRepository.getCell(rightBottomCellName);
+    if(canMoveOrCapture(figure.getColor(), rightBottomCell)) {
+        result.push(rightBottomCell);
+    }
+
+    return result;
 }
 
 const getCellsByDirection = (figure: Figure, getNextCell: (currentCell: BoardCell) => string) => {
@@ -157,9 +199,9 @@ const getCellsByDirection = (figure: Figure, getNextCell: (currentCell: BoardCel
     let cell = cellRepository.getCell(cellName);
     let nextCellName = getNextCell(currentCell);
     let nextCell = cellRepository.getCell(nextCellName);
-    while(cell && !cell.hasFigure() || cell && cell.hasFigure() && cell.getFigure().getColor() !== figure.getColor()) {
+    while(canMoveOrCapture(figure.getColor(), cell)) {
         result.push(cell);
-        if(cell && cell.hasFigure() && cell.getFigure().getColor() !== figure.getColor() || !nextCell) {
+        if(canCapture(figure.getColor(), cell) || !nextCell) {
             break;
         }
         cell = nextCell;
