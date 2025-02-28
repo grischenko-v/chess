@@ -9,9 +9,10 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- Finish Queen, Knight and King figures
-- Figures move strategy for Knight, King
-- Add gameloop
+- Knight figure
+- Figures move strategy for King
+- Refactor moving strategy/simplify code
+- Add gameloops
 - Create moves history
 - Add move rollback function
 - Add history player
