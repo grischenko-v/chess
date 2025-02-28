@@ -51,6 +51,99 @@ const getPawnAvalibleCells = (figure: Figure): BoardCell[] => {
     return result;
 }
 
+const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
+    const result: BoardCell[] = [];
+    const currentCell = figure.getCurrentCell();
+    
+    // top right cell from figure
+    const topRightCellName = figure.getColor() === 'white' ? currentCell.getTopRightSibling() : currentCell.getBottomLeftSibling();
+    const topRightCell = cellRepository.getCell(topRightCellName);
+
+    if(topRightCell) {
+        const topCellName = figure.getColor() === 'white' ? topRightCell.getTopSibling() : topRightCell.getBottomSibling();
+        const topCell = cellRepository.getCell(topCellName);
+        if(topCell
+            && !topCell.hasFigure()
+        || topCell && topCell.hasFigure() && topCell.getFigure().getColor() !== figure.getColor()) {
+            result.push(topCell)
+        }
+
+        const rightCellName = figure.getColor() === 'white' ? topRightCell.getRightSibling() : topRightCell.getLeftSibling();
+        const rightCell = cellRepository.getCell(rightCellName);
+        if(rightCell && !rightCell.hasFigure()
+        || rightCell && rightCell.hasFigure() && rightCell.getFigure().getColor() !== figure.getColor()) {
+            result.push(rightCell)
+        }
+    }
+    
+    // topLeftCell from figure
+    const topLeftCellName = figure.getColor() === 'white' ? currentCell.getTopLeftSibling() : currentCell.getBottomRightSibling();
+    const topLeftCell = cellRepository.getCell(topLeftCellName);
+
+    if(topLeftCell) {
+        const topCellName2 = figure.getColor() === 'white' ? topLeftCell.getTopSibling() : topLeftCell.getBottomSibling();
+        const topCell2 = cellRepository.getCell(topCellName2);
+        if(topCell2 && !topCell2.hasFigure()
+        || topCell2 && topCell2.hasFigure() && topCell2.getFigure().getColor() !== figure.getColor()) {
+            result.push(topCell2)
+        }
+        
+        const rightCellName2 = figure.getColor() === 'white' ? topLeftCell.getLeftSibling() : topLeftCell.getRightSibling();
+        const rightCell2 = cellRepository.getCell(rightCellName2);
+        if(rightCell2 && !rightCell2.hasFigure()
+        || rightCell2 && rightCell2.hasFigure() && rightCell2.getFigure().getColor() !== figure.getColor()) {
+            result.push(rightCell2)
+        }
+    }
+
+    // bottom Right
+    const bottomRightCellName = figure.getColor() === 'white' ? currentCell.getBottomRightSibling() : currentCell.getTopLeftSibling();
+    const bottomRightCell = cellRepository.getCell(bottomRightCellName);
+
+    if(bottomRightCell) {
+    
+        const topCellName3 = figure.getColor() === 'white' ? bottomRightCell.getBottomSibling() : bottomRightCell.getTopSibling();
+        const topCell3 = cellRepository.getCell(topCellName3);
+        if(topCell3
+            && !topCell3.hasFigure()
+        || topCell3 && topCell3.hasFigure() && topCell3.getFigure().getColor() !== figure.getColor()) {
+            result.push(topCell3)
+        }
+
+        const rightCellName3 = figure.getColor() === 'white' ? bottomRightCell.getRightSibling() : bottomRightCell.getLeftSibling();
+        const rightCell3 = cellRepository.getCell(rightCellName3);
+        if(rightCell3 && !rightCell3.hasFigure()
+        || rightCell3 && rightCell3.hasFigure() && rightCell3.getFigure().getColor() !== figure.getColor()) {
+            result.push(rightCell3)
+        }
+    }
+
+    // bottom Left
+    const bottomLeftCellName = figure.getColor() === 'white' ? currentCell.getBottomLeftSibling() : currentCell.getTopRightSibling();
+    const bottomLeftCell = cellRepository.getCell(bottomLeftCellName);
+
+    if(bottomLeftCell) {
+    
+        const topCellName3 = figure.getColor() === 'white' ? bottomLeftCell.getBottomSibling() : bottomLeftCell.getTopSibling();
+        const topCell3 = cellRepository.getCell(topCellName3);
+        if(topCell3
+            && !topCell3.hasFigure()
+        || topCell3 && topCell3.hasFigure() && topCell3.getFigure().getColor() !== figure.getColor()) {
+            result.push(topCell3)
+        }
+
+        const rightCellName3 = figure.getColor() === 'white' ? bottomLeftCell.getLeftSibling() : bottomLeftCell.getRightSibling();
+        const rightCell3 = cellRepository.getCell(rightCellName3);
+        if(rightCell3 && !rightCell3.hasFigure()
+        || rightCell3 && rightCell3.hasFigure() && rightCell3.getFigure().getColor() !== figure.getColor()) {
+            result.push(rightCell3)
+        }
+    }
+
+
+    return result
+}
+
 const getCellsByDirection = (figure: Figure, getNextCell: (currentCell: BoardCell) => string) => {
     const currentCell = figure.getCurrentCell();
     const result = [];
@@ -114,6 +207,6 @@ const moveStrategy: Record<FigureType, (figure: Figure) => BoardCell[]> = {
     'Pawn': getPawnAvalibleCells,
     'Rook': getCellsStrategy['line'],
     'Bishop': getCellsStrategy['diagonale'],
-    'Knight': getCellsStrategy['diagonale'],
+    'Knight': getKnightAvalibleCells,
     'Queen': getCellsStrategy['all'],
 }
