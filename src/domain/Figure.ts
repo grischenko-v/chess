@@ -4,7 +4,7 @@ import { BoardCell } from "./BoardCell";
 import { FIGURE_COLOR } from "../constants";
 
 export type FigureColor = keyof typeof FIGURE_COLOR;
-export type FigureType = 'Pawn' | 'Rook' | 'Bishop' | 'Knight' | 'Queen';
+export type FigureType = 'Pawn' | 'Rook' | 'Bishop' | 'Knight' | 'Queen' | 'King';
 
 export class Figure {
     #color: FigureColor;

@@ -24,7 +24,7 @@ export class BoardCell {
 
     constructor(name: string, boardCoords: {x: number, z: number}) {
         this.#name = name;
-        this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
+        this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'black' : 'white';
         this.#cellGeometry = new CellGeometry(
             {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, this.#color, name
         );

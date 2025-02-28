@@ -7,6 +7,7 @@ import { createBishop } from './createBishop';
 import { createKight } from './createKnight';
 import { createQueen } from './createQueen';
 import { FIGURE_COLOR } from '../../constants';
+import { createKing } from './createKing';
 
 type TFigureParams = {
     position: Vector3,
@@ -33,6 +34,10 @@ export const figureUIFactory: Record<FigureType, any> = {
     },
     'Queen': (params: TFigureParams) => {
         const rook = createQueen(params.color, params.name);
+        return new FigureUI(rook, params.position, params.color);
+    },
+    'King': (params: TFigureParams) => {
+        const rook = createKing(params.color, params.name);
         return new FigureUI(rook, params.position, params.color);
     }
 };

@@ -143,6 +143,13 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     return result
 }
 
+const getKingAvalibleCells = (figure: Figure): BoardCell[] => {
+    const result: BoardCell[] = [];
+    const currentCell = figure.getCurrentCell();
+
+    return [];
+}
+
 const getCellsByDirection = (figure: Figure, getNextCell: (currentCell: BoardCell) => string) => {
     const currentCell = figure.getCurrentCell();
     const result = [];
@@ -208,4 +215,5 @@ const moveStrategy: Record<FigureType, (figure: Figure) => BoardCell[]> = {
     'Bishop': getCellsStrategy['diagonale'],
     'Knight': getKnightAvalibleCells,
     'Queen': getCellsStrategy['all'],
+    'King': getKingAvalibleCells,
 }
