@@ -148,7 +148,7 @@ const getCellsByDirection = (figure: Figure, siblingName: TCellSibiling) => {
 
 type TGetCellStrategy = 'line' | 'diagonale' | 'all';
 
-const getCellsStrategy: Record<TGetCellStrategy, (figure: Figure) => BoardCell[]> = {
+const getAvalibleCellsByDirection: Record<TGetCellStrategy, (figure: Figure) => BoardCell[]> = {
     'line': (figure: Figure) => {
         const cellsOnTop = getCellsByDirection(figure, 'getTopSibling');
         const cellsOnBottom = getCellsByDirection(figure, 'getBottomSibling');
@@ -164,16 +164,15 @@ const getCellsStrategy: Record<TGetCellStrategy, (figure: Figure) => BoardCell[]
         return [...cellsOnTopLeft, ...cellsOnTopRight, ...cellsOnBottomRight, ...cellsOnBottomLeft];
     },
     'all': (figure: Figure) => {
-        return [...getCellsStrategy['line'](figure), ...getCellsStrategy['diagonale'](figure)];
+        return [...getAvalibleCellsByDirection['line'](figure), ...getAvalibleCellsByDirection['diagonale'](figure)];
     }
 } as const;
 
-
 const moveStrategy: Record<FigureType, (figure: Figure) => BoardCell[]> = {
     'Pawn': getPawnAvalibleCells,
-    'Rook': getCellsStrategy['line'],
-    'Bishop': getCellsStrategy['diagonale'],
+    'Rook': getAvalibleCellsByDirection['line'],
+    'Bishop': getAvalibleCellsByDirection['diagonale'],
     'Knight': getKnightAvalibleCells,
-    'Queen': getCellsStrategy['all'],
+    'Queen': getAvalibleCellsByDirection['all'],
     'King': getKingAvalibleCells,
 }
