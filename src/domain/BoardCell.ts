@@ -1,4 +1,4 @@
-import { Figure } from './Figure';
+import { Figure, FigureColor } from './Figure';
 import { CELL_COLOR_TYPE, CellGeometry } from '../ui/board/CellGeometry';
 import { getCellSublings } from '../utils/getCellSiblings';
 import { BOARD_CELL_COLOR } from '../constants';
@@ -31,36 +31,36 @@ export class BoardCell {
         this.#siblings = getCellSublings(name);
     }
 
-    getTopSibling() {
-        return this.#siblings.top;
+    getTopSibling(figureColor: FigureColor) {
+        return figureColor === 'white' ? this.#siblings.top : this.#siblings.bottom;
     }
 
-    getBottomSibling() {
-        return this.#siblings.bottom;
+    getBottomSibling(figureColor: FigureColor) {
+        return figureColor === 'white' ? this.#siblings.bottom : this.#siblings.top ;
     }
 
-    getTopLeftSibling() {
-        return this.#siblings.topLeft;
+    getTopLeftSibling(figureColor: FigureColor) {
+        return figureColor === 'white' ? this.#siblings.topLeft : this.#siblings.bottomRight;
     }
 
-    getTopRightSibling() {
-        return this.#siblings.topRight;
+    getTopRightSibling(figureColor: FigureColor) {
+        return figureColor === 'white' ? this.#siblings.topRight : this.#siblings.bottomLeft;
     }
 
-    getBottomLeftSibling() {
-        return this.#siblings.bottomLeft;
+    getBottomLeftSibling(figureColor: FigureColor) {
+        return figureColor === 'white' ? this.#siblings.bottomLeft : this.#siblings.topRight ;
     }
 
-    getBottomRightSibling() {
-        return this.#siblings.bottomRight;
+    getBottomRightSibling(figureColor: FigureColor) {
+        return figureColor === 'white' ? this.#siblings.bottomRight : this.#siblings.topLeft;
     }
 
-    getLeftSibling() {
-        return this.#siblings.left;
+    getLeftSibling(figureColor: FigureColor) {
+        return figureColor === 'white' ?  this.#siblings.left : this.#siblings.right;
     }
 
-    getRightSibling() {
-        return this.#siblings.right;
+    getRightSibling(figureColor: FigureColor) {
+        return figureColor === 'white' ? this.#siblings.right : this.#siblings.left;
     }
 
     getCanMove() {
