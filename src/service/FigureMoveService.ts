@@ -75,7 +75,7 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     const topRightCell = cellRepository.getCell(topRightCellName);
 
     if(topRightCell) {
-        const posibleAvalibleCells = [topRightCell.getBottomSibling(figure.getColor()), topRightCell.getLeftSibling(figure.getColor())];
+        const posibleAvalibleCells = [topRightCell.getTopSibling(figure.getColor()), topRightCell.getRightSibling(figure.getColor())];
         posibleAvalibleCells.forEach(cell => addMoveOrCaptureCellToArray(result, figure.getColor(), cell));
     }
     
@@ -84,7 +84,7 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     const topLeftCell = cellRepository.getCell(topLeftCellName);
 
     if(topLeftCell) {
-        const posibleAvalibleCells = [topLeftCell.getBottomSibling(figure.getColor()), topLeftCell.getLeftSibling(figure.getColor())];
+        const posibleAvalibleCells = [topLeftCell.getTopSibling(figure.getColor()), topLeftCell.getLeftSibling(figure.getColor())];
         posibleAvalibleCells.forEach(cell => addMoveOrCaptureCellToArray(result, figure.getColor(), cell));
     }
 
@@ -92,7 +92,7 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     const bottomRightCellName = currentCell.getBottomRightSibling(figure.getColor());
     const bottomRightCell = cellRepository.getCell(bottomRightCellName);
     if(bottomRightCell) {
-        const posibleAvalibleCells = [bottomRightCell.getBottomSibling(figure.getColor()), bottomRightCell.getLeftSibling(figure.getColor())];
+        const posibleAvalibleCells = [bottomRightCell.getBottomSibling(figure.getColor()), bottomRightCell.getRightSibling(figure.getColor())];
         posibleAvalibleCells.forEach(cell => addMoveOrCaptureCellToArray(result, figure.getColor(), cell));
     }
 
