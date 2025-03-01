@@ -9,10 +9,8 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- Knight figure
-- Figures move strategy for King
-- Refactor moving strategy/simplify code
-- Add gameloops
+- Add 'roque' and 'en passant'
+- Add gameloop
 - Create moves history
 - Add move rollback function
 - Add history player
