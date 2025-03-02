@@ -10,7 +10,8 @@ Now in progress:
 
 TODO:
 - Add 'en passant'
-- Add gameloop (players turn, checks, checkmate)
+- Add gameloop: checks, checkmate
+- Show current player color
 - Create moves history
 - Add move rollback function
 - Add Pawn transform on last field
