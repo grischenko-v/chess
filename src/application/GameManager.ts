@@ -1,7 +1,5 @@
 import { FigureMoveService } from "../service/FigureMoveService";
 
-type TPlayerColor = 'white' | 'black';
-
 export class GameManager {
     #currentPlayerColor = 'white';
     #figureMoveService: FigureMoveService;
