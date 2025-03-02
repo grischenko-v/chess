@@ -6,17 +6,20 @@ import { eventBus, eventTypes } from "../infra/EventBus";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 import { FigureMoveService } from "../service/FigureMoveService";
+import { GameManager } from "./GameManager";
 
 export class Application {
     #UIAdater: UIAdater;
 
     #selectedFigure: Figure | null;
     #figureMoveService: FigureMoveService;
+    #gameManager: GameManager;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
 
         this.#figureMoveService = new FigureMoveService();
+        this.#gameManager = new GameManager(this.#figureMoveService);
 
         eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
@@ -29,6 +32,10 @@ export class Application {
 
         if(this.getSelectedFigure() && clickedFigure.getCurrentCell().getCanMove()) {
             this.captureFigure(this.getSelectedFigure().getCurrentCell(), clickedFigure.getCurrentCell())
+            return;
+        }
+
+        if(clickedFigure.getColor() !== this.#gameManager.getCurrentPlayer()) {
             return;
         }
 
@@ -110,6 +117,7 @@ export class Application {
             rookDestinatioCell.setFigure(rook);
             rookCell.setFigure(null);
         }
+        this.#gameManager.toggleCurrentPlayer();
     }
 
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {

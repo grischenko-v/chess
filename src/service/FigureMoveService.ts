@@ -17,6 +17,10 @@ export class FigureMoveService implements IFigureMoveService {
         avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
     };
 
+    getAvalibleMoves(figure: Figure) {
+        return this.getAvalibleMoveCells(figure);
+    }
+
     private getAvalibleMoveCells(figure: Figure) {
         const figureType = figure.getType();
         return moveStrategy[figureType](figure);
