@@ -1,4 +1,4 @@
-import { Figure } from "../domain/Figure";
+import { Figure, FigureColor, FigureType } from "../domain/Figure";
 
 export interface IFigureRepository {
     addFigure: (figure: Figure) => void,
@@ -7,20 +7,40 @@ export interface IFigureRepository {
 }
 
 class FigureRepository implements IFigureRepository {
-    #cells: Record<string, Figure> = {};
+    #figures: Record<string, Figure> = {};
 
     addFigure(figure: Figure) {
         const name = figure.getName();
-        this.#cells[name] = figure;
+        this.#figures[name] = figure;
     }
 
     getFigure(name: string): Figure {
-        return this.#cells[name];
+        return this.#figures[name];
     }
 
     deleteFigure(figure: Figure) {
         const figureName = figure.getName();
-        delete this.#cells[figureName];
+        delete this.#figures[figureName];
+    }
+
+    getFiguresByColor(color: FigureColor) {
+        const result: Figure[] = [];
+        Object.keys(this.#figures).forEach(figureName => {
+            if(this.#figures[figureName].getColor() === color) {
+                result.push(this.#figures[figureName]);
+            }
+        })
+        return result;
+    }
+
+    getFiguresByType(type: FigureType) {
+        const result: Figure[] = [];
+        Object.keys(this.#figures).forEach(figureName => {
+            if(this.#figures[figureName].getType() === type) {
+                result.push(this.#figures[figureName]);
+            }
+        })
+        return result;
     }
 }
 

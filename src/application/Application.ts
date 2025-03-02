@@ -1,5 +1,5 @@
 import { UIAdater } from "../adapters/SceneAdapter";
-import { ROOK_DEFUALT_CELLS_NAMES, ROQUE_STEP_MAP, ROQUE_STEP_MAP_KEYS } from "../constants";
+import { ROQUE_STEP_MAP, ROQUE_STEP_MAP_KEYS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
 import { eventBus, eventTypes } from "../infra/EventBus";
