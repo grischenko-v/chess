@@ -34,7 +34,7 @@ class Scene implements IScene{
         this.#camera = new PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.#camera.position.y = 12;
         this.#camera.position.z = 12;
-        this.#camera.position.x = 12;
+        this.#camera.position.x = -12;
         
         this.#renderer = new WebGLRenderer({
             antialias: true,

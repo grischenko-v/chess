@@ -1,7 +1,9 @@
 import { UIAdater } from "../adapters/SceneAdapter";
+import { ROOK_DEFUALT_CELLS_NAMES, ROQUE_STEP_MAP, ROQUE_STEP_MAP_KEYS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
 import { eventBus, eventTypes } from "../infra/EventBus";
+import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 import { FigureMoveService } from "../service/FigureMoveService";
 
@@ -90,12 +92,28 @@ export class Application {
         if(!this.#selectedFigure) {
             return;
         }
+
+        const selectedFigureType = this.#selectedFigure.getType();
+        const selectedFigureStepCount = this.#selectedFigure.getStepNumber();
         this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
         this.#selectedFigure.move(destinationCell);
         currentCell.setFigure(null);
         destinationCell.setFigure(this.#selectedFigure);
         this.#selectedFigure = null;
+
+        const roque = ROQUE_STEP_MAP[destinationCell.getCellName() as ROQUE_STEP_MAP_KEYS];
+        if(selectedFigureType === 'King' && roque && selectedFigureStepCount === 0) {
+            const rookCell = cellRepository.getCell(roque.rookDefualtCellName);
+            const rookDestinatioCell = cellRepository.getCell(roque.rookDestinationCellName);
+            const rook = rookCell.getFigure();
+            if(rook.getStepNumber() !== 0 || rook.getType() !== 'Rook') {
+                return;
+            }
+            rook.move(rookDestinatioCell);
+            rookDestinatioCell.setFigure(rook);
+            rookCell.setFigure(null);
+        }
     }
 
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {

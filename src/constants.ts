@@ -2,7 +2,7 @@ import { FigureType } from "./domain/Figure";
 import { getBoardMatrix } from "./utils/getBoardMatrix";
 
 export const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-export const rows = ['8', '7', '6', '5', '4', '3', '2', '1'];
+export const rows = ['1', '2', '3', '4', '5', '6', '7', '8'];
 export const boardMatrix = getBoardMatrix();
 
 // Figure initial positions
@@ -23,6 +23,30 @@ export const WHITE_FIGURES_INITIAL_POSITIONS: Record<FigureType, string[]> = {
     'Queen': ['d1'],
     'King': ['e1'],
 }
+
+// for get roque figures position 
+export const ROQUE_STEP_MAP = {
+    'c1': {
+        rookDefualtCellName: 'a1',
+        rookDestinationCellName: 'd1',
+    },
+    'g1': {
+        rookDefualtCellName: 'h1',
+        rookDestinationCellName: 'f1',
+    },
+    'c8': {
+        rookDefualtCellName: 'a8',
+        rookDestinationCellName: 'd8',
+    },
+    'g8': {
+        rookDefualtCellName: 'h8',
+        rookDestinationCellName: 'f8',
+    },
+} as const;
+
+export type ROQUE_STEP_MAP_KEYS = keyof typeof ROQUE_STEP_MAP;
+
+export const ROOK_DEFUALT_CELLS_NAMES = [...WHITE_FIGURES_INITIAL_POSITIONS['Rook'], ...BLACK_FIGURES_INITIAL_POSITIONS['Rook']];
 
 //COLORS
 export const BOARD_BOX_COLOR = 0xce8d66;

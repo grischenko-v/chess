@@ -9,7 +9,7 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- Add 'roque' and 'en passant'
+- Add 'en passant'
 - Add gameloop
 - Create moves history
 - Add move rollback function

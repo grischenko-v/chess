@@ -23,11 +23,11 @@ export const createKight = (figureColor: FigureColor, name: string): Group => {
     group.add(torus);
 
     const cylindergeometry = new CylinderGeometry( 0.5, 1.1, 4.75, 4 )
-    cylindergeometry.applyMatrix4( new Matrix4().makeRotationZ( figureColor === 'black' ? Math.PI / 12 : - Math.PI / 12 ) ); 
+    cylindergeometry.applyMatrix4( new Matrix4().makeRotationZ( figureColor === 'black' ? -Math.PI / 12 : Math.PI / 12 ) ); 
     const cylindermaterial = new MeshStandardMaterial( { color: color, wireframe: false } ); 
     const cylinder = new Mesh( cylindergeometry, cylindermaterial );
     cylinder.position.y = 2;
-    cylinder.position.x = figureColor === 'black' ? -0.45 : 0.45;
+    cylinder.position.x = figureColor === 'black' ? 0.45 : -0.45;
     cylinder.receiveShadow = true;
     cylinder.castShadow = true;
     group.add(cylinder);
@@ -37,10 +37,10 @@ export const createKight = (figureColor: FigureColor, name: string): Group => {
     const headmaterial = new MeshStandardMaterial( { color: color, wireframe: false } ); 
     const head = new Mesh( headgeometry, headmaterial );
     head.position.y = 3.5;
-    head.rotateZ(figureColor === 'black' ? -Math.PI/2 : Math.PI/2);
-    head.rotateY(figureColor === 'black' ? -Math.PI/2 : Math.PI/2);
+    head.rotateZ(figureColor === 'black' ? Math.PI/2 : -Math.PI/2);
+    head.rotateY(figureColor === 'black' ? Math.PI/2 : -Math.PI/2);
     head.rotateX(-Math.PI/4);
-    head.position.x = figureColor === 'black' ? -0.1 : 0.1;
+    head.position.x = figureColor === 'black' ? 0.1 : -0.1;
     head.receiveShadow = true;
     head.castShadow = true;
     group.add(head);

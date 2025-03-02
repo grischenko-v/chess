@@ -122,6 +122,19 @@ const getKingAvalibleCells = (figure: Figure): BoardCell[] => {
     ]
     posibleAvalibleCells.forEach(cell => addMoveOrCaptureCellToArray(result, figure.getColor(), cell));
 
+    // roque
+    const cellsOnLeft = getCellsByDirection(figure, figure.getColor() === 'white' ? 'getLeftSibling' : 'getRightSibling');
+    const cellsOnRight = getCellsByDirection(figure, figure.getColor() === 'white' ? 'getRightSibling' : 'getLeftSibling');
+
+    if(cellsOnLeft.length === 3) {
+        result.push(...cellsOnLeft);
+    }
+
+    if(cellsOnRight.length === 4) {
+        cellsOnRight.splice(3, 1);
+        result.push(...cellsOnRight);
+    }
+
     return result;
 }
 
