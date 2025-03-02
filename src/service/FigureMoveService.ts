@@ -135,10 +135,6 @@ const getKingAvalibleCells = (king: Figure): BoardCell[] => {
     const leftRook = leftRookCell.getFigure();
     const rightRook = rightRookCell.getFigure();
 
-    console.log(rightRook);
-    console.log(rightRook.getStepNumber());
-
-
     if(cellsOnRight.length === 3 && rightRook && rightRook.getType() === 'Rook' && rightRook.getStepNumber() === 0) {
         result.push(...cellsOnRight);
     }

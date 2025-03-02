@@ -9,7 +9,6 @@ const dispatchEventStrategy = {
     '': (_intercectName: string) => eventBus.dispatchEvent(eventTypes.outsideClick, {}),
     'figure': (intercectName: string) => {
         const figure = figureRepository.getFigure(intercectName);
-        console.log(figure);
         eventBus.dispatchEvent(eventTypes.figureClick, { clickedFigure: figure });
     },
     'cell': (intercectName: string) => {
