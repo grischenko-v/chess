@@ -10,6 +10,7 @@ Now in progress:
 
 TODO:
 - Add 'en passant'
+- Kings must have 1 cell between
 - Add gameloop: checks, checkmate
 - Show current player color
 - Create moves history
