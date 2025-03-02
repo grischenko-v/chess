@@ -107,32 +107,45 @@ const getKnightAvalibleCells = (figure: Figure): BoardCell[] => {
     return result
 }
 
-const getKingAvalibleCells = (figure: Figure): BoardCell[] => {
+const getKingAvalibleCells = (king: Figure): BoardCell[] => {
     const result: BoardCell[] = [];
-    const currentCell = figure.getCurrentCell();
+    const currentCell = king.getCurrentCell();
+    const kingColor = king.getColor();
     const posibleAvalibleCells = [
-        currentCell.getTopSibling(figure.getColor()),
-        currentCell.getBottomSibling(figure.getColor()),
-        currentCell.getLeftSibling(figure.getColor()),
-        currentCell.getRightSibling(figure.getColor()),
-        currentCell.getTopLeftSibling(figure.getColor()),
-        currentCell.getTopRightSibling(figure.getColor()),
-        currentCell.getBottomLeftSibling(figure.getColor()),
-        currentCell.getBottomRightSibling(figure.getColor())
+        currentCell.getTopSibling(kingColor),
+        currentCell.getBottomSibling(kingColor),
+        currentCell.getLeftSibling(kingColor),
+        currentCell.getRightSibling(kingColor),
+        currentCell.getTopLeftSibling(kingColor),
+        currentCell.getTopRightSibling(kingColor),
+        currentCell.getBottomLeftSibling(kingColor),
+        currentCell.getBottomRightSibling(kingColor)
     ]
-    posibleAvalibleCells.forEach(cell => addMoveOrCaptureCellToArray(result, figure.getColor(), cell));
+    posibleAvalibleCells.forEach(cell => addMoveOrCaptureCellToArray(result, kingColor, cell));
 
+    if(king.getStepNumber() > 0) {
+        return result;
+    }
     // roque
-    const cellsOnLeft = getCellsByDirection(figure, figure.getColor() === 'white' ? 'getLeftSibling' : 'getRightSibling');
-    const cellsOnRight = getCellsByDirection(figure, figure.getColor() === 'white' ? 'getRightSibling' : 'getLeftSibling');
+    const cellsOnRight = getCellsByDirection(king, kingColor === 'white' ? 'getLeftSibling' : 'getRightSibling');
+    const cellsOnLeft = getCellsByDirection(king, kingColor === 'white' ? 'getRightSibling' : 'getLeftSibling');
+    const leftRookCell = cellRepository.getCell(kingColor == 'white' ? 'a1' : 'a8');
+    const rightRookCell = cellRepository.getCell(kingColor == 'white' ? 'h1' : 'h8');
 
-    if(cellsOnLeft.length === 3) {
-        result.push(...cellsOnLeft);
+    const leftRook = leftRookCell.getFigure();
+    const rightRook = rightRookCell.getFigure();
+
+    console.log(rightRook);
+    console.log(rightRook.getStepNumber());
+
+
+    if(cellsOnRight.length === 3 && rightRook && rightRook.getType() === 'Rook' && rightRook.getStepNumber() === 0) {
+        result.push(...cellsOnRight);
     }
 
-    if(cellsOnRight.length === 4) {
-        cellsOnRight.splice(3, 1);
-        result.push(...cellsOnRight);
+    if(cellsOnLeft.length === 4 && leftRook && leftRook.getType() === 'Rook' && leftRook.getStepNumber() === 0) {
+        cellsOnLeft.splice(3, 1);
+        result.push(...cellsOnLeft);
     }
 
     return result;

@@ -94,7 +94,6 @@ export class Application {
         }
 
         const selectedFigureType = this.#selectedFigure.getType();
-        const selectedFigureStepCount = this.#selectedFigure.getStepNumber();
         this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
         this.#selectedFigure.move(destinationCell);
@@ -103,13 +102,10 @@ export class Application {
         this.#selectedFigure = null;
 
         const roque = ROQUE_STEP_MAP[destinationCell.getCellName() as ROQUE_STEP_MAP_KEYS];
-        if(selectedFigureType === 'King' && roque && selectedFigureStepCount === 0) {
+        if(selectedFigureType === 'King' && roque) {
             const rookCell = cellRepository.getCell(roque.rookDefualtCellName);
             const rookDestinatioCell = cellRepository.getCell(roque.rookDestinationCellName);
             const rook = rookCell.getFigure();
-            if(rook.getStepNumber() !== 0 || rook.getType() !== 'Rook') {
-                return;
-            }
             rook.move(rookDestinatioCell);
             rookDestinatioCell.setFigure(rook);
             rookCell.setFigure(null);
