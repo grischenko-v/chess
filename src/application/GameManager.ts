@@ -15,15 +15,8 @@ export class GameManager {
         return this.#currentPlayerColor;
     }
 
-    getSecondaryPlayer() {
-        if(this.#currentPlayerColor === 'white') {
-            return'black'
-        }
-        return 'white';
-    }
-
     toggleCurrentPlayer() {
-        if(this.#currentPlayerColor === 'white') {
+        if (this.#currentPlayerColor === 'white') {
             this.#currentPlayerColor = 'black'
             return;
         }
@@ -61,13 +54,13 @@ export class GameManager {
             figureRepository.getFiguresByColor('white') : figureRepository.getFiguresByColor('black');
         const avalibleMoves = Object.keys(figures).flatMap(key => {
             const movies = this.#figureMoveService.getAvalibleMoveCells(figures[key as any])
-            return this.filterAvalibaleMoves(movies, figures[key as any]);
+            return this.filterAvalibleCellsByKingCheck(movies, figures[key as any]);
         });
 
         return avalibleMoves.length === 0;
     }
 
-    filterAvalibaleMoves(avalibleCells: BoardCell[], figure: Figure) {
+    filterAvalibleCellsByKingCheck(avalibleCells: BoardCell[], figure: Figure) {
         let isKingUnderCheck = this.isKingUnderCheck();
         const currentFigureCell = figure.getCurrentCell();
         const kingCell = this.getCurrentKing().getCurrentCell();
@@ -75,7 +68,7 @@ export class GameManager {
             .filter(item => item.cells.includes(kingCell))
             .map(item => item.figure);
         return avalibleCells.filter(cell => {
-            if(cell.hasFigure()) {
+            if (cell.hasFigure()) {
                 return !isKingUnderCheck || attacedFigures.includes(cell.getFigure());
             }
             currentFigureCell.setFigure(null);
@@ -91,7 +84,7 @@ export class GameManager {
 
     highliteMoves(figure: Figure) {
         const avalibleCells = this.#figureMoveService.getAvalibleMoveCells(figure);
-        this.filterAvalibaleMoves(avalibleCells, figure).forEach((cell: BoardCell) => cell.setCanMove(true));
+        this.filterAvalibleCellsByKingCheck(avalibleCells, figure).forEach((cell: BoardCell) => cell.setCanMove(true));
     }
 
     unhighliteMoves(figure: Figure) {
