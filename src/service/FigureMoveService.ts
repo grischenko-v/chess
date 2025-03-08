@@ -152,7 +152,7 @@ const getKingAvalibleCells = (king: Figure): BoardCell[] => {
 
 type TCellSibiling = 'getTopSibling' | 'getBottomSibling' | 'getLeftSibling' | 'getRightSibling' | 'getTopLeftSibling' | 'getTopRightSibling' | 'getBottomLeftSibling' | 'getBottomRightSibling';
 
-const getCellsByDirection = (figure: Figure, siblingName: TCellSibiling) => {
+export const getCellsByDirection = (figure: Figure, siblingName: TCellSibiling) => {
     const currentCell = figure.getCurrentCell();
     const result = [];
     let cellName = currentCell[siblingName](figure.getColor());

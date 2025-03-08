@@ -119,6 +119,7 @@ export class Application {
         }
         this.#gameManager.toggleCurrentPlayer();
         this.#gameManager.isKingUnderCheck();
+        this.#gameManager.isGameFinished();
     }
 
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {
