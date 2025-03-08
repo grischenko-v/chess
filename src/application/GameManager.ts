@@ -1,9 +1,7 @@
-import { BLACK_FIGURES_INITIAL_POSITIONS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure, FigureColor } from "../domain/Figure";
-import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
-import { FigureMoveService, getCellsByDirection } from "../service/FigureMoveService";
+import { FigureMoveService } from "../service/FigureMoveService";
 
 export class GameManager {
     #currentPlayerColor: FigureColor = 'white';
@@ -38,23 +36,23 @@ export class GameManager {
         return currentKing;
     }
 
-    getAttackedCells() {
+    private getfiguresWithAttackedCells() {
         const figures = this.#currentPlayerColor === 'black' ?
             figureRepository.getFiguresByColor('white') : figureRepository.getFiguresByColor('black');
 
-        const atteackedCells = Object.keys(figures).flatMap(key => {
+        const figuresWithAttackedCells = figures.flatMap(figure => {
             return {
-                figure: figures[key as any],
-                cells: this.#figureMoveService.getCaptureCells(figures[key as any])
+                figure: figure,
+                cells: this.#figureMoveService.getCaptureCells(figure)
             }
         })
 
-        return atteackedCells;
+        return figuresWithAttackedCells;
     }
 
     isKingUnderCheck(): boolean {
         const kingCell = this.getCurrentKing().getCurrentCell();
-        const cellUnderCapture = this.getAttackedCells();
+        const cellUnderCapture = this.getfiguresWithAttackedCells();
         return cellUnderCapture.flatMap(cells => cells.cells).includes(kingCell);
     }
 
@@ -73,7 +71,7 @@ export class GameManager {
         let isKingUnderCheck = this.isKingUnderCheck();
         const currentFigureCell = figure.getCurrentCell();
         const kingCell = this.getCurrentKing().getCurrentCell();
-        const attacedFigures = this.getAttackedCells()
+        const attacedFigures = this.getfiguresWithAttackedCells()
             .filter(item => item.cells.includes(kingCell))
             .map(item => item.figure);
         return avalibleCells.filter(cell => {
