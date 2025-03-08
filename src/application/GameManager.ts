@@ -45,8 +45,8 @@ export class GameManager {
 
     isKingUnderCheck(): boolean {
         const kingCell = this.getCurrentKing().getCurrentCell();
-        const cellUnderCapture = this.getfiguresWithAttackedCells();
-        return cellUnderCapture.flatMap(cells => cells.cells).includes(kingCell);
+        const cellUnderCapturebyFigure = this.getfiguresWithAttackedCells();
+        return cellUnderCapturebyFigure.flatMap(cellsbyFigure => cellsbyFigure.cells).includes(kingCell);
     }
 
     isGameFinished(): boolean {
