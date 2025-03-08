@@ -40,23 +40,23 @@ export class Application {
         }
 
         if(this.getSelectedFigure() && this.getSelectedFigure().getName() !== clickedFigure.getName() ) {
-            this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
+            this.#gameManager.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
             this.#selectedFigure = clickedFigure;
             this.#selectedFigure.select();
-            this.#figureMoveService.highliteMoves(this.#selectedFigure);
+            this.#gameManager.highliteMoves(this.#selectedFigure);
             return;
         }
 
         if(this.getSelectedFigure()) {
-            this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
+            this.#gameManager.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
             return;
         }
 
         this.#selectedFigure = clickedFigure;
         this.#selectedFigure.select();
-        this.#figureMoveService.highliteMoves(this.#selectedFigure);
+        this.#gameManager.highliteMoves(this.#selectedFigure);
     }
 
     private onCellClick(data: { detail: { clickedCell: BoardCell } }) {
@@ -78,14 +78,14 @@ export class Application {
             return;
         }
 
-        this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
+        this.#gameManager.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
         this.#selectedFigure = null;
     }
 
     private onOutsideClick() {
         if(this.getSelectedFigure()) {
-            this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
+            this.#gameManager.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
             this.#selectedFigure = null;
         }
@@ -101,7 +101,7 @@ export class Application {
         }
 
         const selectedFigureType = this.#selectedFigure.getType();
-        this.#figureMoveService.unhighliteMoves(this.#selectedFigure);
+        this.#gameManager.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
         this.#selectedFigure.move(destinationCell);
         currentCell.setFigure(null);
@@ -118,6 +118,7 @@ export class Application {
             rookCell.setFigure(null);
         }
         this.#gameManager.toggleCurrentPlayer();
+        this.#gameManager.isKingUnderCheck();
     }
 
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {

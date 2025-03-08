@@ -3,28 +3,19 @@ import { Figure, FigureColor, FigureType } from "../domain/Figure";
 import { cellRepository } from "../repository/CellRepository";
 
 interface IFigureMoveService {
-    highliteMoves: (figure: Figure) => void;
-    unhighliteMoves: (figure: Figure) => void;
+    getAvalibleMoveCells: (figure: Figure) => BoardCell[];
+    getFigureMoveStrategyByFigureType: (figureType: FigureType) => (figure: Figure) => BoardCell[];
 }
 
 export class FigureMoveService implements IFigureMoveService {
-    highliteMoves(figure: Figure) {
-        const avalibleCells = this.getAvalibleMoveCells(figure);
-        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(true));
-    };
-    unhighliteMoves(figure: Figure) {
-        const avalibleCells = this.getAvalibleMoveCells(figure);
-        avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
-    };
-
-    getAvalibleMoves(figure: Figure) {
-        return this.getAvalibleMoveCells(figure);
-    }
-
-    private getAvalibleMoveCells(figure: Figure) {
+    getAvalibleMoveCells(figure: Figure) {
         const figureType = figure.getType();
         return moveStrategy[figureType](figure);
     };
+
+    getFigureMoveStrategyByFigureType(figureType: FigureType): (figure: Figure) => BoardCell[] {
+        return moveStrategy[figureType];
+    }
 }
 
 const canMove = (_figureColor:  FigureColor, cell?: BoardCell) => cell && !cell.hasFigure();
@@ -33,35 +24,43 @@ const canCapture = (figureColor:  FigureColor, cell?: BoardCell) => cell && cell
 
 const canMoveOrCapture = (figureColor:  FigureColor, cell?: BoardCell) => canMove(figureColor, cell) || canCapture(figureColor,cell);
 
-const getPawnAvalibleCells = (figure: Figure): BoardCell[] => {
-    const currentCell = figure.getCurrentCell();
+const getPawnCanMoveCells = (pawn: Figure): BoardCell[] => {
+    const currentCell = pawn.getCurrentCell();
     const result = [];
-    const topCellName = currentCell.getTopSibling(figure.getColor());
+    const topCellName = currentCell.getTopSibling(pawn.getColor());
     const topCell = cellRepository.getCell(topCellName);
-    if(canMove(figure.getColor(), topCell)) {
+    if(canMove(pawn.getColor(), topCell)) {
         result.push(topCell);
     }
-    if(figure.getStepNumber() === 0 && canMove(figure.getColor(), topCell)) {
-        const topTopCellName = topCell.getTopSibling(figure.getColor());
+    if(pawn.getStepNumber() === 0 && canMove(pawn.getColor(), topCell)) {
+        const topTopCellName = topCell.getTopSibling(pawn.getColor());
         const topTopCell = cellRepository.getCell(topTopCellName);
-        if(canMove(figure.getColor(), topTopCell)) {
+        if(canMove(pawn.getColor(), topTopCell)) {
             result.push(topTopCell);
         }
     }
-    
-    const topLeftSiblingName = currentCell.getTopLeftSibling(figure.getColor());
+    return result;
+}
+
+const getPawnCuptureCells = (pawn: Figure):BoardCell[] => {
+    const currentCell = pawn.getCurrentCell();
+    const result = [];
+    const topLeftSiblingName = currentCell.getTopLeftSibling(pawn.getColor());
     const topLeftCell = cellRepository.getCell(topLeftSiblingName);
-    if(canCapture(figure.getColor(), topLeftCell)) {
+    if(canCapture(pawn.getColor(), topLeftCell)) {
         result.push(topLeftCell);
     }
 
-    const topRightSiblingName = currentCell.getTopRightSibling( figure.getColor());
+    const topRightSiblingName = currentCell.getTopRightSibling( pawn.getColor());
     const topRightCell = cellRepository.getCell(topRightSiblingName);
-    if(canCapture(figure.getColor(), topRightCell)) {
+    if(canCapture(pawn.getColor(), topRightCell)) {
         result.push(topRightCell);
     }
     return result;
 }
+
+const getPawnAvalibleCells = (pawn: Figure): BoardCell[] => 
+    [...getPawnCanMoveCells(pawn), ...getPawnCuptureCells(pawn)];
 
 const addMoveOrCaptureCellToArray = (array: BoardCell[], figureColor: FigureColor, cellName: string) => {
     const cell = cellRepository.getCell(cellName);
@@ -191,7 +190,7 @@ const getAvalibleCellsByDirection: Record<TGetCellStrategy, (figure: Figure) => 
     },
     'all': (figure: Figure) => {
         return [...getAvalibleCellsByDirection['line'](figure), ...getAvalibleCellsByDirection['diagonale'](figure)];
-    }
+    },
 } as const;
 
 const moveStrategy: Record<FigureType, (figure: Figure) => BoardCell[]> = {
