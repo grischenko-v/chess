@@ -43,7 +43,10 @@ export class GameManager {
             figureRepository.getFiguresByColor('white') : figureRepository.getFiguresByColor('black');
 
         const atteackedCells = Object.keys(figures).flatMap(key => {
-            return this.#figureMoveService.getCaptureCells(figures[key as any])
+            return {
+                figure: figures[key as any],
+                cells: this.#figureMoveService.getCaptureCells(figures[key as any])
+            }
         })
 
         return atteackedCells;
@@ -51,8 +54,8 @@ export class GameManager {
 
     isKingUnderCheck(): boolean {
         const kingCell = this.getCurrentKing().getCurrentCell();
-        const testCells = this.getAttackedCells();
-        return testCells.includes(kingCell);
+        const cellUnderCapture = this.getAttackedCells();
+        return cellUnderCapture.flatMap(cells => cells.cells).includes(kingCell);
     }
 
     isGameFinished(): boolean {
@@ -69,21 +72,23 @@ export class GameManager {
     filterAvalibaleMoves(avalibleCells: BoardCell[], figure: Figure) {
         let isKingUnderCheck = this.isKingUnderCheck();
         const currentFigureCell = figure.getCurrentCell();
-        const test =  avalibleCells.filter(cell => {
+        const kingCell = this.getCurrentKing().getCurrentCell();
+        const attacedFigures = this.getAttackedCells()
+            .filter(item => item.cells.includes(kingCell))
+            .map(item => item.figure);
+        return avalibleCells.filter(cell => {
             if(cell.hasFigure()) {
-                // to do save king by figure caputre
-                return true;
+                return !isKingUnderCheck || attacedFigures.includes(cell.getFigure());
             }
             currentFigureCell.setFigure(null);
             cell.setFigure(figure);
             figure.setCurrentCell(cell);
-            isKingUnderCheck = this.isKingUnderCheck();
+            const isChecked = this.isKingUnderCheck();
             currentFigureCell.setFigure(figure);
             figure.setCurrentCell(currentFigureCell);
             cell.setFigure(null);
-            return !isKingUnderCheck;
+            return !isChecked;
         })
-        return test
     }
 
     highliteMoves(figure: Figure) {
