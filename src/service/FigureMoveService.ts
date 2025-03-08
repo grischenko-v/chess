@@ -4,7 +4,7 @@ import { cellRepository } from "../repository/CellRepository";
 
 interface IFigureMoveService {
     getAvalibleMoveCells: (figure: Figure) => BoardCell[];
-    getFigureMoveStrategyByFigureType: (figureType: FigureType) => (figure: Figure) => BoardCell[];
+    getCaptureCells: (figure: Figure) =>  BoardCell[];
 }
 
 export class FigureMoveService implements IFigureMoveService {
@@ -13,9 +13,10 @@ export class FigureMoveService implements IFigureMoveService {
         return moveStrategy[figureType](figure);
     };
 
-    getFigureMoveStrategyByFigureType(figureType: FigureType): (figure: Figure) => BoardCell[] {
-        return moveStrategy[figureType];
-    }
+    getCaptureCells(figure: Figure) {
+        const figureType = figure.getType();
+        return captureStrategy[figureType](figure);
+    };
 }
 
 const canMove = (_figureColor:  FigureColor, cell?: BoardCell) => cell && !cell.hasFigure();
@@ -195,6 +196,15 @@ const getAvalibleCellsByDirection: Record<TGetCellStrategy, (figure: Figure) => 
 
 const moveStrategy: Record<FigureType, (figure: Figure) => BoardCell[]> = {
     'Pawn': getPawnAvalibleCells,
+    'Rook': getAvalibleCellsByDirection['line'],
+    'Bishop': getAvalibleCellsByDirection['diagonale'],
+    'Knight': getKnightAvalibleCells,
+    'Queen': getAvalibleCellsByDirection['all'],
+    'King': getKingAvalibleCells,
+}
+
+const captureStrategy: Record<FigureType, (figure: Figure) => BoardCell[]> = {
+    'Pawn': getPawnCuptureCells,
     'Rook': getAvalibleCellsByDirection['line'],
     'Bishop': getAvalibleCellsByDirection['diagonale'],
     'Knight': getKnightAvalibleCells,

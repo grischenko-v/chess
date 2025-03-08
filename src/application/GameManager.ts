@@ -43,17 +43,15 @@ export class GameManager {
             figureRepository.getFiguresByColor('white') : figureRepository.getFiguresByColor('black');
 
         const atteackedCells = Object.keys(figures).flatMap(key => {
-            return this.#figureMoveService.getAvalibleMoveCells(figures[key as any])
+            return this.#figureMoveService.getCaptureCells(figures[key as any])
         })
 
-        // console.log(atteackedCells);
         return atteackedCells;
     }
 
     isKingUnderCheck(): boolean {
         const kingCell = this.getCurrentKing().getCurrentCell();
         const testCells = this.getAttackedCells();
-        // console.log(testCells.includes(kingCell));
         return testCells.includes(kingCell);
     }
 
@@ -71,17 +69,21 @@ export class GameManager {
     filterAvalibaleMoves(avalibleCells: BoardCell[], figure: Figure) {
         let isKingUnderCheck = this.isKingUnderCheck();
         const currentFigureCell = figure.getCurrentCell();
-        return avalibleCells.filter(cell => {
+        const test =  avalibleCells.filter(cell => {
+            if(cell.hasFigure()) {
+                // to do save king by figure caputre
+                return true;
+            }
             currentFigureCell.setFigure(null);
             cell.setFigure(figure);
             figure.setCurrentCell(cell);
             isKingUnderCheck = this.isKingUnderCheck();
-            console.log(isKingUnderCheck);
             currentFigureCell.setFigure(figure);
             figure.setCurrentCell(currentFigureCell);
             cell.setFigure(null);
             return !isKingUnderCheck;
         })
+        return test
     }
 
     highliteMoves(figure: Figure) {

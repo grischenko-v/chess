@@ -3,7 +3,6 @@ import { BoardCell } from "../domain/BoardCell";
 export interface ICellRepository {
     addCell: (cell: BoardCell) => void,
     getCell: (name: string) => BoardCell,
-    getBoardCopy: () => Record<string, BoardCell> 
 }
 
 class CellRepository implements ICellRepository {
@@ -16,10 +15,6 @@ class CellRepository implements ICellRepository {
 
     getCell(name: string): BoardCell {
         return this.#cells[name];
-    }
-
-    getBoardCopy(): Record<string, BoardCell> {
-        return structuredClone(this.#cells);
     }
 }
 
