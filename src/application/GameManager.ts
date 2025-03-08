@@ -50,11 +50,11 @@ export class GameManager {
     }
 
     isGameFinished(): boolean {
-        const figures = this.#currentPlayerColor === 'white' ?
+        const figures = this.#currentPlayerColor === 'black' ?
             figureRepository.getFiguresByColor('white') : figureRepository.getFiguresByColor('black');
-        const avalibleMoves = Object.keys(figures).flatMap(key => {
-            const movies = this.#figureMoveService.getAvalibleMoveCells(figures[key as any])
-            return this.filterAvalibleCellsByKingCheck(movies, figures[key as any]);
+        const avalibleMoves = figures.flatMap(figure => {
+            const movies = this.#figureMoveService.getAvalibleMoveCells(figure)
+            return this.filterAvalibleCellsByKingCheck(movies, figure);
         });
 
         return avalibleMoves.length === 0;

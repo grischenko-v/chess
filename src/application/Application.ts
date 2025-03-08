@@ -118,8 +118,12 @@ export class Application {
             rookCell.setFigure(null);
         }
         this.#gameManager.toggleCurrentPlayer();
-        this.#gameManager.isKingUnderCheck();
-        this.#gameManager.isGameFinished();
+        if(this.#gameManager.isKingUnderCheck()) {
+            console.log(`${this.#gameManager.getCurrentPlayer()} - check`)
+        }
+        if(this.#gameManager.isGameFinished()) {
+            console.log(`${this.#gameManager.getCurrentPlayer()} - loose`)
+        };
     }
 
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {
