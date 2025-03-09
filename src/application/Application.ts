@@ -1,6 +1,6 @@
 import { HTMLAdapter } from "../adapters/HTMLAdapter";
 import { UIAdater } from "../adapters/SceneAdapter";
-import { BOARD_CELL_COLOR, ROQUE_STEP_MAP, ROQUE_STEP_MAP_KEYS } from "../constants";
+import { ROQUE_STEP_MAP, ROQUE_STEP_MAP_KEYS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
 import { eventBus, eventTypes } from "../infra/EventBus";

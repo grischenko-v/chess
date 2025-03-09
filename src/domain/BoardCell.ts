@@ -67,6 +67,10 @@ export class BoardCell {
         return this.#canmove;
     }
 
+    setDefualtColor() {
+        this.changeColor(BOARD_CELL_COLOR[this.#color]);
+    }
+
     setCanMove(canMove: boolean) {
         this.#canmove = canMove;
         
@@ -80,7 +84,7 @@ export class BoardCell {
             return;
         }
 
-        this.changeColor(BOARD_CELL_COLOR[this.#color]);
+        this.setDefualtColor();
     }
 
     changeColor(color: number) {

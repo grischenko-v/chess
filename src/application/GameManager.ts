@@ -11,7 +11,8 @@ export class GameManager {
 
     constructor(figureMoveService: FigureMoveService) {
         this.#figureMoveService = figureMoveService;
-        eventBus.subscribe('gameFinished', this.onGameFinished.bind(this))
+        eventBus.subscribe('gameFinished', this.onGameFinished.bind(this));
+        eventBus.subscribe('checked', this.onChecked.bind(this))
     }
 
     getCurrentPlayer() {
@@ -27,9 +28,19 @@ export class GameManager {
         this.#currentPlayerColor = 'white';
     }
 
+    private onChecked() {
+        const currentKingCell = this.getCurrentKing().getCurrentCell();
+        currentKingCell.changeColor(BOARD_CELL_COLOR.capture);
+
+        setTimeout(() => {
+            const currentKingCell = this.getCurrentKing().getCurrentCell()
+            currentKingCell.setDefualtColor();
+        }, 1000)
+    }
+
     private onGameFinished() {
-        const currentKingCell = this.getCurrentKing().getCurrentCell()
-        currentKingCell.changeColor(BOARD_CELL_COLOR.capture)
+        const currentKingCell = this.getCurrentKing().getCurrentCell();
+        currentKingCell.changeColor(BOARD_CELL_COLOR.capture);
     }
 
     private getCurrentKing() {
