@@ -6,9 +6,9 @@ export class HTMLAdapter {
     constructor() {
         this.#body = document.body;
 
-        eventBus.subscribe('chagePlayer', this.onChangePlayer);
-        eventBus.subscribe('checked', this.onCheked);
-        eventBus.subscribe('gameFinished', this.onGameFinished);
+        eventBus.subscribe('chagePlayer', this.onChangePlayer.bind(this));
+        eventBus.subscribe('checked', this.onCheked.bind(this));
+        eventBus.subscribe('gameFinished', this.onGameFinished.bind(this));
     }
 
     private onChangePlayer() {

@@ -1,3 +1,4 @@
+import { BOARD_CELL_COLOR } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure, FigureColor } from "../domain/Figure";
 import { eventBus } from "../infra/EventBus";
@@ -10,6 +11,7 @@ export class GameManager {
 
     constructor(figureMoveService: FigureMoveService) {
         this.#figureMoveService = figureMoveService;
+        eventBus.subscribe('gameFinished', this.onGameFinished.bind(this))
     }
 
     getCurrentPlayer() {
@@ -23,6 +25,11 @@ export class GameManager {
             return;
         }
         this.#currentPlayerColor = 'white';
+    }
+
+    private onGameFinished() {
+        const currentKingCell = this.getCurrentKing().getCurrentCell()
+        currentKingCell.changeColor(BOARD_CELL_COLOR.capture)
     }
 
     private getCurrentKing() {
