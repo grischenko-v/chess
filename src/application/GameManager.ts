@@ -50,7 +50,7 @@ export class GameManager {
     }
 
     isGameFinished(): boolean {
-        const figures = this.#currentPlayerColor === 'black' ?
+        const figures = this.#currentPlayerColor === 'white' ?
             figureRepository.getFiguresByColor('white') : figureRepository.getFiguresByColor('black');
         const avalibleMoves = figures.flatMap(figure => {
             const movies = this.#figureMoveService.getAvalibleMoveCells(figure)
@@ -68,7 +68,7 @@ export class GameManager {
             .filter(item => item.cells.includes(kingCell))
             .map(item => item.figure);
         return avalibleCells.filter(cell => {
-            if (cell.hasFigure()) {
+            if (cell.hasFigure() && cell.getFigure().getType() !== 'King') {
                 return !isKingUnderCheck || attacedFigures.includes(cell.getFigure());
             }
             currentFigureCell.setFigure(null);
@@ -84,6 +84,8 @@ export class GameManager {
 
     highliteMoves(figure: Figure) {
         const avalibleCells = this.#figureMoveService.getAvalibleMoveCells(figure);
+      
+
         this.filterAvalibleCellsByKingCheck(avalibleCells, figure).forEach((cell: BoardCell) => cell.setCanMove(true));
     }
 
