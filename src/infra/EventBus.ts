@@ -1,7 +1,10 @@
 export const eventTypes = {
     outsideClick: 'outsideClick',
     cellClick: 'cellClick',
-    figureClick: 'figureClick'
+    figureClick: 'figureClick',
+    chagePlayer: 'changePlayer',
+    checked: 'checked',
+    gameFinished: 'gameFinished',
 } as const;
 
 export type EventTypes = keyof typeof eventTypes;
@@ -12,7 +15,7 @@ export interface IEventBus {
 }
 
 class EventBus implements IEventBus {
-    dispatchEvent(eventType: EventTypes, message: unknown) {
+    dispatchEvent(eventType: EventTypes, message?: unknown) {
         window.dispatchEvent(new CustomEvent(eventType, { 
             detail: message, 
         }))

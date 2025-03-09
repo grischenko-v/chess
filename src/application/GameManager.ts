@@ -1,5 +1,6 @@
 import { BoardCell } from "../domain/BoardCell";
 import { Figure, FigureColor } from "../domain/Figure";
+import { eventBus } from "../infra/EventBus";
 import { figureRepository } from "../repository/FiguresRepository";
 import { FigureMoveService } from "../service/FigureMoveService";
 
@@ -16,6 +17,7 @@ export class GameManager {
     }
 
     toggleCurrentPlayer() {
+        eventBus.dispatchEvent('chagePlayer');
         if (this.#currentPlayerColor === 'white') {
             this.#currentPlayerColor = 'black'
             return;
@@ -84,8 +86,6 @@ export class GameManager {
 
     highliteMoves(figure: Figure) {
         const avalibleCells = this.#figureMoveService.getAvalibleMoveCells(figure);
-      
-
         this.filterAvalibleCellsByKingCheck(avalibleCells, figure).forEach((cell: BoardCell) => cell.setCanMove(true));
     }
 

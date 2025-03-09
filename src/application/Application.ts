@@ -1,3 +1,4 @@
+import { HTMLAdapter } from "../adapters/HTMLAdapter";
 import { UIAdater } from "../adapters/SceneAdapter";
 import { ROQUE_STEP_MAP, ROQUE_STEP_MAP_KEYS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
@@ -10,6 +11,7 @@ import { GameManager } from "./GameManager";
 
 export class Application {
     #UIAdater: UIAdater;
+    #htmlAdapter = new HTMLAdapter();
 
     #selectedFigure: Figure | null;
     #figureMoveService: FigureMoveService;
@@ -119,9 +121,11 @@ export class Application {
         }
         this.#gameManager.toggleCurrentPlayer();
         if(this.#gameManager.isKingUnderCheck()) {
-            console.log(`${this.#gameManager.getCurrentPlayer()} - check`)
+            eventBus.dispatchEvent('checked');
+            console.log(`${this.#gameManager.getCurrentPlayer()} - loose`)
         }
         if(this.#gameManager.isGameFinished()) {
+            eventBus.dispatchEvent('gameFinished');
             console.log(`${this.#gameManager.getCurrentPlayer()} - loose`)
         };
     }
