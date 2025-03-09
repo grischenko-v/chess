@@ -14,14 +14,11 @@ export class Application {
     #htmlAdapter = new HTMLAdapter();
 
     #selectedFigure: Figure | null;
-    #figureMoveService: FigureMoveService;
     #gameManager: GameManager;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
-
-        this.#figureMoveService = new FigureMoveService();
-        this.#gameManager = new GameManager(this.#figureMoveService);
+        this.#gameManager = new GameManager();
 
         eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));

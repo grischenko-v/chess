@@ -9,8 +9,8 @@ export class GameManager {
     #currentPlayerColor: FigureColor = 'white';
     #figureMoveService: FigureMoveService;
 
-    constructor(figureMoveService: FigureMoveService) {
-        this.#figureMoveService = figureMoveService;
+    constructor() {
+        this.#figureMoveService = new FigureMoveService();
         eventBus.subscribe('gameFinished', this.onGameFinished.bind(this));
         eventBus.subscribe('checked', this.onChecked.bind(this))
     }
