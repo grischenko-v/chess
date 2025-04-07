@@ -87,17 +87,36 @@ export class GameManager {
         const attacedFigures = this.getfiguresWithAttackedCells()
             .filter(item => item.cells.includes(kingCell))
             .map(item => item.figure);
+        console.log(avalibleCells);
         return avalibleCells.filter(cell => {
-            if (cell.hasFigure() && cell.getFigure().getType() !== 'King') {
+            if (cell.hasFigure() && cell.getFigure().getType() !== 'King' && figure.getType() !== 'King') {
                 return !isKingUnderCheck || attacedFigures.includes(cell.getFigure());
             }
+
             currentFigureCell.setFigure(null);
+            let oldFigure = null;
+            if(cell.hasFigure()) {
+                oldFigure = cell.getFigure();
+                oldFigure.setCurrentCell(null);
+                cell.setFigure(null);
+            }
             cell.setFigure(figure);
             figure.setCurrentCell(cell);
+
+            
+            const test = this.getfiguresWithAttackedCells()
+                .filter(item => item.cells.includes(cell))
             const isChecked = this.isKingUnderCheck();
+            console.log(isChecked);
             currentFigureCell.setFigure(figure);
             figure.setCurrentCell(currentFigureCell);
-            cell.setFigure(null);
+            cell.setFigure(oldFigure);
+            oldFigure && oldFigure.setCurrentCell(cell);
+            if(figure.getType() === 'King') {
+
+                console.log(test);
+                return test.length === 0 && !isChecked;
+            }
             return !isChecked;
         })
     }
