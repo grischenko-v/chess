@@ -69,7 +69,6 @@ export class GameManager {
     isKingUnderCheck(): boolean {
         const kingCell = this.getCurrentKing().getCurrentCell();
         const cellUnderCapturebyFigure = this.getfiguresWithAttackedCells(this.getSecondPlayerColor());
-        console.log(this.getSecondPlayerColor());
         return cellUnderCapturebyFigure.flatMap(cellsbyFigure => cellsbyFigure.cells).includes(kingCell);
     }
 
@@ -85,7 +84,6 @@ export class GameManager {
 
     filterAvalibleCellsByKingCheck(avalibleCells: BoardCell[], selectedFigure: Figure) {
         const selectedigureCell = selectedFigure.getCurrentCell();
-        console.log(avalibleCells.map(cell => cell.getCellName()))
         return avalibleCells.filter(cell => {
             const cellFigure = cell.getFigure();
             if(cellFigure && cellFigure.getColor() !== this.#currentPlayerColor || !cellFigure) {
