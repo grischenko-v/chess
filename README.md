@@ -10,7 +10,6 @@ Now in progress:
 
 TODO:
 - Add 'en passant'
-- King can eat figure that is defended.
 - Kings must have 1 cell between
 - Create moves history
 - Add move rollback function
