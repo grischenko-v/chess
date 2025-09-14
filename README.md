@@ -9,7 +9,6 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- fix en passant when you have 2 variants
 - Kings must have 1 cell between
 - Cant roque when King under check
 - Create moves history

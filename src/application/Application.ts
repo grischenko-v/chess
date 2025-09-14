@@ -85,9 +85,9 @@ export class Application {
         const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
         const currentCellFigure = currentCell.getFigure();
         if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure.getType() === 'Pawn'
-             && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
+            && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
+            && destinationCell.getCellRow() === rightSiblingCell.getCellRow()
             ) {
-
                 this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
                 return true;
         }
@@ -95,9 +95,9 @@ export class Application {
         const leftSiblingCellName = currentCell.getLeftSibling(this.#selectedFigure.getColor());
         const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
         if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure.getType() === 'Pawn'
-                && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
+            && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
+            && destinationCell.getCellRow() === leftSiblingCell.getCellRow()
             ) {
-
                 this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
                 return true;
         }
