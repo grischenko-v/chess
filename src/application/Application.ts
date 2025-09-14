@@ -6,7 +6,6 @@ import { Figure } from "../domain/Figure";
 import { eventBus, eventTypes } from "../infra/EventBus";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
-import { FigureMoveService } from "../service/FigureMoveService";
 import { GameManager } from "./GameManager";
 
 export class Application {
@@ -66,6 +65,21 @@ export class Application {
         }
 
         const currentCell = this.#selectedFigure.getCurrentCell();
+
+        // en passant 
+        const rightSiblingCellName = currentCell.getRightSibling(this.#selectedFigure.getColor());
+        const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
+        const leftSiblingCellName = currentCell.getLeftSibling(this.#selectedFigure.getColor());
+        const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
+        if(destinationCell.getCanMove() && !destinationCell.hasFigure()
+             && (rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor()) || 
+                leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor()))
+            ) {
+
+                this.captureFigureEnPassant(currentCell, destinationCell,
+                    rightSiblingCell.getRow() === destinationCell.getRow() ? rightSiblingCell : leftSiblingCell);
+                return;
+        }
 
         if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
             this.captureFigure(currentCell, destinationCell)
@@ -127,6 +141,14 @@ export class Application {
 
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {
         const capturedFigure = destinationCell.getFigure();
+        this.#UIAdater.remove(capturedFigure.getFigure());
+        figureRepository.deleteFigure(capturedFigure);
+
+        this.moveFigure(currentCell, destinationCell);
+    }
+
+    private captureFigureEnPassant(currentCell: BoardCell, destinationCell: BoardCell, cupturedCell: BoardCell) {
+        const capturedFigure = cupturedCell.getFigure();
         this.#UIAdater.remove(capturedFigure.getFigure());
         figureRepository.deleteFigure(capturedFigure);
 

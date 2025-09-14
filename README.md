@@ -9,7 +9,6 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- Add 'en passant'
 - Kings must have 1 cell between
 - Create moves history
 - Add move rollback function

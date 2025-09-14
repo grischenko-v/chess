@@ -23,6 +23,8 @@ const canMove = (_figureColor:  FigureColor, cell?: BoardCell) => cell && !cell.
 
 const canCapture = (figureColor:  FigureColor, cell?: BoardCell) => cell && cell.hasFigure() && cell.getFigure().getColor() !== figureColor;
 
+const canCaptureEnPassant = (figureColor:  FigureColor, cell?: BoardCell) => canCapture(figureColor, cell) && cell.getFigure().getStepNumber() === 1;
+
 const canMoveOrCapture = (figureColor:  FigureColor, cell?: BoardCell) => canMove(figureColor, cell) || canCapture(figureColor,cell);
 
 const getPawnCanMoveCells = (pawn: Figure): BoardCell[] => {
@@ -52,11 +54,24 @@ const getPawnCuptureCells = (pawn: Figure):BoardCell[] => {
         result.push(topLeftCell);
     }
 
+    const leftSiblingName = currentCell.getLeftSibling(pawn.getColor());
+    const leftCell = cellRepository.getCell(leftSiblingName);
+    if(canCaptureEnPassant(pawn.getColor(), leftCell)) {
+        result.push(topLeftCell);
+    }
+
     const topRightSiblingName = currentCell.getTopRightSibling( pawn.getColor());
     const topRightCell = cellRepository.getCell(topRightSiblingName);
     if(canCapture(pawn.getColor(), topRightCell)) {
         result.push(topRightCell);
     }
+
+    const rightSiblingName = currentCell.getRightSibling(pawn.getColor());
+    const rightCell = cellRepository.getCell(rightSiblingName);
+    if(canCaptureEnPassant(pawn.getColor(), rightCell)) {
+        result.push(topRightCell);
+    }
+
     return result;
 }
 

@@ -21,14 +21,16 @@ export class BoardCell {
     #siblings: TSiblings;
     #canmove = false;
     #color: CELL_COLOR_TYPE;
+    #row: string;
 
-    constructor(name: string, boardCoords: {x: number, z: number}) {
-        this.#name = name;
+    constructor( column: string, row: string, boardCoords: {x: number, z: number}) {
+        this.#name = `${column}${row}`;
+        this.#row = row;
         this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
         this.#cellGeometry = new CellGeometry(
-            {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, this.#color, name
+            {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, this.#color, this.#name 
         );
-        this.#siblings = getCellSublings(name);
+        this.#siblings = getCellSublings(this.#name);
     }
 
     getTopSibling(figureColor: FigureColor) {
@@ -121,5 +123,19 @@ export class BoardCell {
 
     getCellPosition() {
         return this.#cellGeometry.getPosition();
+    }
+
+    canEnPassantCupture(figureColor: FigureColor) {
+        if(!this.hasFigure() || !this.#figure) {
+            return false;
+        }
+        const figure = this.getFigure();
+        return figure.getType() === 'Pawn'
+             && figure.getColor() !== figureColor
+             && figure.getStepNumber() === 1 
+    }
+
+    getRow() {
+        return this.#row;
     }
 }

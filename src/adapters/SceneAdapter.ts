@@ -63,7 +63,7 @@ class SceneAdapter {
 
         for(let [x, row] of rows.entries()) {
             for(let [z, column] of columns.entries()) {
-                const cell = new BoardCell(`${column}${row}`, {x, z});
+                const cell = new BoardCell(`${column}`,`${row}`, {x, z});
                 cellRepository.addCell(cell)
                 this.draw(cell);
             }
