@@ -19,6 +19,10 @@ export class GameManager {
         return this.#currentPlayerColor;
     }
 
+    getSecondPlayerColor() {
+        return this.#currentPlayerColor === 'black' ? 'white' : 'black';
+    }
+
     toggleCurrentPlayer() {
         eventBus.dispatchEvent('chagePlayer');
         if (this.#currentPlayerColor === 'white') {
@@ -49,9 +53,8 @@ export class GameManager {
         return currentKing;
     }
 
-    private getfiguresWithAttackedCells() {
-        const figures = this.#currentPlayerColor === 'black' ?
-            figureRepository.getFiguresByColor('white') : figureRepository.getFiguresByColor('black');
+    private getfiguresWithAttackedCells(color: FigureColor) {
+        const figures = figureRepository.getFiguresByColor(color);
 
         const figuresWithAttackedCells = figures.flatMap(figure => {
             return {
@@ -65,13 +68,13 @@ export class GameManager {
 
     isKingUnderCheck(): boolean {
         const kingCell = this.getCurrentKing().getCurrentCell();
-        const cellUnderCapturebyFigure = this.getfiguresWithAttackedCells();
+        const cellUnderCapturebyFigure = this.getfiguresWithAttackedCells(this.getSecondPlayerColor());
+        console.log(this.getSecondPlayerColor());
         return cellUnderCapturebyFigure.flatMap(cellsbyFigure => cellsbyFigure.cells).includes(kingCell);
     }
 
     isGameFinished(): boolean {
-        const figures = this.#currentPlayerColor === 'white' ?
-            figureRepository.getFiguresByColor('white') : figureRepository.getFiguresByColor('black');
+        const figures = figureRepository.getFiguresByColor(this.#currentPlayerColor);
         const avalibleMoves = figures.flatMap(figure => {
             const movies = this.#figureMoveService.getAvalibleMoveCells(figure)
             return this.filterAvalibleCellsByKingCheck(movies, figure);
@@ -81,22 +84,26 @@ export class GameManager {
     }
 
     filterAvalibleCellsByKingCheck(avalibleCells: BoardCell[], selectedFigure: Figure) {
-        let isKingUnderCheck = this.isKingUnderCheck();
-        if(!isKingUnderCheck) {
-            return avalibleCells;
-        }
-
         const selectedigureCell = selectedFigure.getCurrentCell();
-
+        console.log(avalibleCells.map(cell => cell.getCellName()))
         return avalibleCells.filter(cell => {
-            selectedigureCell.setFigure(null);
-            selectedFigure.setCurrentCell(cell);
-            cell.setFigure(selectedFigure);
+            const cellFigure = cell.getFigure();
+            if(cellFigure && cellFigure.getColor() !== this.#currentPlayerColor || !cellFigure) {
+                selectedigureCell.setFigure(null);
+                selectedFigure.setCurrentCell(cell);
+                cell.setFigure(selectedFigure);
+                cellFigure && cellFigure.setCurrentCell(null);
+                cellFigure && figureRepository.deleteFigure(cellFigure);
+            }
             const isKingUnderCheckAfterMove = this.isKingUnderCheck();
-            selectedFigure.setCurrentCell(selectedigureCell);
-            selectedigureCell.setFigure(selectedFigure);
-            cell.setFigure(null);
-           return !isKingUnderCheckAfterMove;
+            if(cellFigure && cellFigure.getColor() !== this.#currentPlayerColor || !cellFigure) {
+                selectedigureCell.setFigure(selectedFigure);
+                selectedFigure.setCurrentCell(selectedigureCell);
+                cell.setFigure(cellFigure);
+                cellFigure && cellFigure.setCurrentCell(cell);
+                cellFigure && figureRepository.addFigure(cellFigure);
+            }
+            return !isKingUnderCheckAfterMove;
         })
     }
 

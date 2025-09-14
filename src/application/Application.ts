@@ -161,6 +161,7 @@ export class Application {
             rookDestinatioCell.setFigure(rook);
             rookCell.setFigure(null);
         }
+        
         this.#gameManager.toggleCurrentPlayer();
         if(this.#gameManager.isKingUnderCheck()) {
             eventBus.dispatchEvent('checked');
