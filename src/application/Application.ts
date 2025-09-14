@@ -66,21 +66,29 @@ export class Application {
 
         const currentCell = this.#selectedFigure.getCurrentCell();
 
-        // en passant 
+        // en passant capture
         const rightSiblingCellName = currentCell.getRightSibling(this.#selectedFigure.getColor());
         const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
+       
+        if(destinationCell.getCanMove() && !destinationCell.hasFigure()
+             && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
+            ) {
+
+                this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
+                return;
+        }
+        
         const leftSiblingCellName = currentCell.getLeftSibling(this.#selectedFigure.getColor());
         const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
         if(destinationCell.getCanMove() && !destinationCell.hasFigure()
-             && (rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor()) || 
-                leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor()))
+                && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             ) {
 
-                this.captureFigureEnPassant(currentCell, destinationCell,
-                    rightSiblingCell.getRow() === destinationCell.getRow() ? rightSiblingCell : leftSiblingCell);
+                this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
                 return;
         }
 
+        // regular capture
         if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
             this.captureFigure(currentCell, destinationCell)
             return;

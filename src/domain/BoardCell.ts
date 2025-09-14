@@ -21,11 +21,9 @@ export class BoardCell {
     #siblings: TSiblings;
     #canmove = false;
     #color: CELL_COLOR_TYPE;
-    #row: string;
 
     constructor( column: string, row: string, boardCoords: {x: number, z: number}) {
         this.#name = `${column}${row}`;
-        this.#row = row;
         this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
         this.#cellGeometry = new CellGeometry(
             {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, this.#color, this.#name 
@@ -133,9 +131,5 @@ export class BoardCell {
         return figure.getType() === 'Pawn'
              && figure.getColor() !== figureColor
              && figure.getStepNumber() === 1 
-    }
-
-    getRow() {
-        return this.#row;
     }
 }
