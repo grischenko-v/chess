@@ -68,7 +68,7 @@ export class Application {
         if(this.tryEnPassantCapture(destinationCell, currentCell)) {
             return;
         }
-        
+
         if(this.tryRegularCapture(destinationCell, currentCell)) {
             return
         }
@@ -83,8 +83,8 @@ export class Application {
     private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
         const rightSiblingCellName = currentCell.getRightSibling(this.#selectedFigure.getColor());
         const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
-       
-        if(destinationCell.getCanMove() && !destinationCell.hasFigure()
+        const currentCellFigure = currentCell.getFigure();
+        if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure.getType() === 'Pawn'
              && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             ) {
 
@@ -94,7 +94,7 @@ export class Application {
         
         const leftSiblingCellName = currentCell.getLeftSibling(this.#selectedFigure.getColor());
         const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
-        if(destinationCell.getCanMove() && !destinationCell.hasFigure()
+        if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure.getType() === 'Pawn'
                 && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             ) {
 
