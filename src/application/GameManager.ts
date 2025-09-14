@@ -80,44 +80,23 @@ export class GameManager {
         return avalibleMoves.length === 0;
     }
 
-    filterAvalibleCellsByKingCheck(avalibleCells: BoardCell[], figure: Figure) {
+    filterAvalibleCellsByKingCheck(avalibleCells: BoardCell[], selectedFigure: Figure) {
         let isKingUnderCheck = this.isKingUnderCheck();
-        const currentFigureCell = figure.getCurrentCell();
-        const kingCell = this.getCurrentKing().getCurrentCell();
-        const attacedFigures = this.getfiguresWithAttackedCells()
-            .filter(item => item.cells.includes(kingCell))
-            .map(item => item.figure);
-        console.log(avalibleCells);
+        if(!isKingUnderCheck) {
+            return avalibleCells;
+        }
+
+        const selectedigureCell = selectedFigure.getCurrentCell();
+
         return avalibleCells.filter(cell => {
-            if (cell.hasFigure() && cell.getFigure().getType() !== 'King' && figure.getType() !== 'King') {
-                return !isKingUnderCheck || attacedFigures.includes(cell.getFigure());
-            }
-
-            currentFigureCell.setFigure(null);
-            let oldFigure = null;
-            if(cell.hasFigure()) {
-                oldFigure = cell.getFigure();
-                oldFigure.setCurrentCell(null);
-                cell.setFigure(null);
-            }
-            cell.setFigure(figure);
-            figure.setCurrentCell(cell);
-
-            
-            const test = this.getfiguresWithAttackedCells()
-                .filter(item => item.cells.includes(cell))
-            const isChecked = this.isKingUnderCheck();
-            console.log(isChecked);
-            currentFigureCell.setFigure(figure);
-            figure.setCurrentCell(currentFigureCell);
-            cell.setFigure(oldFigure);
-            oldFigure && oldFigure.setCurrentCell(cell);
-            if(figure.getType() === 'King') {
-
-                console.log(test);
-                return test.length === 0 && !isChecked;
-            }
-            return !isChecked;
+            selectedigureCell.setFigure(null);
+            selectedFigure.setCurrentCell(cell);
+            cell.setFigure(selectedFigure);
+            const isKingUnderCheckAfterMove = this.isKingUnderCheck();
+            selectedFigure.setCurrentCell(selectedigureCell);
+            selectedigureCell.setFigure(selectedFigure);
+            cell.setFigure(null);
+           return !isKingUnderCheckAfterMove;
         })
     }
 

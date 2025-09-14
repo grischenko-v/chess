@@ -156,6 +156,9 @@ type TCellSibiling = 'getTopSibling' | 'getBottomSibling' | 'getLeftSibling' | '
 export const getCellsByDirection = (figure: Figure, siblingName: TCellSibiling) => {
     const currentCell = figure.getCurrentCell();
     const result = [];
+    if(!currentCell) {
+        return [];
+    }
     let cellName = currentCell[siblingName](figure.getColor());
     let cell = cellRepository.getCell(cellName);
     let nextCellName = currentCell[siblingName](figure.getColor());
@@ -195,19 +198,19 @@ const getAvalibleCellsByDirection: Record<TGetCellStrategy, (figure: Figure) => 
 } as const;
 
 const moveStrategy: Record<FigureType, (figure: Figure) => BoardCell[]> = {
-    'Pawn': getPawnAvalibleCells,
-    'Rook': getAvalibleCellsByDirection['line'],
-    'Bishop': getAvalibleCellsByDirection['diagonale'],
-    'Knight': getKnightAvalibleCells,
-    'Queen': getAvalibleCellsByDirection['all'],
-    'King': getKingAvalibleCells,
+    'Pawn': (figure) =>getPawnAvalibleCells(figure),
+    'Rook': (figure) =>getAvalibleCellsByDirection['line'](figure),
+    'Bishop': (figure) =>getAvalibleCellsByDirection['diagonale'](figure),
+    'Knight': (figure) =>getKnightAvalibleCells(figure),
+    'Queen': (figure) =>getAvalibleCellsByDirection['all'](figure),
+    'King': (figure) =>getKingAvalibleCells(figure),
 }
 
 const captureStrategy: Record<FigureType, (figure: Figure) => BoardCell[]> = {
-    'Pawn': getPawnCuptureCells,
-    'Rook': getAvalibleCellsByDirection['line'],
-    'Bishop': getAvalibleCellsByDirection['diagonale'],
-    'Knight': getKnightAvalibleCells,
-    'Queen': getAvalibleCellsByDirection['all'],
-    'King': getKingAvalibleCells,
+    'Pawn': (figure) => getPawnCuptureCells(figure),
+    'Rook': (figure) => getAvalibleCellsByDirection['line'](figure),
+    'Bishop': (figure) => getAvalibleCellsByDirection['diagonale'](figure),
+    'Knight': (figure) => getKnightAvalibleCells(figure),
+    'Queen': (figure) => getAvalibleCellsByDirection['all'](figure),
+    'King': (figure) => getKingAvalibleCells(figure),
 }
