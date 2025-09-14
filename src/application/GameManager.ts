@@ -53,8 +53,8 @@ export class GameManager {
         return currentKing;
     }
 
-    private getfiguresWithAttackedCells(color: FigureColor) {
-        const figures = figureRepository.getFiguresByColor(color);
+    private getfiguresWithAttackedCells() {
+        const figures = figureRepository.getFiguresByColor(this.getSecondPlayerColor());
 
         const figuresWithAttackedCells = figures.flatMap(figure => {
             return {
@@ -68,7 +68,7 @@ export class GameManager {
 
     isKingUnderCheck(): boolean {
         const kingCell = this.getCurrentKing().getCurrentCell();
-        const cellUnderCapturebyFigure = this.getfiguresWithAttackedCells(this.getSecondPlayerColor());
+        const cellUnderCapturebyFigure = this.getfiguresWithAttackedCells();
         return cellUnderCapturebyFigure.flatMap(cellsbyFigure => cellsbyFigure.cells).includes(kingCell);
     }
 
@@ -86,23 +86,32 @@ export class GameManager {
         const selectedigureCell = selectedFigure.getCurrentCell();
         return avalibleCells.filter(cell => {
             const cellFigure = cell.getFigure();
-            if(cellFigure && cellFigure.getColor() !== this.#currentPlayerColor || !cellFigure) {
-                selectedigureCell.setFigure(null);
-                selectedFigure.setCurrentCell(cell);
-                cell.setFigure(selectedFigure);
-                cellFigure && cellFigure.setCurrentCell(null);
-                cellFigure && figureRepository.deleteFigure(cellFigure);
-            }
+            this.simulateMove(cell, selectedFigure, selectedigureCell, cellFigure);
             const isKingUnderCheckAfterMove = this.isKingUnderCheck();
-            if(cellFigure && cellFigure.getColor() !== this.#currentPlayerColor || !cellFigure) {
-                selectedigureCell.setFigure(selectedFigure);
-                selectedFigure.setCurrentCell(selectedigureCell);
-                cell.setFigure(cellFigure);
-                cellFigure && cellFigure.setCurrentCell(cell);
-                cellFigure && figureRepository.addFigure(cellFigure);
-            }
+            this.revertSimulateMove(cell, selectedFigure, selectedigureCell, cellFigure);
+          
             return !isKingUnderCheckAfterMove;
         })
+    }
+
+    private simulateMove(cell: BoardCell, selectedFigure: Figure, selectedigureCell: BoardCell, cellFigure: Figure | null) {
+        if(cellFigure && cellFigure.getColor() !== this.#currentPlayerColor || !cellFigure) {
+            selectedigureCell.setFigure(null);
+            selectedFigure.setCurrentCell(cell);
+            cell.setFigure(selectedFigure);
+            cellFigure && cellFigure.setCurrentCell(null);
+            cellFigure && figureRepository.deleteFigure(cellFigure);
+        }
+    }
+
+    private revertSimulateMove(cell: BoardCell, selectedFigure: Figure, selectedigureCell: BoardCell, cellFigure: Figure | null) {
+        if(cellFigure && cellFigure.getColor() !== this.#currentPlayerColor || !cellFigure) {
+            selectedigureCell.setFigure(selectedFigure);
+            selectedFigure.setCurrentCell(selectedigureCell);
+            cell.setFigure(cellFigure);
+            cellFigure && cellFigure.setCurrentCell(cell);
+            cellFigure && figureRepository.addFigure(cellFigure);
+        }
     }
 
     highliteMoves(figure: Figure) {
