@@ -63,10 +63,24 @@ export class Application {
         if(!this.#selectedFigure) {
             return;
         }
-
         const currentCell = this.#selectedFigure.getCurrentCell();
 
-        // en passant capture
+        if(this.tryEnPassantCapture(destinationCell, currentCell)) {
+            return;
+        }
+        
+        if(this.tryRegularCapture(destinationCell, currentCell)) {
+            return
+        }
+
+        if(this.tryMoveFigure(destinationCell, currentCell)) {
+            return;
+        }
+
+        this.unselectFigure();
+    }
+
+    private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
         const rightSiblingCellName = currentCell.getRightSibling(this.#selectedFigure.getColor());
         const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
        
@@ -75,7 +89,7 @@ export class Application {
             ) {
 
                 this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
-                return;
+                return true;
         }
         
         const leftSiblingCellName = currentCell.getLeftSibling(this.#selectedFigure.getColor());
@@ -85,20 +99,29 @@ export class Application {
             ) {
 
                 this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
-                return;
+                return true;
         }
 
-        // regular capture
-        if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
+        return false;
+    }
+
+    private tryRegularCapture(destinationCell: BoardCell, currentCell: BoardCell) {
+         if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
             this.captureFigure(currentCell, destinationCell)
-            return;
+            return true;
         }
+        return false;
+    }
 
+    private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell){
         if(destinationCell.getCanMove()) {
             this.moveFigure(currentCell, destinationCell);
-            return;
+            return true;
         }
+        return false;
+    }
 
+    private unselectFigure() {
         this.#gameManager.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
         this.#selectedFigure = null;
