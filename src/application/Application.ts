@@ -191,7 +191,7 @@ export class Application {
         }
         this.#UIAdater.remove(capturedFigure.getFigure());
         figureRepository.deleteFigure(capturedFigure);
-
+        eventBus.dispatchEvent('figureCaptured', { capturedFigure });
         this.moveFigure(currentCell, destinationCell);
     }
 
@@ -202,7 +202,7 @@ export class Application {
         }
         this.#UIAdater.remove(capturedFigure.getFigure());
         figureRepository.deleteFigure(capturedFigure);
-
+        eventBus.dispatchEvent('figureCaptured', { capturedFigure });
         this.moveFigure(currentCell, destinationCell);
     }
 }

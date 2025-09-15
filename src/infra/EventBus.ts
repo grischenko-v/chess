@@ -5,6 +5,7 @@ export const eventTypes = {
     chagePlayer: 'changePlayer',
     checked: 'checked',
     gameFinished: 'gameFinished',
+    figureCaptured: 'figureCaptured',
 } as const;
 
 export type EventTypes = keyof typeof eventTypes;
