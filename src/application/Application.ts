@@ -142,10 +142,6 @@ export class Application {
         this.unSelectCurrentFigure();
     }
 
-    private getSelectedFigure() {
-        return this.#selectedFigure !== null;
-    }
-
     private unSelectCurrentFigure() {
         if(!this.#selectedFigure) {
             return;
