@@ -152,7 +152,7 @@ export class Application {
         destinationCell.setFigure(this.#selectedFigure);
         this.#selectedFigure = null;
 
-        const roque = ROQUE_STEP_MAP[destinationCell.getCellName() as ROQUE_STEP_MAP_KEYS];
+        const roque = this.#gameManager.isRoqueAvailable(destinationCell);
         if(selectedFigureType === 'King' && roque) {
             const rookCell = cellRepository.getCell(roque.rookDefualtCellName);
             const rookDestinatioCell = cellRepository.getCell(roque.rookDestinationCellName);

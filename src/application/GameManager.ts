@@ -1,4 +1,4 @@
-import { BOARD_CELL_COLOR } from "../constants";
+import { BOARD_CELL_COLOR, ROQUE_STEP_MAP, ROQUE_STEP_MAP_KEYS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure, FigureColor } from "../domain/Figure";
 import { eventBus } from "../infra/EventBus";
@@ -82,9 +82,20 @@ export class GameManager {
         return avalibleMoves.length === 0;
     }
 
+    isRoqueAvailable(cell: BoardCell) {
+        return  ROQUE_STEP_MAP[cell.getCellName() as ROQUE_STEP_MAP_KEYS]
+    }
+
     filterAvalibleCellsByKingCheck(avalibleCells: BoardCell[], selectedFigure: Figure) {
         const selectedigureCell = selectedFigure.getCurrentCell();
+        const isKingUnderCheck = this.isKingUnderCheck();
+        const isKingSelected = selectedFigure.getType() === 'King';
         return avalibleCells.filter(cell => {
+            const roque = this.isRoqueAvailable(cell)
+            if(isKingSelected && isKingUnderCheck && roque) {
+                return false;
+            }
+
             const cellFigure = cell.getFigure();
             this.simulateMove(cell, selectedFigure, selectedigureCell, cellFigure);
             const isKingUnderCheckAfterMove = this.isKingUnderCheck();
