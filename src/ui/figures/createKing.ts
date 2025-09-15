@@ -5,10 +5,8 @@ import {
     Mesh,
     CylinderGeometry,
     CapsuleGeometry,
-    CircleGeometry,
-    SphereGeometry
 } from 'three';
-import { FigureColor } from '../../domain/Figure';
+import type { FigureColor } from '../../domain/Figure';
 import { FIGURE_COLOR } from '../../constants';
 
 export const createKing = (figureColor: FigureColor, name: string): Group => {

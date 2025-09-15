@@ -4,10 +4,9 @@ import {
     MeshStandardMaterial,
     Mesh,
     CylinderGeometry,
-    CapsuleGeometry,
     Matrix4
 } from 'three';
-import { FigureColor } from '../../domain/Figure';
+import type { FigureColor } from '../../domain/Figure';
 import { FIGURE_COLOR } from '../../constants';
 
 export const createKight = (figureColor: FigureColor, name: string): Group => {

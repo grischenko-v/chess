@@ -1,6 +1,6 @@
-import { BOARD_CELL_COLOR, ROQUE_STEP_MAP, ROQUE_STEP_MAP_KEYS } from "../constants";
+import { BOARD_CELL_COLOR, ROQUE_STEP_MAP, type ROQUE_STEP_MAP_KEYS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
-import { Figure, FigureColor } from "../domain/Figure";
+import { Figure, type FigureColor } from "../domain/Figure";
 import { eventBus } from "../infra/EventBus";
 import { figureRepository } from "../repository/FiguresRepository";
 import { FigureMoveService } from "../service/FigureMoveService";

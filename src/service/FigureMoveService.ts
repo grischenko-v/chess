@@ -1,5 +1,5 @@
 import { BoardCell } from "../domain/BoardCell";
-import { Figure, FigureColor, FigureType } from "../domain/Figure";
+import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
 import { cellRepository } from "../repository/CellRepository";
 
 interface IFigureMoveService {

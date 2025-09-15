@@ -1,3 +1,4 @@
+import './index.css';
 import { sceneAdater } from './adapters/SceneAdapter';
 import { Application } from './application/Application';
 

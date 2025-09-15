@@ -1,4 +1,4 @@
-import { FigureType } from "./domain/Figure";
+import type { FigureType } from "./domain/Figure";
 import { getBoardMatrix } from "./utils/getBoardMatrix";
 
 export const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];

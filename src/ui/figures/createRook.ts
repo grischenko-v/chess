@@ -4,9 +4,8 @@ import {
     MeshStandardMaterial,
     Mesh,
     CylinderGeometry,
-    CapsuleGeometry
 } from 'three';
-import { FigureColor } from '../../domain/Figure';
+import type { FigureColor } from '../../domain/Figure';
 import { FIGURE_COLOR } from '../../constants';
 
 export const createRook = (figureColor: FigureColor, name: string): Group => {

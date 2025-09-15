@@ -1,5 +1,5 @@
 import { boardMatrix } from "../constants";
-import { TSiblings } from "../domain/BoardCell";
+import type { TSiblings } from "../domain/BoardCell";
 
 export const getCellSublings = (cellName: string): TSiblings => {
     let cellI, cellJ;

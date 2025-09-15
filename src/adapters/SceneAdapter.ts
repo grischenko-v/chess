@@ -1,5 +1,5 @@
 import { scene } from "../infra/Scene";
-import { Figure, FigureColor, FigureType } from "../domain/Figure";
+import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
 import { Object3D } from "three";
 import { RaycastController } from "./RaycastController";
 import { BLACK_FIGURES_INITIAL_POSITIONS, columns, rows, WHITE_FIGURES_INITIAL_POSITIONS } from "../constants";

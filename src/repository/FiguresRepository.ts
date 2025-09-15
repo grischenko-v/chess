@@ -1,4 +1,4 @@
-import { Figure, FigureColor, FigureType } from "../domain/Figure";
+import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
 
 export interface IFigureRepository {
     addFigure: (figure: Figure) => void,

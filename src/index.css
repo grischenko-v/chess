@@ -1,0 +1,20 @@
+body {
+    -webkit-transition: background-color 1s ease-out;
+    -moz-transition: background-color 1s ease-out;
+    -o-transition: background-color 1s ease-out;
+    transition: background-color 1s ease-out;
+    background-color: rgba(249, 249, 249, 0.8);
+}
+
+.black {
+    background-color: rgba(59, 59, 59, 0.9);
+}
+
+.checked {
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
+.finished {
+    pointer-events: none;
+    background-color: rgba(255, 0, 0, 0.8);
+}

@@ -1,5 +1,5 @@
-import { Figure, FigureColor } from './Figure';
-import { CELL_COLOR_TYPE, CellGeometry } from '../ui/board/CellGeometry';
+import { Figure, type FigureColor } from './Figure';
+import { type CELL_COLOR_TYPE, CellGeometry } from '../ui/board/CellGeometry';
 import { getCellSublings } from '../utils/getCellSiblings';
 import { BOARD_CELL_COLOR } from '../constants';
 
@@ -134,6 +134,9 @@ export class BoardCell {
             return false;
         }
         const figure = this.getFigure();
+        if(!figure) {
+            return false;
+        }
         return figure.getType() === 'Pawn'
              && figure.getColor() !== figureColor
              && figure.getStepNumber() === 1 

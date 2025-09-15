@@ -1,5 +1,5 @@
 import { HTMLAdapter } from "../adapters/HTMLAdapter";
-import { UIAdater } from "../adapters/SceneAdapter";
+import type { UIAdater } from "../adapters/SceneAdapter";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
 import { eventBus, eventTypes } from "../infra/EventBus";

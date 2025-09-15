@@ -1,7 +1,7 @@
 import {Group, Vector3} from 'three';
 import {createPawn} from './createPawn';
 import { gsap } from 'gsap';
-import { FigureColor, FigureType } from '../../domain/Figure';
+import type { FigureColor, FigureType } from '../../domain/Figure';
 import { createRook } from './createRook';
 import { createBishop } from './createBishop';
 import { createKight } from './createKnight';
