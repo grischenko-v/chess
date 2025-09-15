@@ -9,7 +9,6 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- fix TS warnings
 - Create moves history
 - Add move rollback function
 - Add Pawn transform on last field
