@@ -1,7 +1,9 @@
 <template>
   <div class="wrapper">
-    <li v-for="figure in cupturedFigures">
-      {{ figure.figureType }}: {{ figure.figureColor }}
+    <li class="captured-list" v-for="figure in cupturedFigures">
+      <div :style="{color: figure.figureColor}">
+        {{ figure.figureType }}
+      </div>
     </li>
   </div>
 </template>
@@ -10,6 +12,11 @@
 .wrapper {
     position: absolute;
     background-color: lightgrey;
+}
+.captured-list {
+    list-style: none;
+    padding: 4px;
+    margin: 0;
 }
 </style>
 
