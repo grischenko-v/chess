@@ -11,7 +11,7 @@ export class Application {
     #UIAdater: UIAdater;
     #htmlAdapter = new HTMLAdapter();
 
-    #selectedFigure: Figure | null;
+    #selectedFigure: Figure | null = null;
     #gameManager: GameManager;
 
     constructor(UIAdater: UIAdater) {
@@ -23,12 +23,12 @@ export class Application {
         eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
     }
 
-    private onFigureClick(data: { detail: { clickedFigure: Figure } }) {
-        const { detail } = data;
+    private onFigureClick(data: unknown) {
+        const { detail } = data as { detail: { clickedFigure: Figure }};
         const { clickedFigure } = detail;
 
-        if(this.getSelectedFigure() && clickedFigure.getCurrentCell().getCanMove()) {
-            this.captureFigure(this.getSelectedFigure().getCurrentCell(), clickedFigure.getCurrentCell())
+        if(this.#selectedFigure && clickedFigure.getCurrentCell().getCanMove()) {
+            this.captureFigure(this.#selectedFigure.getCurrentCell(), clickedFigure.getCurrentCell())
             return;
         }
 
@@ -36,7 +36,7 @@ export class Application {
             return;
         }
 
-        if(this.getSelectedFigure() && this.getSelectedFigure().getName() !== clickedFigure.getName() ) {
+        if(this.#selectedFigure && this.#selectedFigure.getName() !== clickedFigure.getName() ) {
             this.#gameManager.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
             this.#selectedFigure = clickedFigure;
@@ -45,7 +45,7 @@ export class Application {
             return;
         }
 
-        if(this.getSelectedFigure()) {
+        if(this.#selectedFigure) {
             this.#gameManager.unhighliteMoves(this.#selectedFigure);
             this.#selectedFigure.unselect();
             return;
@@ -56,8 +56,8 @@ export class Application {
         this.#gameManager.highliteMoves(this.#selectedFigure);
     }
 
-    private onCellClick(data: { detail: { clickedCell: BoardCell } }) {
-        const { detail } = data;
+    private onCellClick(data: unknown) {
+        const { detail } = data as { detail: { clickedCell: BoardCell }};
         const { clickedCell: destinationCell } = detail;
         if(!this.#selectedFigure) {
             return;
@@ -80,10 +80,13 @@ export class Application {
     }
 
     private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
+        if(!this.#selectedFigure) {
+            return false;
+        }
         const rightSiblingCellName = currentCell.getRightSibling(this.#selectedFigure.getColor());
         const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
         const currentCellFigure = currentCell.getFigure();
-        if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure.getType() === 'Pawn'
+        if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure &&  currentCellFigure.getType() === 'Pawn'
             && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             && destinationCell.getCellRow() === rightSiblingCell.getCellRow()
             ) {
@@ -93,7 +96,7 @@ export class Application {
         
         const leftSiblingCellName = currentCell.getLeftSibling(this.#selectedFigure.getColor());
         const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
-        if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure.getType() === 'Pawn'
+        if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure && currentCellFigure.getType() === 'Pawn'
             && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             && destinationCell.getCellRow() === leftSiblingCell.getCellRow()
             ) {
@@ -105,6 +108,9 @@ export class Application {
     }
 
     private tryRegularCapture(destinationCell: BoardCell, currentCell: BoardCell) {
+        if(!this.#selectedFigure) {
+            return false;
+        }
          if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
             this.captureFigure(currentCell, destinationCell)
             return true;
@@ -121,21 +127,31 @@ export class Application {
     }
 
     private unselectFigure() {
+        if(!this.#selectedFigure) {
+            return;
+        }
         this.#gameManager.unhighliteMoves(this.#selectedFigure);
-        this.#selectedFigure.unselect();
-        this.#selectedFigure = null;
+        this.unSelectCurrentFigure();
     }
 
     private onOutsideClick() {
-        if(this.getSelectedFigure()) {
-            this.#gameManager.unhighliteMoves(this.#selectedFigure);
-            this.#selectedFigure.unselect();
-            this.#selectedFigure = null;
+        if(!this.#selectedFigure) {
+            return;
         }
+        this.#gameManager.unhighliteMoves(this.#selectedFigure);
+        this.unSelectCurrentFigure();
     }
 
     private getSelectedFigure() {
-        return this.#selectedFigure;
+        return this.#selectedFigure !== null;
+    }
+
+    private unSelectCurrentFigure() {
+        if(!this.#selectedFigure) {
+            return;
+        }
+        this.#selectedFigure.unselect();
+        this.#selectedFigure = null;
     }
 
     private moveFigure(currentCell: BoardCell, destinationCell: BoardCell) {
@@ -156,9 +172,11 @@ export class Application {
             const rookCell = cellRepository.getCell(roque.rookDefualtCellName);
             const rookDestinatioCell = cellRepository.getCell(roque.rookDestinationCellName);
             const rook = rookCell.getFigure();
-            rook.move(rookDestinatioCell);
-            rookDestinatioCell.setFigure(rook);
-            rookCell.setFigure(null);
+            if(rook) {
+                rook.move(rookDestinatioCell);
+                rookDestinatioCell.setFigure(rook);
+                rookCell.setFigure(null);
+            }
         }
         
         this.#gameManager.toggleCurrentPlayer();
@@ -172,6 +190,9 @@ export class Application {
 
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {
         const capturedFigure = destinationCell.getFigure();
+        if(!capturedFigure) {
+            return;
+        }
         this.#UIAdater.remove(capturedFigure.getFigure());
         figureRepository.deleteFigure(capturedFigure);
 
@@ -180,6 +201,9 @@ export class Application {
 
     private captureFigureEnPassant(currentCell: BoardCell, destinationCell: BoardCell, cupturedCell: BoardCell) {
         const capturedFigure = cupturedCell.getFigure();
+        if(!capturedFigure) {
+            return;
+        }
         this.#UIAdater.remove(capturedFigure.getFigure());
         figureRepository.deleteFigure(capturedFigure);
 

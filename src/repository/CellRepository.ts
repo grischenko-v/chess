@@ -13,7 +13,10 @@ class CellRepository implements ICellRepository {
         this.#cells[name] = cell;
     }
 
-    getCell(name: string): BoardCell {
+    getCell(name: string | null): BoardCell {
+        if(!name) {
+            return null as unknown as BoardCell;
+        }
         return this.#cells[name];
     }
 }

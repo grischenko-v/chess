@@ -46,9 +46,9 @@ export class RaycastController {
         return '';
     }
 
-    private getIntercectName = (intercect: Intersection) => {
+    private getIntercectName = (intercect?: Intersection) => {
         if(intercect && intercect.object) {
-            return intercect.object.parent.name || intercect.object.name;
+            return intercect.object.parent?.name || intercect.object.name;
         }
         return '';
     }
@@ -59,7 +59,7 @@ export class RaycastController {
         this.#raycaster.setFromCamera(this.#mouseCoordVector, this.#camera);
         
         const intersects = this.#raycaster.intersectObjects(this.#globalScene.getScene().children);
-        const intersect = intersects.length && intersects[0];
+        const intersect = intersects.length ? intersects[0] : undefined;
 
         const intercectName = this.getIntercectName(intersect);
         const intercectType = this.getIntercectType(intercectName);

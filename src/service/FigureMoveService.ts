@@ -21,9 +21,9 @@ export class FigureMoveService implements IFigureMoveService {
 
 const canMove = (_figureColor:  FigureColor, cell?: BoardCell) => cell && !cell.hasFigure();
 
-const canCapture = (figureColor:  FigureColor, cell?: BoardCell) => cell && cell.hasFigure() && cell.getFigure().getColor() !== figureColor;
+const canCapture = (figureColor:  FigureColor, cell?: BoardCell) => cell && cell.hasFigure() && cell.getFigure()?.getColor() !== figureColor;
 
-const canCaptureEnPassant = (figureColor:  FigureColor, cell?: BoardCell) => canCapture(figureColor, cell) && cell.getFigure().getStepNumber() === 1;
+const canCaptureEnPassant = (figureColor:  FigureColor, cell?: BoardCell) => cell && canCapture(figureColor, cell) && cell.getFigure()?.getStepNumber() === 1;
 
 const canMoveOrCapture = (figureColor:  FigureColor, cell?: BoardCell) => canMove(figureColor, cell) || canCapture(figureColor,cell);
 
@@ -78,7 +78,7 @@ const getPawnCuptureCells = (pawn: Figure):BoardCell[] => {
 const getPawnAvalibleCells = (pawn: Figure): BoardCell[] => 
     [...getPawnCanMoveCells(pawn), ...getPawnCuptureCells(pawn)];
 
-const addMoveOrCaptureCellToArray = (array: BoardCell[], figureColor: FigureColor, cellName: string) => {
+const addMoveOrCaptureCellToArray = (array: BoardCell[], figureColor: FigureColor, cellName: string | null) => {
     const cell = cellRepository.getCell(cellName);
     if(canMoveOrCapture(figureColor, cell)) {
         array.push(cell);

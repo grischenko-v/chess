@@ -49,10 +49,10 @@ class SceneAdapter {
     }
 
     private initFigures() {
-        Object.keys(BLACK_FIGURES_INITIAL_POSITIONS).forEach((figureType: FigureType) => {
+        (Object.keys(BLACK_FIGURES_INITIAL_POSITIONS) as Array<keyof Record<FigureType, string>>).forEach((figureType: FigureType) => {
             BLACK_FIGURES_INITIAL_POSITIONS[figureType].forEach(cellName => this.initFigure(cellName, 'black', figureType));
-        })
-        Object.keys(WHITE_FIGURES_INITIAL_POSITIONS).forEach((figureType: FigureType) => {
+        });
+        (Object.keys(WHITE_FIGURES_INITIAL_POSITIONS) as Array<keyof Record<FigureType, string>>).forEach((figureType: FigureType) => {
             WHITE_FIGURES_INITIAL_POSITIONS[figureType].forEach(cellName => this.initFigure(cellName, 'white', figureType));
         })
     }

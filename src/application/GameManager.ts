@@ -50,6 +50,9 @@ export class GameManager {
     private getCurrentKing() {
         const kings = figureRepository.getFiguresByType('King');
         const currentKing = kings.find(king => king.getColor() === this.getCurrentPlayer());
+        if(!currentKing) {
+            throw new Error('There must be the king');
+        }
         return currentKing;
     }
 
@@ -110,7 +113,7 @@ export class GameManager {
             selectedigureCell.setFigure(null);
             selectedFigure.setCurrentCell(cell);
             cell.setFigure(selectedFigure);
-            cellFigure && cellFigure.setCurrentCell(null);
+            // cellFigure && cellFigure.setCurrentCell(null);
             cellFigure && figureRepository.deleteFigure(cellFigure);
         }
     }

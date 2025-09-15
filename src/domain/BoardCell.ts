@@ -16,7 +16,7 @@ export type TSiblings = {
 
 export class BoardCell {
     #name: string;
-    #figure: Figure | null;
+    #figure: Figure | null = null;
     #cellGeometry: CellGeometry;
     #siblings: TSiblings;
     #canmove = false;
@@ -99,14 +99,11 @@ export class BoardCell {
     }
 
     hasFigure() {
-        return !!this.#figure;
+        return this.#figure !== null;
     }
 
     hasFigureColor() {
-        if(!this.hasFigure()) {
-            return '';
-        }
-        return this.#figure.getColor();
+       return this.#figure?.getColor() ?? '';
     }
 
     getFigure(): Figure | null {
