@@ -3,6 +3,7 @@
 Tech stack:
 - Typescript
 - ThreeJS
+- VueJS
 
 Now in progress:
 
