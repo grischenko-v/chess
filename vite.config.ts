@@ -7,4 +7,10 @@ export default defineConfig({
     port: 9000
   },
   plugins: [vue()],
+
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src/'),
+    }
+  }
 });
