@@ -26,7 +26,7 @@
 </style>
 
 <script lang="ts" setup>
-import { type FigureColor, type FigureType  } from "../../../domain/Figure";
+import { type FigureColor, type FigureType  } from "@/domain/Figure";
 
 type Props = {
   cupturedFigures: {figureType: FigureType, figureColor: FigureColor}[],
