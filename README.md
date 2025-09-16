@@ -14,7 +14,6 @@ TODO:
 - Add move rollback function
 - Add Pawn transform on last field
 - Add AI
-- Show capture figures
 - Add history player
 - add 2d mode
 - add multilang support
