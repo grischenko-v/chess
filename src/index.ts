@@ -14,7 +14,7 @@ const initWidgets = async () => {
 }
 
 const initCuttedFiggures = async (createApp: any) => {
-    const { default: CuttedFigures } = await import('./ui/widgets/CuttedFigures.vue');
+    const { default: CuttedFigures } = await import('./ui/widgets/CuttedFigures/CuttedFigures.vue');
     const app = createApp(CuttedFigures);
     app.mount('#cuttedFigures');
 }
