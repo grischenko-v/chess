@@ -9,3 +9,20 @@ const app = createApp(CuttedFigures)
 app.mount('#cuttedFigures')
 
 new Application(sceneAdater);
+
+// const initWidgets = async () => {
+//     const { createApp } = await import('vue');
+//     await Promise.all(
+//         [
+//             initCuttedFiggures(createApp),
+//         ]
+//     )
+// }
+
+// const initCuttedFiggures = async (createApp: any) => {
+//     const CuttedFigures = await import('./ui/widgets/CuttedFigures.vue');
+//      const app = createApp(CuttedFigures);
+//     app.mount('#cuttedFigures');
+// }
+
+// initWidgets();

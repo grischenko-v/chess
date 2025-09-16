@@ -7,7 +7,4 @@ export default defineConfig({
     port: 9000
   },
   plugins: [vue()],
-  build: {
-    assetsDir: 'chess/dist/assets'
-  }
 });
