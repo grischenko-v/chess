@@ -23,12 +23,12 @@ body {
 
 #history {
     position: absolute;
-	right: 4px;
-    top: 4px;
+	right: 8px;
+    top: 8px;
 }
 
 #cuttedFigures {
     position: absolute;
-    left: 4px;
-    top: 4px;
+    left: 8px;
+    top: 8px;
 }
