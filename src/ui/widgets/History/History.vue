@@ -1,5 +1,5 @@
 <template>
-<div class="wrapper">
+<div class="wrapper" ref="wrapperDiv">
 	<div v-for="value, index in history">
 		<span class="step">
 			{{index + 1}}. {{value}}
@@ -20,6 +20,8 @@
     display: flex;
     flex-direction: column;
     border-radius: 4px;
+	max-height: 120px;
+	overflow: auto;
 }
 
 .step {
@@ -29,14 +31,14 @@
 
 <script lang="ts" setup>
 import { eventBus, eventTypes } from '@/infra/EventBus';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 
 type HistoryItem = {
 	currentCell: string,
 	destinationCell: string,
 	figureType: string,
 	player: string,
-	moveType: string,
+	moveType: 'move' | 'capture',
 }
 
 const figuresNameMap = {
@@ -48,23 +50,36 @@ const figuresNameMap = {
 	'King': 'K'
 } as const;
 
+const moveTypeAction = {
+	move: (shortFigureType: string, detail: HistoryItem) => currentRound.value.push(`${shortFigureType}${detail.currentCell}-${detail.destinationCell} `),
+	capture: (shortFigureType: string, detail: HistoryItem) => currentRound.value.push(`${shortFigureType}${detail.currentCell}-x${detail.destinationCell} `)
+} as const;
+
+const wrapperDiv = ref<HTMLDivElement | null>(null);
 const history = ref<string[]>([]);
 const currentRound = ref<string[]>([]);
 const currentRoundString = computed(() => currentRound.value.join());
+
+const scrollToBottom = () => {
+  nextTick(() => {
+	if(!wrapperDiv.value) {
+		return;
+	}
+	wrapperDiv.value.scrollTop = wrapperDiv.value?.scrollHeight
+  });
+}
 
 eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
   const { detail } = data as { detail: HistoryItem};
   console.log(detail);
   const shortFigureType = figuresNameMap[detail.figureType as keyof typeof figuresNameMap];
-  if(detail.moveType === 'move'){
-  	currentRound.value.push(`${shortFigureType}${detail.currentCell}-${detail.destinationCell} `)
-  }
-  if(detail.moveType === 'capture'){
-  	currentRound.value.push(`${shortFigureType}${detail.currentCell}-x${detail.destinationCell} `)
-  }
+  const action = detail.moveType as keyof typeof moveTypeAction;
+  moveTypeAction[action](shortFigureType, detail);
+
   if(detail.player === 'black') {
 	history.value.push(currentRound.value.join(''))
 	currentRound.value = [];
   }
+  scrollToBottom();
 })
 </script>
