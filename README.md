@@ -3,7 +3,7 @@
 Tech stack:
 - Typescript
 - ThreeJS
-- VueJS
+- VueJS/Pinia
 
 Now in progress:
 
