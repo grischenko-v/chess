@@ -14,6 +14,7 @@
     margin: 0;
     display: flex;
 }
+
 .cuptured-list-item {
   list-style: none;
   padding: 2px;
@@ -35,6 +36,6 @@ type Props = {
 defineProps<Props>()
 
 function getCupturedFigureIcon(figure: {figureType: string, figureColor: FigureColor}) {
-  return `/imgs/figures${figure.figureType}${figure.figureColor}.png`;
+  return `/imgs/figures/${figure.figureType}${figure.figureColor}.png`;
 }
 </script>

@@ -15,6 +15,7 @@
 	justify-content: center;
 	align-items: center;
 }
+
 .rollback {
 	width: 24px;
 	height: 24px;
