@@ -1,14 +1,14 @@
 <template>
 <div class="wrapper">
 	<div v-for="value, index in history">
-		<div v-if="index %2 === 0">
-			<span class="step">
-				{{index + 1}}. {{value.figureType}}{{value.currentCell}}-{{value.destinationCell}}
-			</span>
-			<span v-if="history[index + 1]">
-				{{value.figureType}}{{ history[index + 1].currentCell }}-{{ history[index + 1].destinationCell }}
-			</span>
-		</div>
+		<span class="step">
+			{{index + 1}}. {{value}}
+		</span>
+	</div>
+	<div v-if="currentRoundString.length">
+		<span class="step">
+			{{history.length + 1}}. {{currentRoundString}}
+		</span>
 	</div>
 </div>
 
@@ -20,17 +20,16 @@
     display: flex;
     flex-direction: column;
     border-radius: 4px;
-	padding: 2px;
 }
 
 .step {
-	padding-right: 2px;
+	padding: 2px;
 }
 </style>
 
 <script lang="ts" setup>
 import { eventBus, eventTypes } from '@/infra/EventBus';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 type HistoryItem = {
 	currentCell: string,
@@ -40,12 +39,32 @@ type HistoryItem = {
 	moveType: string,
 }
 
-const history = ref<HistoryItem[]>([])
+const figuresNameMap = {
+	'Pawn': '',
+	'Bishop': 'B',
+	'Rook': 'R',
+	'Knight': 'N',
+	'Queen': 'Q',
+	'King': 'K'
+} as const;
 
+const history = ref<string[]>([]);
+const currentRound = ref<string[]>([]);
+const currentRoundString = computed(() => currentRound.value.join());
 
 eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
   const { detail } = data as { detail: HistoryItem};
   console.log(detail);
-  history.value.push({ ...detail, figureType: detail.figureType === 'Pawn' ? '' : detail.figureType[0]});
+  const shortFigureType = figuresNameMap[detail.figureType as keyof typeof figuresNameMap];
+  if(detail.moveType === 'move'){
+  	currentRound.value.push(`${shortFigureType}${detail.currentCell}-${detail.destinationCell} `)
+  }
+  if(detail.moveType === 'capture'){
+  	currentRound.value.push(`${shortFigureType}${detail.currentCell}-x${detail.destinationCell} `)
+  }
+  if(detail.player === 'black') {
+	history.value.push(currentRound.value.join(''))
+	currentRound.value = [];
+  }
 })
 </script>
