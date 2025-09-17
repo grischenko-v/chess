@@ -15,7 +15,6 @@ const initWidgets = async () => {
 }
 
 const initWidget = async (createApp: any, widgetName: string, mountId: string) => {
-	console.log('init widget',`./ui/widgets/${widgetName}.vue`);
 	const { default: Widget } = await import(`./ui/widgets/${widgetName}/${widgetName}.vue`);
 	const app = createApp(Widget);
 	app.mount(mountId);

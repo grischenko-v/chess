@@ -160,9 +160,17 @@ export class Application {
         this.#selectedFigure.unselect();
         this.#selectedFigure.move(destinationCell);
         currentCell.setFigure(null);
-        destinationCell.setFigure(this.#selectedFigure);
-        this.#selectedFigure = null;
 
+		destinationCell.setFigure(this.#selectedFigure);
+			eventBus.dispatchEvent('figureMove', {
+			currentCell: currentCell.getCellName(),
+			destinationCell: destinationCell.getCellName(),
+			figureType: this.#selectedFigure.getType(),
+			player: this.#gameManager.getCurrentPlayer(),
+		});
+
+        this.#selectedFigure = null;
+	
         const roque = this.#gameManager.isRoqueAvailable(destinationCell);
         if(selectedFigureType === 'King' && roque) {
             const rookCell = cellRepository.getCell(roque.rookDefualtCellName);

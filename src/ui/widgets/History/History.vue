@@ -10,5 +10,10 @@ history
 </style>
 
 <script lang="ts" setup>
-console.log('history widget');
+import { eventBus, eventTypes } from '@/infra/EventBus';
+
+eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
+  const { detail } = data as { detail: any};
+  console.log(detail);
+})
 </script>
