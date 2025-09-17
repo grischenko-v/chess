@@ -15,6 +15,9 @@ TODO:
 - Add Pawn transform on last field
 - Add AI
 - Add history player
+- change camera position on player change
 - add 2d mode
 - add multilang support
 - add localfirst
+- remove utils floader
+- add linter

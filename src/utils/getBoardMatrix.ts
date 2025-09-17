@@ -1,7 +1,7 @@
 import { columns, rows } from "../constants";
 
 export const getBoardMatrix = (): string[][] => {
-    const boardMatrix = [];
+    const boardMatrix: string[][] = [];
     let counter = 0;
     for(let row of rows) {
         boardMatrix.push([]);

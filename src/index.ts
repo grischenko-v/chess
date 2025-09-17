@@ -8,15 +8,17 @@ const initWidgets = async () => {
     const { createApp } = await import('vue');
     await Promise.all(
         [
-            initCuttedFiggures(createApp),
+            initWidget(createApp, 'History', '#history'),
+			initWidget(createApp, 'CuttedFigures', '#cuttedFigures'),
         ]
     )
 }
 
-const initCuttedFiggures = async (createApp: any) => {
-    const { default: CuttedFigures } = await import('./ui/widgets/CuttedFigures/CuttedFigures.vue');
-    const app = createApp(CuttedFigures);
-    app.mount('#cuttedFigures');
+const initWidget = async (createApp: any, widgetName: string, mountId: string) => {
+	console.log('init widget',`./ui/widgets/${widgetName}.vue`);
+	const { default: Widget } = await import(`./ui/widgets/${widgetName}/${widgetName}.vue`);
+	const app = createApp(Widget);
+	app.mount(mountId);
 }
 
 initWidgets();

@@ -7,7 +7,6 @@
 
 <style scoped>
 .wrapper {
-    position: absolute;
     background-color: lightgrey;
     display: flex;
     flex-direction: column;
