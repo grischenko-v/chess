@@ -163,10 +163,10 @@ export class Application {
 
 		destinationCell.setFigure(this.#selectedFigure);
 			eventBus.dispatchEvent('figureMove', {
-			currentCell: currentCell.getCellName(),
-			destinationCell: destinationCell.getCellName(),
-			figureType: this.#selectedFigure.getType(),
-			player: this.#gameManager.getCurrentPlayer(),
+				currentCell: currentCell.getCellName(),
+				destinationCell: destinationCell.getCellName(),
+				figureType: this.#selectedFigure.getType(),
+				player: this.#gameManager.getCurrentPlayer(),
 		});
 
         this.#selectedFigure = null;
