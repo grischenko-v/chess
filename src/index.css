@@ -32,3 +32,9 @@ body {
     left: 8px;
     top: 8px;
 }
+
+#rollback {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+}

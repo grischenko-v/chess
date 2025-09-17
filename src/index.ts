@@ -13,6 +13,7 @@ const initWidgets = async () => {
         [
             initWidget(createApp, 'History', '#history'),
 			initWidget(createApp, 'CuttedFigures', '#cuttedFigures'),
+			initWidget(createApp, 'Rollback', '#rollback'),
         ]
     )
 }

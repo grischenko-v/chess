@@ -39,5 +39,12 @@ function addItem(item: StepItem) {
   }
 }
 
-return {items, addItem, currentStepString}
+function revert() {
+	if(!items.value.length) {
+		return;
+	}
+	return items.value.pop();
+}
+
+return {items, addItem, currentStepString, revert}
 });
