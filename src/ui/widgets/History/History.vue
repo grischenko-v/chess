@@ -4,7 +4,7 @@
 		<HistoryStep :step="combineStepData(index, value)"/>
 	</div>
 	<div v-if="steps.currentStepString.length">
-		<HistoryStep :step="combineStepData(steps.items.length - 1, steps.currentStepString)"/>
+		<HistoryStep :step="combineStepData(steps.items.length, steps.currentStepString)"/>
 	</div>
 </div>
 </template>
