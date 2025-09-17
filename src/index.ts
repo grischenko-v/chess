@@ -1,28 +1,30 @@
 import './index.css';
 import { sceneAdater } from './adapters/SceneAdapter';
 import { Application } from './application/Application';
-import { createPinia } from 'pinia';
+import type { CreateAppFunction } from 'vue';
+import type { Pinia } from 'pinia';
 
 new Application(sceneAdater);
 
-const pinia = createPinia()
-
-const initWidgets = async () => {
-    const { createApp } = await import('vue');
-    await Promise.all(
-        [
-            initWidget(createApp, 'History', '#history'),
-			initWidget(createApp, 'CuttedFigures', '#cuttedFigures'),
-			initWidget(createApp, 'Rollback', '#rollback'),
-        ]
-    )
+const initWidget = async (pinia: Pinia, createApp: CreateAppFunction<Element>, widgetName: string, mountId: string) => {
+	 import(`./ui/widgets/${widgetName}/${widgetName}.vue`).then(({ default: Widget }) => {
+		const app = createApp(Widget);
+		app.use(pinia)
+		app.mount(mountId);
+	 }).catch(e => console.error(e));
 }
 
-const initWidget = async (createApp: any, widgetName: string, mountId: string) => {
-	const { default: Widget } = await import(`./ui/widgets/${widgetName}/${widgetName}.vue`);
-	const app = createApp(Widget);
-	app.use(pinia)
-	app.mount(mountId);
+const initWidgets = async () => {
+	try {
+		const { createApp } = await import('vue');
+		const { createPinia } = await import('pinia');
+		const pinia = createPinia()
+		initWidget(pinia, createApp, 'History', '#history');
+		initWidget(pinia, createApp, 'CuttedFigures', '#cuttedFigures');
+		initWidget(pinia, createApp, 'Rollback', '#rollback');
+	} catch(e) {
+		console.error(e);
+	}
 }
 
 initWidgets();
