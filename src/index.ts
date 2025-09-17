@@ -14,14 +14,27 @@ const initWidget = async (pinia: Pinia, createApp: CreateAppFunction<Element>, w
 	 }).catch(e => console.error(e));
 }
 
+const widgets = [
+	{
+		name: 'History',
+		mountId: '#history'
+	},
+	{
+		name: 'CuttedFigures',
+		mountId: '#cuttedFigures'
+	},
+	{
+		name: 'Rollback',
+		mountId: '#rollback'
+	}
+]
+
 const initWidgets = async () => {
 	try {
 		const { createApp } = await import('vue');
 		const { createPinia } = await import('pinia');
-		const pinia = createPinia()
-		initWidget(pinia, createApp, 'History', '#history');
-		initWidget(pinia, createApp, 'CuttedFigures', '#cuttedFigures');
-		initWidget(pinia, createApp, 'Rollback', '#rollback');
+		const pinia = createPinia();
+		widgets.forEach(widget => initWidget(pinia, createApp, widget.name, widget.mountId));
 	} catch(e) {
 		console.error(e);
 	}
