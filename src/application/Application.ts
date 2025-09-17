@@ -28,7 +28,7 @@ export class Application {
         const { clickedFigure } = detail;
 
         if(this.#selectedFigure && clickedFigure.getCurrentCell().getCanMove()) {
-            this.captureFigure(this.#selectedFigure.getCurrentCell(), clickedFigure.getCurrentCell())
+			this.onCellClick({ detail: { clickedCell: clickedFigure.getCurrentCell() } })
             return;
         }
 
@@ -89,8 +89,15 @@ export class Application {
         if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure &&  currentCellFigure.getType() === 'Pawn'
             && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             && destinationCell.getCellRow() === rightSiblingCell.getCellRow()
-            ) {
-                this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
+            ) {  
+				eventBus.dispatchEvent('figureMove', {
+					currentCell: currentCell.getCellName(),
+					destinationCell: destinationCell.getCellName(),
+					figureType: this.#selectedFigure.getType(),
+					player: this.#gameManager.getCurrentPlayer(),
+					moveType: 'capture',
+				});
+				this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
                 return true;
         }
         
@@ -108,18 +115,33 @@ export class Application {
     }
 
     private tryRegularCapture(destinationCell: BoardCell, currentCell: BoardCell) {
-        if(!this.#selectedFigure) {
+        if(!this.#selectedFigure) {	
             return false;
         }
-         if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
+
+        if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
+			eventBus.dispatchEvent('figureMove', {
+				currentCell: currentCell.getCellName(),
+				destinationCell: destinationCell.getCellName(),
+				figureType: this.#selectedFigure.getType(),
+				player: this.#gameManager.getCurrentPlayer(),
+				moveType: 'capture',
+			});
             this.captureFigure(currentCell, destinationCell)
-            return true;
+			return true;
         }
         return false;
     }
 
     private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell){
         if(destinationCell.getCanMove()) {
+			eventBus.dispatchEvent('figureMove', {
+				currentCell: currentCell.getCellName(),
+				destinationCell: destinationCell.getCellName(),
+				figureType: this.#selectedFigure?.getType(),
+				player: this.#gameManager.getCurrentPlayer(),
+				moveType: 'move',
+			});
             this.moveFigure(currentCell, destinationCell);
             return true;
         }
@@ -162,12 +184,6 @@ export class Application {
         currentCell.setFigure(null);
 
 		destinationCell.setFigure(this.#selectedFigure);
-			eventBus.dispatchEvent('figureMove', {
-				currentCell: currentCell.getCellName(),
-				destinationCell: destinationCell.getCellName(),
-				figureType: this.#selectedFigure.getType(),
-				player: this.#gameManager.getCurrentPlayer(),
-		});
 
         this.#selectedFigure = null;
 	
