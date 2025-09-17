@@ -10,7 +10,7 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- Create moves history
+- add checks and game finished to steps history
 - Add move rollback function
 - Add Pawn transform on last field
 - Add AI
