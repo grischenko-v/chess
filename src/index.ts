@@ -1,13 +1,13 @@
 import './index.css';
-import { sceneAdater } from './adapters/SceneAdapter';
-import { Application } from './application/Application';
+import { sceneAdater } from './chess/adapters/SceneAdapter';
+import { Application } from './chess/application/Application';
 import type { CreateAppFunction } from 'vue';
 import type { Pinia } from 'pinia';
 
 new Application(sceneAdater);
 
 const initWidget = async (pinia: Pinia, createApp: CreateAppFunction<Element>, widgetName: string, mountId: string) => {
-	 import(`./ui/widgets/${widgetName}/${widgetName}.vue`).then(({ default: Widget }) => {
+	 import(`./widgets/${widgetName}/${widgetName}.vue`).then(({ default: Widget }) => {
 		const app = createApp(Widget);
 		app.use(pinia)
 		app.mount(mountId);

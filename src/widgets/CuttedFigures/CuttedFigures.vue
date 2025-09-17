@@ -17,8 +17,8 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import FigureList from './FigureList.vue';
-import { eventBus, eventTypes } from '@/infra/EventBus';
-import { Figure, type FigureColor, type FigureType  } from '@/domain/Figure';
+import { eventBus, eventTypes } from '@/chess/infra/EventBus';
+import { Figure, type FigureColor, type FigureType  } from '@/chess/domain/Figure';
 
 const cupturedFigures = ref<Array<{figureType: FigureType, figureColor: FigureColor}>>([]);
 const cupturedWhite = computed(() => cupturedFigures.value.filter(figure => figure.figureColor === 'white'));
