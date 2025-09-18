@@ -12,11 +12,11 @@ Now in progress:
 TODO:
 - add checks and game finished to steps history
 - Add move rollback function
-- Add Pawn transform on last field
-- Add AI
-- Add history player
 - change camera position on player change
-- add 2d mode
-- add multilang support
+- Add Pawn transform on last field
 - add localfirst
 - add linter
+- Add AI
+- Add history player
+- add 2d mode
+- add multilang support
