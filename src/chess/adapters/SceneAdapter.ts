@@ -1,4 +1,3 @@
-import { scene } from "../infra/Scene";
 import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
 import { Object3D } from "three";
 import { RaycastController } from "./RaycastController";
@@ -7,6 +6,7 @@ import { BoardCell } from "../domain/BoardCell";
 import { figureRepository } from "../repository/FiguresRepository";
 import { cellRepository } from "../repository/CellRepository";
 import { Board } from "../domain/Board";
+import { scene } from "../infra/Scene";
 
 interface ISceenObject {
     getMesh: () => Object3D;
@@ -15,13 +15,11 @@ interface ISceenObject {
 export interface UIAdater {
     remove: (deletedFigure: ISceenObject) => void;
 }
-
 class SceneAdapter {
     #scene = scene
-    #raycastController: RaycastController;
 
     constructor() {
-        this.#raycastController = new RaycastController();
+        new RaycastController();
         this.createBoard();
         this.initFigures();
         this.animate();

@@ -6,7 +6,6 @@ import {
     AmbientLight,
     DirectionalLight,
     BasicShadowMap,
-    Raycaster,
     Object3D,
     Fog,
 } from 'three';
@@ -25,7 +24,6 @@ class Scene implements IScene{
     #camera: PerspectiveCamera;
     #renderer: WebGLRenderer;
     controls: any;
-    raycaster: Raycaster;
 
     constructor() {
         this.#scene = new ThreeScene();
