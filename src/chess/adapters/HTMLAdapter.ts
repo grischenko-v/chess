@@ -1,4 +1,4 @@
-import { eventBus } from "../infra/EventBus";
+import { eventBus } from "../../infra/EventBus";
 
 export class HTMLAdapter {
     #body: HTMLElement;

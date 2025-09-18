@@ -2,7 +2,7 @@ import { HTMLAdapter } from "../adapters/HTMLAdapter";
 import type { UIAdater } from "../adapters/SceneAdapter";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure } from "../domain/Figure";
-import { eventBus, eventTypes } from "../infra/EventBus";
+import { eventBus, eventTypes } from "../../infra/EventBus";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 import { GameManager } from "./GameManager";

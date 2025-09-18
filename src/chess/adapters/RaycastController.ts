@@ -1,5 +1,5 @@
 import { PerspectiveCamera, Raycaster, type Renderer, Vector2, type Intersection, } from "three";
-import { eventBus, eventTypes } from "../infra/EventBus";
+import { eventBus, eventTypes } from "../../infra/EventBus";
 import { type IScene, scene } from "../infra/Scene";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";

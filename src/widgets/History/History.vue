@@ -21,7 +21,7 @@
 </style>
 
 <script lang="ts" setup>
-import { eventBus, eventTypes } from '@/chess/infra/EventBus';
+import { eventBus, eventTypes } from '@/infra/EventBus';
 import { nextTick, ref } from 'vue';
 import { useStepsStore, type StepItem } from '../StepStore';
 import HistoryStep from './HistoryStep.vue';
