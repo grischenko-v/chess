@@ -19,5 +19,4 @@ TODO:
 - add 2d mode
 - add multilang support
 - add localfirst
-- remove utils floader
 - add linter

@@ -1,5 +1,4 @@
 import type { FigureType } from "./domain/Figure";
-import { getBoardMatrix } from "./utils/getBoardMatrix";
 
 export const columns = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
 export const rows = ['1', '2', '3', '4', '5', '6', '7', '8'];
@@ -62,4 +61,17 @@ export const FIGURE_COLOR = {
     black: 0x2b2b29,
     white:  0xfaf3e1,
     selected: 0x0000f7
+}
+
+function getBoardMatrix(): string[][] {
+    const boardMatrix: string[][] = [];
+    let counter = 0;
+    for(let row of rows) {
+        boardMatrix.push([]);
+        for(let column of columns) {
+            boardMatrix[counter].push(`${column}${row}`);
+        }
+        counter++;
+    }
+    return boardMatrix;
 }

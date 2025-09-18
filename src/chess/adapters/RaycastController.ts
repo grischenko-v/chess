@@ -1,9 +1,9 @@
 import { PerspectiveCamera, Raycaster, type Renderer, Vector2, type Intersection, } from "three";
 import { eventBus, eventTypes } from "../infra/EventBus";
 import { type IScene, scene } from "../infra/Scene";
-import { isBoardCell } from "../utils/isBoardCell";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
+import { boardMatrix } from "../constants";
 
 const dispatchEventStrategy = {
     '': (_intercectName: string) => eventBus.dispatchEvent(eventTypes.outsideClick, {}),
@@ -37,7 +37,7 @@ export class RaycastController {
     }
 
     private getIntercectType = (intercectName: string): 'cell' | 'figure' | '' => {
-        if(isBoardCell(intercectName)) {
+        if(this.isBoardCell(intercectName)) {
             return'cell';
         }
         if(intercectName) {
@@ -66,4 +66,16 @@ export class RaycastController {
 
         dispatchEventStrategy[intercectType](intercectName);
     }
+
+	private isBoardCell(name: string) {
+		const result = false;
+		for(let i = 0; i < boardMatrix.length; i++) {
+			for(let j = 0; j< boardMatrix[i].length; j++) {
+				if(name === boardMatrix[i][j]) {
+					return true;
+				}
+			}
+		}
+		return result
+	}
 }

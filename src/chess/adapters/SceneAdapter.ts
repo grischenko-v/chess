@@ -3,10 +3,10 @@ import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
 import { Object3D } from "three";
 import { RaycastController } from "./RaycastController";
 import { BLACK_FIGURES_INITIAL_POSITIONS, columns, rows, WHITE_FIGURES_INITIAL_POSITIONS } from "../constants";
-import { createBoard } from "../utils/createBoard";
 import { BoardCell } from "../domain/BoardCell";
 import { figureRepository } from "../repository/FiguresRepository";
 import { cellRepository } from "../repository/CellRepository";
+import { Board } from "../domain/Board";
 
 interface ISceenObject {
     getMesh: () => Object3D;
@@ -58,7 +58,7 @@ class SceneAdapter {
     }
 
     private createBoard() {
-        const board = createBoard();
+        const board = new Board();
         this.draw(board);
 
         for(let [x, column ] of rows.entries()) {

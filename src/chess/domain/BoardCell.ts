@@ -1,7 +1,6 @@
 import { Figure, type FigureColor } from './Figure';
 import { type CELL_COLOR_TYPE, CellGeometry } from '../ui/board/CellGeometry';
-import { getCellSublings } from '../utils/getCellSiblings';
-import { BOARD_CELL_COLOR } from '../constants';
+import { BOARD_CELL_COLOR, boardMatrix } from '../constants';
 
 export type TSiblings = {
     bottom: string | null,
@@ -30,7 +29,7 @@ export class BoardCell {
         this.#cellGeometry = new CellGeometry(
             {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, this.#color, this.#name 
         );
-        this.#siblings = getCellSublings(this.#name);
+        this.#siblings = this.initCellSublings(this.#name);
     }
 
     getTopSibling(figureColor: FigureColor) {
@@ -138,4 +137,27 @@ export class BoardCell {
              && figure.getColor() !== figureColor
              && figure.getStepNumber() === 1 
     }
+
+	private initCellSublings(cellName: string): TSiblings {
+		let cellI = 0 , cellJ = 0;
+		for(let i = 0; i < boardMatrix.length; i++) {
+			for(let j = 0; j < boardMatrix[i].length; j++) {
+				if(boardMatrix[i][j] === cellName) {
+					cellI = i;
+					cellJ = j;
+				}
+			}
+		}
+
+		return {
+			bottom: boardMatrix[cellI + 1] ? boardMatrix[cellI + 1][cellJ] : null,
+			top: boardMatrix[cellI - 1] ? boardMatrix[cellI - 1][cellJ] : null,
+			left: boardMatrix[cellI][cellJ - 1] ?? null,
+			right: boardMatrix[cellI][cellJ + 1] ?? null,
+			bottomLeft:  boardMatrix[cellI + 1] ? boardMatrix[cellI + 1][cellJ - 1] : null,
+			bottomRight:  boardMatrix[cellI + 1] ? boardMatrix[cellI + 1][cellJ + 1] : null,
+			topLeft:  boardMatrix[cellI - 1] ? boardMatrix[cellI - 1][cellJ - 1] : null,
+			topRight:  boardMatrix[cellI - 1] ? boardMatrix[cellI - 1][cellJ + 1] : null,
+		}
+	}
 }
