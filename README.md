@@ -10,7 +10,7 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- add checks and game finished to steps history, and roque and promotion,
+- add roque and promotion to steps history
 - Add move rollback function
 - change camera position on player change
 - Add Pawn promotion on last field

@@ -47,4 +47,14 @@ eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
   steps.addItem(detail)
   scrollToBottom();
 })
+eventBus.subscribe(eventTypes.checked, (data: unknown) => {
+  const { detail } = data as { detail: {player: string}};
+  steps.onCheck(detail, '+');
+})
+
+eventBus.subscribe(eventTypes.gameFinished, (data: unknown) => {
+  const { detail } = data as { detail: {player: string}};
+  steps.onCheck(detail, '#');
+})
+
 </script>

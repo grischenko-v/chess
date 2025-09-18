@@ -201,10 +201,10 @@ export class Application {
         
         this.#gameManager.toggleCurrentPlayer();
         if(this.#gameManager.isKingUnderCheck()) {
-            eventBus.dispatchEvent('checked');
+            eventBus.dispatchEvent('checked', {player: this.#gameManager.getSecondPlayerColor()});
         }
         if(this.#gameManager.isGameFinished()) {
-            eventBus.dispatchEvent('gameFinished');
+            eventBus.dispatchEvent('gameFinished', {player: this.#gameManager.getSecondPlayerColor()});
         };
     }
 

@@ -24,8 +24,8 @@ const currentStep = ref<string[]>([]);
 const currentStepString = computed(() => currentStep.value.join());
 
 const moveTypeAction = {
-	move: (shortFigureType: string, detail: StepItem) => currentStep.value.push(`${shortFigureType}${detail.currentCell}-${detail.destinationCell} `),
-	capture: (shortFigureType: string, detail: StepItem) => currentStep.value.push(`${shortFigureType}${detail.currentCell}-x${detail.destinationCell} `)
+	move: (shortFigureType: string, detail: StepItem) => currentStep.value.push(`${shortFigureType}${detail.currentCell}-${detail.destinationCell}`),
+	capture: (shortFigureType: string, detail: StepItem) => currentStep.value.push(`${shortFigureType}${detail.currentCell}-x${detail.destinationCell}`)
 } as const;
 
 function addItem(item: StepItem) {
@@ -34,9 +34,18 @@ function addItem(item: StepItem) {
   moveTypeAction[action](shortFigureType, item);
 
   if(item.player === 'black') {
-	items.value.push(currentStep.value.join(''))
+	items.value.push(currentStep.value.join(' '))
 	currentStep.value = [];
   }
+}
+
+function onCheck(data: {player: string}, sign: '+' | '#') {
+	console.log('check');
+	if(data.player === 'white') {
+		currentStep.value.push(sign);
+		return;
+	}
+	items.value[items.value.length - 1] = `${items.value[items.value.length - 1]}${sign}`;
 }
 
 function revert() {
@@ -46,5 +55,5 @@ function revert() {
 	return items.value.pop();
 }
 
-return {items, addItem, currentStepString, revert}
+return {items, addItem, currentStepString, revert, onCheck}
 });
