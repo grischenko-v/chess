@@ -1,1 +1,0 @@
-import{d as s,a as e,t as o,o as p}from"./runtime-core.esm-bundler-CAmNyCtD.js";import{_ as a}from"./_plugin-vue_export-helper-DlAUqK2U.js";const r={class:"step"},n=s({__name:"HistoryStep",props:{step:{}},setup(_){return(t,c)=>(p(),e("span",r,o(t.step),1))}}),f=a(n,[["__scopeId","data-v-83184f75"]]);export{f as default};
