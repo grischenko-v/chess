@@ -6,7 +6,8 @@ const initWidget = async (pinia: Pinia, createApp: CreateAppFunction<Element>, w
 		const app = createApp(Widget);
 		app.use(pinia)
 		app.mount(mountId);
-	 }).catch(e => console.error(e));
+	 })
+	 .catch(e => console.error(e));
 }
 
 const widgets = [
@@ -30,7 +31,8 @@ export const initWidgets = async () => {
 		const { createPinia } = await import('pinia');
 		const pinia = createPinia();
 		widgets.forEach(widget => initWidget(pinia, createApp, widget.name, widget.mountId));
-	} catch(e) {
+	}
+	catch(e) {
 		console.error(e);
 	}
 }
