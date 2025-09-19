@@ -1,0 +1,1 @@
+const c={outsideClick:"outsideClick",cellClick:"cellClick",figureClick:"figureClick",checked:"checked",gameFinished:"gameFinished",figureCaptured:"figureCaptured",figureMove:"figureMove"};class s{dispatchEvent(e,i){window.dispatchEvent(new CustomEvent(e,{detail:i}))}subscribe(e,i){window.addEventListener(e,i)}}const n=new s;export{c as a,n as e};
