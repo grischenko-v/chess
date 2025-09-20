@@ -16,6 +16,7 @@
     flex-direction: column;
     border-radius: 4px;
 	max-height: 120px;
+	width: 156px;
 	overflow: auto;
 }
 </style>

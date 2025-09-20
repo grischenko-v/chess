@@ -21,16 +21,14 @@ body {
     background-color: rgba(255, 0, 0, 0.8);
 }
 
-#history {
+.widgets-wrapper {
     position: absolute;
-	right: 8px;
+    right: 8px;
     top: 8px;
-}
-
-#cuttedFigures {
-    position: absolute;
-    left: 8px;
-    top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-end;
 }
 
 #rollback {

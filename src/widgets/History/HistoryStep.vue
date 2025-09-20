@@ -6,7 +6,7 @@
 
 <style scoped>
 .step {
-	padding: 2px;
+	padding: 4px;
 }
 </style>
 
