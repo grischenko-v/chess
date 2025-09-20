@@ -14,7 +14,7 @@ export class Application {
 
     #selectedFigure: Figure | null = null;
     #gameManager: GameManager;
-	#figureMoveEvent: FigureMoveEvent | null;
+	#figureMoveEvent: FigureMoveEvent | null = null;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
@@ -184,6 +184,9 @@ export class Application {
         }
         
         this.#gameManager.toggleCurrentPlayer();
+		if(!this.#figureMoveEvent) {
+			throw new Error('no figure move event');
+		}
         if(this.#gameManager.isKingUnderCheck()) {
 			this.#figureMoveEvent.isCheck(true);
         }
