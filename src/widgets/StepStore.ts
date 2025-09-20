@@ -1,13 +1,6 @@
+import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-
-export type StepItem = {
-	currentCell: string,
-	destinationCell: string,
-	figureType: string,
-	player: string,
-	moveType: 'move' | 'capture',
-}
 
 const figuresNameMap = {
 	'Pawn': '',
@@ -18,34 +11,22 @@ const figuresNameMap = {
 	'King': 'K'
 } as const;
 
-export const useStepsStore = defineStore("steps", () => {
-const items = ref<string[]>([]);
-const currentStep = ref<string[]>([]);
-const currentStepString = computed(() => currentStep.value.join());
-
-const moveTypeAction = {
-	move: (shortFigureType: string, detail: StepItem) => currentStep.value.push(`${shortFigureType}${detail.currentCell}-${detail.destinationCell}`),
-	capture: (shortFigureType: string, detail: StepItem) => currentStep.value.push(`${shortFigureType}${detail.currentCell}-x${detail.destinationCell}`)
-} as const;
-
-function addItem(item: StepItem) {
-  const shortFigureType = figuresNameMap[item.figureType as keyof typeof figuresNameMap];
-  const action = item.moveType as keyof typeof moveTypeAction;
-  moveTypeAction[action](shortFigureType, item);
-
-  if(item.player === 'black') {
-	items.value.push(currentStep.value.join(' '))
-	currentStep.value = [];
-  }
+function getShortFigureName(obj: FigureMoveEventDTO) {
+	return figuresNameMap[obj.figureType as keyof typeof figuresNameMap];
 }
 
-function onCheck(data: {player: string}, sign: '+' | '#') {
-	console.log('check');
-	if(data.player === 'white') {
-		currentStep.value.push(sign);
-		return;
-	}
-	items.value[items.value.length - 1] = `${items.value[items.value.length - 1]}${sign}`;
+function MoveItemObjtoStepString(obj: FigureMoveEventDTO): string {
+	return `${getShortFigureName(obj)}${obj.currentCell}${obj.destinationCell}${obj.capture ? 'x' : ''}${obj.check ? '+' : ''}${obj.gameend ? '#' : ''}`;
+}
+
+export const useStepsStore = defineStore("stepsStore", () => {
+	
+const items = ref<FigureMoveEventDTO[]>([]);
+
+const steps = computed(() => items.value.map(item => MoveItemObjtoStepString(item)));
+
+function addItem(item: FigureMoveEventDTO) {
+  items.value.push(item);
 }
 
 function revert() {
@@ -55,5 +36,5 @@ function revert() {
 	return items.value.pop();
 }
 
-return {items, addItem, currentStepString, revert, onCheck}
+return {items, steps, addItem, revert}
 });

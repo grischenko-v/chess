@@ -6,6 +6,7 @@ import { eventBus, eventTypes } from "../../infra/EventBus";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 import { GameManager } from "./GameManager";
+import { FigureMoveEvent } from "@/infra/FigureMoveEvent";
 
 export class Application {
     #UIAdater: UIAdater;
@@ -13,6 +14,7 @@ export class Application {
 
     #selectedFigure: Figure | null = null;
     #gameManager: GameManager;
+	#figureMoveEvent: FigureMoveEvent | null;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
@@ -90,13 +92,7 @@ export class Application {
             && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             && destinationCell.getCellRow() === rightSiblingCell.getCellRow()
             ) {  
-				eventBus.dispatchEvent('figureMove', {
-					currentCell: currentCell.getCellName(),
-					destinationCell: destinationCell.getCellName(),
-					figureType: this.#selectedFigure.getType(),
-					player: this.#gameManager.getCurrentPlayer(),
-					moveType: 'capture',
-				});
+				this.#figureMoveEvent = new FigureMoveEvent(this.#selectedFigure.getType(), currentCell.getCellName(), destinationCell.getCellName(), true)
 				this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
                 return true;
         }
@@ -120,13 +116,7 @@ export class Application {
         }
 
         if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
-			eventBus.dispatchEvent('figureMove', {
-				currentCell: currentCell.getCellName(),
-				destinationCell: destinationCell.getCellName(),
-				figureType: this.#selectedFigure.getType(),
-				player: this.#gameManager.getCurrentPlayer(),
-				moveType: 'capture',
-			});
+			this.#figureMoveEvent = new FigureMoveEvent(this.#selectedFigure.getType(), currentCell.getCellName(), destinationCell.getCellName(), true)
             this.captureFigure(currentCell, destinationCell)
 			return true;
         }
@@ -134,14 +124,8 @@ export class Application {
     }
 
     private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell){
-        if(destinationCell.getCanMove()) {
-			eventBus.dispatchEvent('figureMove', {
-				currentCell: currentCell.getCellName(),
-				destinationCell: destinationCell.getCellName(),
-				figureType: this.#selectedFigure?.getType(),
-				player: this.#gameManager.getCurrentPlayer(),
-				moveType: 'move',
-			});
+        if(destinationCell.getCanMove() && this.#selectedFigure) {
+			this.#figureMoveEvent = new FigureMoveEvent(this.#selectedFigure.getType(), currentCell.getCellName(), destinationCell.getCellName(), false)
             this.moveFigure(currentCell, destinationCell);
             return true;
         }
@@ -201,11 +185,13 @@ export class Application {
         
         this.#gameManager.toggleCurrentPlayer();
         if(this.#gameManager.isKingUnderCheck()) {
-            eventBus.dispatchEvent('checked', {player: this.#gameManager.getSecondPlayerColor()});
+			this.#figureMoveEvent.isCheck(true);
         }
         if(this.#gameManager.isGameFinished()) {
-            eventBus.dispatchEvent('gameFinished', {player: this.#gameManager.getSecondPlayerColor()});
+			this.#figureMoveEvent.isGameEnd(true);
         };
+		eventBus.dispatchEvent('figureMove', { value: this.#figureMoveEvent.toJson()});
+		this.#figureMoveEvent = null;
     }
 
     private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {

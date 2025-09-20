@@ -1,10 +1,7 @@
 <template>
 <div class="wrapper" ref="wrapperDiv">
-	<div v-for="value, index in steps.items">
+	<div v-for="value, index in stepsData">
 		<HistoryStep :step="combineStepData(index, value)"/>
-	</div>
-	<div v-if="steps.currentStepString.length">
-		<HistoryStep :step="combineStepData(steps.items.length, steps.currentStepString)"/>
 	</div>
 </div>
 </template>
@@ -23,12 +20,22 @@
 
 <script lang="ts" setup>
 import { eventBus, eventTypes } from '@/infra/EventBus';
-import { nextTick, ref } from 'vue';
-import { useStepsStore, type StepItem } from '../StepStore';
+import { computed, nextTick, ref } from 'vue';
+import { useStepsStore } from '../StepStore';
 import HistoryStep from './HistoryStep.vue';
+import type { FigureMoveEventDTO } from '@/infra/FigureMoveEvent';
 
 const wrapperDiv = ref<HTMLDivElement | null>(null);
-const steps = useStepsStore();
+const stepStore = useStepsStore();
+
+const stepsData = computed(() => stepStore.steps
+	.filter((_, index) => index % 2 === 0)
+    .map((step, index) => {
+      const originalIndex = index * 2;
+      const nextStep = stepStore.steps[originalIndex + 1];
+      return nextStep ? `${step} ${nextStep}` : step;
+    })
+);
 
 function combineStepData(index: number, step: string) {
 	return `${index + 1}. ${step}`
@@ -44,18 +51,9 @@ const scrollToBottom = () => {
 }
 
 eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
-  const { detail } = data as { detail: StepItem};
-  steps.addItem(detail)
+  const { detail } = data as { detail: { value: FigureMoveEventDTO }};
+  stepStore.addItem(detail.value);
   scrollToBottom();
-})
-eventBus.subscribe(eventTypes.checked, (data: unknown) => {
-  const { detail } = data as { detail: {player: string}};
-  steps.onCheck(detail, '+');
-})
-
-eventBus.subscribe(eventTypes.gameFinished, (data: unknown) => {
-  const { detail } = data as { detail: {player: string}};
-  steps.onCheck(detail, '#');
 })
 
 </script>
