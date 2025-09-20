@@ -27,7 +27,11 @@ export class FigureMoveEvent {
 	}
 
 	static fromJson(obj: FigureMoveEventDTO) {
-
+		const figureMoveEvent = new FigureMoveEvent(obj.figureType, obj.currentCell, obj.destinationCell, obj.capture);
+		figureMoveEvent.isCheck(obj.check);
+		figureMoveEvent.isGameEnd(obj.gameend);
+		figureMoveEvent.isRouqe(obj.rouqe);
+		return figureMoveEvent;
 	}
 
 	toJson(): FigureMoveEventDTO {
