@@ -127,8 +127,10 @@ export class Application {
 					this.#selectedFigure,
 					currentCell.getCellName(),
 					destinationCell.getCellName(),
-					destinationCell.getFigure()?.getType())
+					destinationCell.getFigure()?.getType());
+				this.#figureMoveEvent.isEnPassant(rightSiblingCellName);
 				this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
+				
                 return true;
         }
         
@@ -142,7 +144,8 @@ export class Application {
 					this.#selectedFigure,
 					currentCell.getCellName(),
 					destinationCell.getCellName(),
-					destinationCell.getFigure()?.getType())
+					destinationCell.getFigure()?.getType());
+				this.#figureMoveEvent.isEnPassant(leftSiblingCellName);
                 this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
                 return true;
         }

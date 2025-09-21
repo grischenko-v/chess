@@ -9,6 +9,7 @@ export type FigureMoveEventDTO = {
 	rouqe: boolean;
 	check: boolean;
 	gameend: boolean;
+	enPassant: string | undefined;
 };
 
 export class FigureMoveEvent {
@@ -20,6 +21,7 @@ export class FigureMoveEvent {
 	#rouqe = false;
 	#check = false;
 	#gameend = false;
+	#enPassant: string | null = null;
 
 	constructor(figure: Figure, currentCell: string, destinationCell: string, isCapture?: FigureType) {
 		this.#figureType = figure.getType();
@@ -39,6 +41,7 @@ export class FigureMoveEvent {
 			rouqe: this.#rouqe,
 			check: this.#check,
 			gameend: this.#gameend,
+			enPassant: this.#enPassant
 		}
 	}
 
@@ -59,5 +62,9 @@ export class FigureMoveEvent {
 	
 	isGameEnd(isGameEnd: boolean) {
 		this.#gameend = isGameEnd;
+	}
+
+	isEnPassant(isEnPassant: string | null) {
+		this.#enPassant = isEnPassant;
 	}
 }
