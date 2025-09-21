@@ -30,7 +30,6 @@ class SceneAdapter {
 
 	private onChangePlayer(data: unknown) {
 		 const { detail } = data as { detail: { currentPlayer: 'white' | 'black' }};
-		 console.log(detail);
 		 this.#scene.changeCameraPosition(detail.currentPlayer);
 	}
 
