@@ -11,6 +11,7 @@ Now in progress:
 
 TODO:
 - add roque, check and gameend to revert function
+- fix display capture figures on revert
 - change camera position on player change
 - Add Pawn promotion on last field, add promotion to steps history
 - add localfirst
