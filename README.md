@@ -14,7 +14,7 @@ TODO:
 - Add Pawn promotion on last field, add promotion to steps history
 - add localfirst
 - add linter
-- Add AI
+- Add AI(like https://github.com/lichess-org/stockfish.js )
 - Split Application to use-cases
 - Add history player
 - add 2d mode
