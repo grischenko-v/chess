@@ -1,5 +1,5 @@
 <template>
-<div class="wrapper" ref="wrapperDiv">
+<div class="wrapper" ref="wrapperDiv" v-if="stepsData.length > 0">
 	<div v-for="value, index in stepsData">
 		<HistoryStep :step="combineStepData(index, value)"/>
 	</div>
@@ -15,6 +15,7 @@
 	max-height: 120px;
 	width: 156px;
 	overflow: auto;
+	min-height: 24px;
 }
 </style>
 
