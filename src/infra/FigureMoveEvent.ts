@@ -1,7 +1,8 @@
-import type { FigureType } from "@/chess/domain/Figure";
+import type { Figure, FigureColor, FigureType } from "@/chess/domain/Figure";
 
 export type FigureMoveEventDTO = {
 	figureType: FigureType;
+	figureColor: FigureColor;
 	currentCell: string;
 	destinationCell: string;
 	capture: FigureType | undefined;
@@ -12,6 +13,7 @@ export type FigureMoveEventDTO = {
 
 export class FigureMoveEvent {
 	#figureType: FigureType;
+	#figureColor: FigureColor
 	#currentCell: string;
 	#destinationCell: string;
 	#capture: FigureType | undefined = undefined;
@@ -19,24 +21,18 @@ export class FigureMoveEvent {
 	#check = false;
 	#gameend = false;
 
-	constructor(figureType: FigureType, currentCell: string, destinationCell: string, isCapture?: FigureType) {
-		this.#figureType = figureType;
+	constructor(figure: Figure, currentCell: string, destinationCell: string, isCapture?: FigureType) {
+		this.#figureType = figure.getType();
+		this.#figureColor = figure.getColor();
 		this.#currentCell = currentCell;
 		this.#destinationCell = destinationCell;
 		this.#capture = isCapture;
 	}
 
-	static fromJson(obj: FigureMoveEventDTO) {
-		const figureMoveEvent = new FigureMoveEvent(obj.figureType, obj.currentCell, obj.destinationCell, obj.capture);
-		figureMoveEvent.isCheck(obj.check);
-		figureMoveEvent.isGameEnd(obj.gameend);
-		figureMoveEvent.isRouqe(obj.rouqe);
-		return figureMoveEvent;
-	}
-
 	toJson(): FigureMoveEventDTO {
 		return {
 			figureType: this.#figureType,
+			figureColor: this.#figureColor,
 			currentCell: this.#currentCell,
 			destinationCell: this.#destinationCell,
 			capture: this.#capture,

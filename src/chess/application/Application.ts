@@ -124,7 +124,7 @@ export class Application {
             && destinationCell.getCellRow() === rightSiblingCell.getCellRow()
             ) {  
 				this.#figureMoveEvent = new FigureMoveEvent(
-					this.#selectedFigure.getType(),
+					this.#selectedFigure,
 					currentCell.getCellName(),
 					destinationCell.getCellName(),
 					destinationCell.getFigure()?.getType())
@@ -139,7 +139,7 @@ export class Application {
             && destinationCell.getCellRow() === leftSiblingCell.getCellRow()
             ) {
 				this.#figureMoveEvent = new FigureMoveEvent(
-					this.#selectedFigure.getType(),
+					this.#selectedFigure,
 					currentCell.getCellName(),
 					destinationCell.getCellName(),
 					destinationCell.getFigure()?.getType())
@@ -157,7 +157,7 @@ export class Application {
 
         if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
 			this.#figureMoveEvent = new FigureMoveEvent(
-				this.#selectedFigure.getType(),
+				this.#selectedFigure,
 				currentCell.getCellName(),
 				destinationCell.getCellName(),
 				destinationCell.getFigure()?.getType())
@@ -170,7 +170,7 @@ export class Application {
     private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell){
         if(destinationCell.getCanMove() && this.#selectedFigure) {
 			this.#figureMoveEvent = new FigureMoveEvent(
-				this.#selectedFigure.getType(),
+				this.#selectedFigure,
 				currentCell.getCellName(),
 				destinationCell.getCellName())
             this.moveFigure(currentCell, destinationCell);
@@ -264,7 +264,6 @@ export class Application {
 	private captureFigure(capturedFigure: Figure, currentCell: BoardCell, destinationCell: BoardCell) {
 		this.#UIAdater.remove(capturedFigure.getFigure());
         figureRepository.deleteFigure(capturedFigure);
-        eventBus.dispatchEvent('figureCaptured', { capturedFigure });
         this.moveFigure(currentCell, destinationCell);
 	}
 }
