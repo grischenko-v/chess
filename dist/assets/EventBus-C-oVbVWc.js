@@ -1,0 +1,1 @@
+const s={outsideClick:"outsideClick",cellClick:"cellClick",figureClick:"figureClick",figureCaptured:"figureCaptured",figureMove:"figureMove",revertFigureMove:"revertFigureMove"};class t{dispatchEvent(e,i){window.dispatchEvent(new CustomEvent(e,{detail:i}))}subscribe(e,i){window.addEventListener(e,i)}}const u=new t;export{s as a,u as e};
