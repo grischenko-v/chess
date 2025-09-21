@@ -10,10 +10,9 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:
-- add roque and promotion to steps history
 - Add move rollback function
 - change camera position on player change
-- Add Pawn promotion on last field
+- Add Pawn promotion on last field, add promotion to steps history
 - add localfirst
 - add linter
 - Add AI

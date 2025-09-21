@@ -181,6 +181,7 @@ export class Application {
                 rookDestinatioCell.setFigure(rook);
                 rookCell.setFigure(null);
             }
+			this.#figureMoveEvent?.isRouqe(true);
         }
         
         this.#gameManager.toggleCurrentPlayer();

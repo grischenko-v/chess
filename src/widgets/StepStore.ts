@@ -11,11 +11,22 @@ const figuresNameMap = {
 	'King': 'K'
 } as const;
 
+function isShotRouque(obj: FigureMoveEventDTO) {
+	if(obj.currentCell === 'e1' && obj.destinationCell == 'g1'
+		|| obj.currentCell === 'e8' && obj.destinationCell === 'g8'
+	) {
+		return true;
+	}
+}
+
 function getShortFigureName(obj: FigureMoveEventDTO) {
 	return figuresNameMap[obj.figureType as keyof typeof figuresNameMap];
 }
 
 function MoveItemObjtoStepString(obj: FigureMoveEventDTO): string {
+	if(obj.rouqe) {
+		return isShotRouque(obj) ? '0-0' : '0-0-0';
+	}
 	return `${getShortFigureName(obj)}${obj.currentCell}${obj.destinationCell}${obj.capture ? 'x' : ''}${obj.check ? '+' : ''}${obj.gameend ? '#' : ''}`;
 }
 
