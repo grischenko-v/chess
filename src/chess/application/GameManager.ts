@@ -114,7 +114,6 @@ export class GameManager {
             selectedigureCell.setFigure(null);
             selectedFigure.setCurrentCell(cell);
             cell.setFigure(selectedFigure);
-            // cellFigure && cellFigure.setCurrentCell(null);
             cellFigure && figureRepository.deleteFigure(cellFigure);
         }
     }

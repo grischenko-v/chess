@@ -1,5 +1,5 @@
 import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
-import { eventBus } from "../../infra/EventBus";
+import { eventBus, eventTypes } from "../../infra/EventBus";
 
 export class HTMLAdapter {
     #body: HTMLElement;
@@ -8,9 +8,8 @@ export class HTMLAdapter {
         this.#body = document.body;
 
         eventBus.subscribe('chagePlayer', this.onChangePlayer.bind(this));
-        eventBus.subscribe('checked', this.onCheked.bind(this));
-        eventBus.subscribe('gameFinished', this.onGameFinished.bind(this));
 		eventBus.subscribe('revertFigureMove', this.onRevertFigureMove.bind(this));
+		eventBus.subscribe(eventTypes.figureMove, this.onFigureMove.bind(this));
     }
 
 	private onRevertFigureMove(data: unknown) {
@@ -23,6 +22,16 @@ export class HTMLAdapter {
     private onChangePlayer() {
         this.#body.classList.toggle('black')
     }
+
+	private onFigureMove(data: unknown) {
+		const { detail } = data as { detail: FigureMoveEventDTO};
+		if(detail.check) {
+			this.onCheked();
+		}
+		if(detail.gameend) {
+			this.onGameFinished();
+		}
+	}
 
     private onCheked() {
         this.#body.classList.add('checked');
