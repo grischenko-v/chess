@@ -52,6 +52,12 @@ export class Figure {
         this.#stepNumber++;
     }
 
+	revert(newCell: BoardCell) {
+		this.#figure.move(newCell.getCellPosition());
+        this.setCurrentCell(newCell);
+        this.#stepNumber--;
+	}
+
     getCurrentCell() {
         return this.#currentCell;
     }
