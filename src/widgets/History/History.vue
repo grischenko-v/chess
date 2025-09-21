@@ -19,11 +19,9 @@
 </style>
 
 <script lang="ts" setup>
-import { eventBus, eventTypes } from '@/infra/EventBus';
 import { computed, nextTick, ref, watch } from 'vue';
 import { useStepsStore } from '../StepStore';
 import HistoryStep from './HistoryStep.vue';
-import type { FigureMoveEventDTO } from '@/infra/FigureMoveEvent';
 
 const wrapperDiv = ref<HTMLDivElement | null>(null);
 const stepStore = useStepsStore();
