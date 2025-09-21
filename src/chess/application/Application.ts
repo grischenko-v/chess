@@ -91,8 +91,20 @@ export class Application {
 		console.log(destinationCell);
 		console.log(currentCell);
 		console.log(destinationCellFigure);
-		// this.#gameManager.toggleCurrentPlayer();
-		// this.#selectedFigure = destinationCellFigure;
+		this.#gameManager.toggleCurrentPlayer();
+		this.#selectedFigure = destinationCellFigure;
+		if(!this.#selectedFigure) {
+			return;
+		}
+
+		this.#gameManager.unhighliteMoves(this.#selectedFigure);
+        this.#selectedFigure.unselect();
+        this.#selectedFigure.revert(currentCell);
+        destinationCell.setFigure(null);
+		currentCell.setFigure(this.#selectedFigure);
+
+        this.#selectedFigure = null;
+
 	}
 
     private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
