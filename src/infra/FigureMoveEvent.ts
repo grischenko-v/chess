@@ -6,11 +6,16 @@ export type FigureMoveEventDTO = {
 	currentCell: string;
 	destinationCell: string;
 	capture: FigureType | undefined;
-	rouqe: boolean;
+	rouqe: RoqueData | null;
 	check: boolean;
 	gameend: boolean;
 	enPassant: string | null;
 };
+
+type RoqueData = {
+	rookDestinatioCell: string,
+	rookCell: string,
+}
 
 export class FigureMoveEvent {
 	#figureType: FigureType;
@@ -18,7 +23,7 @@ export class FigureMoveEvent {
 	#currentCell: string;
 	#destinationCell: string;
 	#capture: FigureType | undefined = undefined;
-	#rouqe = false;
+	#rouqe: RoqueData| null = null;
 	#check = false;
 	#gameend = false;
 	#enPassant: string | null = null;
@@ -52,7 +57,7 @@ export class FigureMoveEvent {
 		this.#capture = isCapture;
 	}
 
-	isRouqe(isRouqe: boolean) {
+	isRouqe(isRouqe: RoqueData) {
 		this.#rouqe = isRouqe;
 	}
 

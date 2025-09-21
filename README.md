@@ -11,7 +11,6 @@ Now in progress:
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 TODO:   
-- add roque, check and gameend to revert function
 - Add Pawn promotion on last field, add promotion to steps history
 - add localfirst
 - add linter

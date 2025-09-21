@@ -84,16 +84,10 @@ export class Application {
 
 	private onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO};
-		console.log(detail);
 		const destinationCell = cellRepository.getCell(detail.destinationCell);
 		const destinationCellFigure = destinationCell.getFigure();
 		const currentCell = cellRepository.getCell(detail.currentCell);
 		let cupturedFigure = null;
-		console.log(detail.capture);
-		console.log(detail.rouqe);
-		console.log(destinationCell);
-		console.log(currentCell);
-		console.log(destinationCellFigure);
 		this.#gameManager.toggleCurrentPlayer();
 		this.#selectedFigure = destinationCellFigure;
 		if(!this.#selectedFigure) {
@@ -113,7 +107,17 @@ export class Application {
 				detail.capture
 			);
 		}
-
+		if(detail.rouqe) {
+			const rookDestinatioCell = cellRepository.getCell(detail.rouqe.rookDestinatioCell);
+			const rookCell = cellRepository.getCell(detail.rouqe.rookCell);
+			const rook = rookDestinatioCell.getFigure();
+			if(!rook) {
+				return;
+			}
+			rook.move(rookCell);
+            rookDestinatioCell.setFigure(null);
+            rookCell.setFigure(rook);
+		}
 	}
 
     private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
@@ -234,8 +238,11 @@ export class Application {
                 rook.move(rookDestinatioCell);
                 rookDestinatioCell.setFigure(rook);
                 rookCell.setFigure(null);
+				this.#figureMoveEvent?.isRouqe({
+					rookDestinatioCell: roque.rookDestinationCellName,
+					rookCell: roque.rookDefualtCellName,
+				});
             }
-			this.#figureMoveEvent?.isRouqe(true);
         }
         
         this.#gameManager.toggleCurrentPlayer();
