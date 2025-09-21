@@ -24,12 +24,13 @@ export class GameManager {
     }
 
     toggleCurrentPlayer() {
-        eventBus.dispatchEvent('chagePlayer');
         if (this.#currentPlayerColor === 'white') {
             this.#currentPlayerColor = 'black'
+			eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#currentPlayerColor});
             return;
         }
         this.#currentPlayerColor = 'white';
+		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#currentPlayerColor});
     }
 
     private onChecked() {

@@ -2,6 +2,7 @@
 
 Tech stack:
 - Typescript
+- gsap
 - ThreeJS
 - VueJS/Pinia
 
@@ -11,7 +12,6 @@ Now in progress:
 
 TODO:
 - add roque, check and gameend to revert function
-- change camera position on player change
 - Add Pawn promotion on last field, add promotion to steps history
 - add localfirst
 - add linter

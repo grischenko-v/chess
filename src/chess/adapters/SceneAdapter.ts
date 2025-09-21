@@ -7,6 +7,7 @@ import { figureRepository } from "../repository/FiguresRepository";
 import { cellRepository } from "../repository/CellRepository";
 import { Board } from "../domain/Board";
 import { scene } from "../infra/Scene";
+import { eventBus } from "@/infra/EventBus";
 
 interface ISceenObject {
     getMesh: () => Object3D;
@@ -24,7 +25,14 @@ class SceneAdapter {
         this.createBoard();
         this.initFigures();
         this.animate();
+		eventBus.subscribe('chagePlayer', this.onChangePlayer.bind(this));
     }
+
+	private onChangePlayer(data: unknown) {
+		 const { detail } = data as { detail: { currentPlayer: 'white' | 'black' }};
+		 console.log(detail);
+		 this.#scene.changeCameraPosition(detail.currentPlayer);
+	}
 
     private draw(sceenObject: ISceenObject) {
         this.#scene.addObject(sceenObject.getMesh());
