@@ -9,7 +9,7 @@ export type FigureMoveEventDTO = {
 	rouqe: boolean;
 	check: boolean;
 	gameend: boolean;
-	enPassant: string | undefined;
+	enPassant: string | null;
 };
 
 export class FigureMoveEvent {
