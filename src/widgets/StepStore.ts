@@ -37,6 +37,11 @@ const items = ref<FigureMoveEventDTO[]>([]);
 
 const steps = computed(() => items.value.map(item => MoveItemObjtoStepString(item)));
 
+eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
+  const { detail } = data as { detail: { value: FigureMoveEventDTO }};
+  addItem(detail.value);
+})
+
 function addItem(item: FigureMoveEventDTO) {
   items.value.push(item);
 }

@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { eventBus, eventTypes } from '@/infra/EventBus';
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useStepsStore } from '../StepStore';
 import HistoryStep from './HistoryStep.vue';
 import type { FigureMoveEventDTO } from '@/infra/FigureMoveEvent';
@@ -50,10 +50,5 @@ const scrollToBottom = () => {
   });
 }
 
-eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
-  const { detail } = data as { detail: { value: FigureMoveEventDTO }};
-  stepStore.addItem(detail.value);
-  scrollToBottom();
-})
-
+watch(stepStore.items, () => scrollToBottom()); 
 </script>
