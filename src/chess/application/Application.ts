@@ -88,6 +88,9 @@ export class Application {
 		const destinationCell = cellRepository.getCell(detail.destinationCell);
 		const destinationCellFigure = destinationCell.getFigure();
 		const currentCell = cellRepository.getCell(detail.currentCell);
+		let cupturedFigure = null;
+		console.log(detail.capture);
+
 		console.log(destinationCell);
 		console.log(currentCell);
 		console.log(destinationCellFigure);
@@ -100,10 +103,12 @@ export class Application {
 		this.#gameManager.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
         this.#selectedFigure.revert(currentCell);
-        destinationCell.setFigure(null);
+        destinationCell.setFigure(cupturedFigure);
 		currentCell.setFigure(this.#selectedFigure);
-
         this.#selectedFigure = null;
+		if(detail.capture) {
+			this.#UIAdater.initFigure(detail.destinationCell, this.#gameManager.getSecondPlayerColor(), detail.capture);
+		}
 
 	}
 

@@ -14,6 +14,7 @@ interface ISceenObject {
 
 export interface UIAdater {
     remove: (deletedFigure: ISceenObject) => void;
+	initFigure: (cellName: string, color: FigureColor, type: FigureType) => void;
 }
 class SceneAdapter {
     #scene = scene
@@ -37,7 +38,7 @@ class SceneAdapter {
         this.#scene.remove(deletedFigure.getMesh());
     }
 
-    private initFigure(cellName: string, color: FigureColor, type: FigureType) {
+    initFigure(cellName: string, color: FigureColor, type: FigureType) {
         const cell = cellRepository.getCell(cellName);
         const position = cell.getCellPosition();
         const figure = new Figure(position, color, type, cell)
