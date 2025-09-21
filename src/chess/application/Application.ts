@@ -90,7 +90,7 @@ export class Application {
 		const currentCell = cellRepository.getCell(detail.currentCell);
 		let cupturedFigure = null;
 		console.log(detail.capture);
-
+		console.log(detail.rouqe);
 		console.log(destinationCell);
 		console.log(currentCell);
 		console.log(destinationCellFigure);
@@ -161,7 +161,7 @@ export class Application {
 				currentCell.getCellName(),
 				destinationCell.getCellName(),
 				destinationCell.getFigure()?.getType())
-            this.captureFigure(currentCell, destinationCell)
+            this.captureFigureRegular(currentCell, destinationCell)
 			return true;
         }
         return false;
@@ -245,15 +245,12 @@ export class Application {
 		this.#figureMoveEvent = null;
     }
 
-    private captureFigure(currentCell: BoardCell, destinationCell: BoardCell) {
+    private captureFigureRegular(currentCell: BoardCell, destinationCell: BoardCell) {
         const capturedFigure = destinationCell.getFigure();
         if(!capturedFigure) {
             return;
         }
-        this.#UIAdater.remove(capturedFigure.getFigure());
-        figureRepository.deleteFigure(capturedFigure);
-        eventBus.dispatchEvent('figureCaptured', { capturedFigure });
-        this.moveFigure(currentCell, destinationCell);
+       this.captureFigure(capturedFigure, currentCell, destinationCell);
     }
 
     private captureFigureEnPassant(currentCell: BoardCell, destinationCell: BoardCell, cupturedCell: BoardCell) {
@@ -261,9 +258,13 @@ export class Application {
         if(!capturedFigure) {
             return;
         }
-        this.#UIAdater.remove(capturedFigure.getFigure());
+        this.captureFigure(capturedFigure, currentCell, destinationCell);
+    }
+
+	private captureFigure(capturedFigure: Figure, currentCell: BoardCell, destinationCell: BoardCell) {
+		this.#UIAdater.remove(capturedFigure.getFigure());
         figureRepository.deleteFigure(capturedFigure);
         eventBus.dispatchEvent('figureCaptured', { capturedFigure });
         this.moveFigure(currentCell, destinationCell);
-    }
+	}
 }
