@@ -15,6 +15,7 @@ TODO:
 - add localfirst
 - add linter
 - Add AI
+- Split Application to use-cases
 - Add history player
 - add 2d mode
 - add multilang support
