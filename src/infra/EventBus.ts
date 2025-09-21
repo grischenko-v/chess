@@ -5,7 +5,6 @@ export const eventTypes = {
     chagePlayer: 'changePlayer',
     checked: 'checked',
     gameFinished: 'gameFinished',
-    figureCaptured: 'figureCaptured',
 	figureMove: 'figureMove',
 	revertFigureMove: 'revertFigureMove',
 } as const;
