@@ -107,7 +107,11 @@ export class Application {
 		currentCell.setFigure(this.#selectedFigure);
         this.#selectedFigure = null;
 		if(detail.capture) {
-			this.#UIAdater.initFigure(detail.destinationCell, this.#gameManager.getSecondPlayerColor(), detail.capture);
+			this.#UIAdater.initFigure(
+				detail.enPassant ? detail.enPassant : detail.destinationCell,
+				this.#gameManager.getSecondPlayerColor(),
+				detail.capture
+			);
 		}
 
 	}
@@ -127,7 +131,7 @@ export class Application {
 					this.#selectedFigure,
 					currentCell.getCellName(),
 					destinationCell.getCellName(),
-					destinationCell.getFigure()?.getType());
+					rightSiblingCell.getFigure()?.getType());
 				this.#figureMoveEvent.isEnPassant(rightSiblingCellName);
 				this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
 				
@@ -144,7 +148,7 @@ export class Application {
 					this.#selectedFigure,
 					currentCell.getCellName(),
 					destinationCell.getCellName(),
-					destinationCell.getFigure()?.getType());
+					leftSiblingCell.getFigure()?.getType());
 				this.#figureMoveEvent.isEnPassant(leftSiblingCellName);
                 this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
                 return true;
