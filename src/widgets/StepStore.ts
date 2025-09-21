@@ -1,3 +1,4 @@
+import { eventBus, eventTypes } from "@/infra/EventBus";
 import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
@@ -44,7 +45,8 @@ function revert() {
 	if(!items.value.length) {
 		return;
 	}
-	return items.value.pop();
+	const revertFigureMove = items.value.pop();
+	eventBus.dispatchEvent(eventTypes.revertFigureMove, revertFigureMove);
 }
 
 return {items, steps, addItem, revert}

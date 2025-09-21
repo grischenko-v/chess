@@ -32,7 +32,6 @@ import { useStepsStore } from '../StepStore';
 const steps = useStepsStore();
 
 function onRollBack() {
-	const revertedStep = steps.revert();
-	console.log(revertedStep);
+	steps.revert();
 }
 </script>

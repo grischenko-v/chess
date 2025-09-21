@@ -6,7 +6,7 @@ import { eventBus, eventTypes } from "../../infra/EventBus";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 import { GameManager } from "./GameManager";
-import { FigureMoveEvent } from "@/infra/FigureMoveEvent";
+import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 
 export class Application {
     #UIAdater: UIAdater;
@@ -23,6 +23,7 @@ export class Application {
         eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
         eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
+		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
     }
 
     private onFigureClick(data: unknown) {
@@ -81,6 +82,19 @@ export class Application {
         this.unselectFigure();
     }
 
+	private onRevertFigureMove(data: unknown) {
+		const { detail } = data as { detail: FigureMoveEventDTO};
+		console.log(detail);
+		const destinationCell = cellRepository.getCell(detail.destinationCell);
+		const destinationCellFigure = destinationCell.getFigure();
+		const currentCell = cellRepository.getCell(detail.currentCell);
+		console.log(destinationCell);
+		console.log(currentCell);
+		console.log(destinationCellFigure);
+		// this.#gameManager.toggleCurrentPlayer();
+		// this.#selectedFigure = destinationCellFigure;
+	}
+
     private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
         if(!this.#selectedFigure) {
             return false;
@@ -92,7 +106,11 @@ export class Application {
             && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             && destinationCell.getCellRow() === rightSiblingCell.getCellRow()
             ) {  
-				this.#figureMoveEvent = new FigureMoveEvent(this.#selectedFigure.getType(), currentCell.getCellName(), destinationCell.getCellName(), true)
+				this.#figureMoveEvent = new FigureMoveEvent(
+					this.#selectedFigure.getType(),
+					currentCell.getCellName(),
+					destinationCell.getCellName(),
+					destinationCell.getFigure()?.getType())
 				this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
                 return true;
         }
@@ -103,6 +121,11 @@ export class Application {
             && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
             && destinationCell.getCellRow() === leftSiblingCell.getCellRow()
             ) {
+				this.#figureMoveEvent = new FigureMoveEvent(
+					this.#selectedFigure.getType(),
+					currentCell.getCellName(),
+					destinationCell.getCellName(),
+					destinationCell.getFigure()?.getType())
                 this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
                 return true;
         }
@@ -116,7 +139,11 @@ export class Application {
         }
 
         if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
-			this.#figureMoveEvent = new FigureMoveEvent(this.#selectedFigure.getType(), currentCell.getCellName(), destinationCell.getCellName(), true)
+			this.#figureMoveEvent = new FigureMoveEvent(
+				this.#selectedFigure.getType(),
+				currentCell.getCellName(),
+				destinationCell.getCellName(),
+				destinationCell.getFigure()?.getType())
             this.captureFigure(currentCell, destinationCell)
 			return true;
         }
@@ -125,7 +152,10 @@ export class Application {
 
     private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell){
         if(destinationCell.getCanMove() && this.#selectedFigure) {
-			this.#figureMoveEvent = new FigureMoveEvent(this.#selectedFigure.getType(), currentCell.getCellName(), destinationCell.getCellName(), false)
+			this.#figureMoveEvent = new FigureMoveEvent(
+				this.#selectedFigure.getType(),
+				currentCell.getCellName(),
+				destinationCell.getCellName())
             this.moveFigure(currentCell, destinationCell);
             return true;
         }

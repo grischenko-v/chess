@@ -4,7 +4,7 @@ export type FigureMoveEventDTO = {
 	figureType: FigureType;
 	currentCell: string;
 	destinationCell: string;
-	capture: boolean;
+	capture: FigureType | undefined;
 	rouqe: boolean;
 	check: boolean;
 	gameend: boolean;
@@ -14,12 +14,12 @@ export class FigureMoveEvent {
 	#figureType: FigureType;
 	#currentCell: string;
 	#destinationCell: string;
-	#capture = false;
+	#capture: FigureType | undefined = undefined;
 	#rouqe = false;
 	#check = false;
 	#gameend = false;
 
-	constructor(figureType: FigureType, currentCell: string, destinationCell: string, isCapture: boolean) {
+	constructor(figureType: FigureType, currentCell: string, destinationCell: string, isCapture?: FigureType) {
 		this.#figureType = figureType;
 		this.#currentCell = currentCell;
 		this.#destinationCell = destinationCell;
@@ -46,7 +46,7 @@ export class FigureMoveEvent {
 		}
 	}
 
-	initStep(figureType: FigureType, currentCell: string, destinationCell: string, isCapture: boolean) {
+	initStep(figureType: FigureType, currentCell: string, destinationCell: string, isCapture: FigureType) {
 		this.#figureType = figureType;
 		this.#currentCell = currentCell;
 		this.#destinationCell = destinationCell;

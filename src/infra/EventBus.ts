@@ -7,6 +7,7 @@ export const eventTypes = {
     gameFinished: 'gameFinished',
     figureCaptured: 'figureCaptured',
 	figureMove: 'figureMove',
+	revertFigureMove: 'revertFigureMove',
 } as const;
 
 export type EventTypes = keyof typeof eventTypes;
