@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper">
+	<div class="wrapper" v-if="steps.items.length > 0">
 		<div class="rollback" @click="onRollBack"></div>
 	</div>
 </template>
