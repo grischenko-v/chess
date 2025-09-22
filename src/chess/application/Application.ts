@@ -89,6 +89,10 @@ export class Application {
 		const currentCell = cellRepository.getCell(detail.currentCell);
 		let cupturedFigure = null;
 		this.#gameManager.toggleCurrentPlayer();
+		if(this.#selectedFigure) {
+			this.#selectedFigure.unselect();
+			this.#gameManager.unhighliteMoves(this.#selectedFigure);
+		}
 		this.#selectedFigure = destinationCellFigure;
 		if(!this.#selectedFigure) {
 			return;
