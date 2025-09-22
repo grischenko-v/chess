@@ -251,11 +251,9 @@ export class Application {
 		}
         if(this.#gameManager.isKingUnderCheck()) {
 			this.#figureMoveEvent.isCheck(true);
-			eventBus.dispatchEvent(eventTypes.checked);
         }
         if(this.#gameManager.isGameFinished()) {
 			this.#figureMoveEvent.isGameEnd(true);
-			eventBus.dispatchEvent(eventTypes.gameFinished);
         };
 		eventBus.dispatchEvent('figureMove', { value: this.#figureMoveEvent.toJson()});
 		this.#figureMoveEvent = null;

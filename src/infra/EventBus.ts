@@ -3,8 +3,6 @@ export const eventTypes = {
     cellClick: 'cellClick',
     figureClick: 'figureClick',
     chagePlayer: 'changePlayer',
-    checked: 'checked',
-    gameFinished: 'gameFinished',
 	figureMove: 'figureMove',
 	revertFigureMove: 'revertFigureMove',
 } as const;

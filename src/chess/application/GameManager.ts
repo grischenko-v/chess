@@ -1,9 +1,10 @@
 import { BOARD_CELL_COLOR, ROQUE_STEP_MAP, type ROQUE_STEP_MAP_KEYS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
 import { Figure, type FigureColor } from "../domain/Figure";
-import { eventBus } from "../../infra/EventBus";
+import { eventBus, eventTypes } from "../../infra/EventBus";
 import { figureRepository } from "../repository/FiguresRepository";
 import { FigureMoveService } from "../service/FigureMoveService";
+import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 
 export class GameManager {
     #currentPlayerColor: FigureColor = 'white';
@@ -11,8 +12,7 @@ export class GameManager {
 
     constructor() {
         this.#figureMoveService = new FigureMoveService();
-        eventBus.subscribe('gameFinished', this.onGameFinished.bind(this));
-        eventBus.subscribe('checked', this.onChecked.bind(this))
+		eventBus.subscribe(eventTypes.figureMove, this.onFigureMove.bind(this));
     }
 
     getCurrentPlayer() {
@@ -33,9 +33,21 @@ export class GameManager {
 		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#currentPlayerColor});
     }
 
+	private onFigureMove(data: unknown) {
+		const { detail } = data as { detail: { value: FigureMoveEventDTO }};
+		console.log(detail);
+		if(detail.value.check) {
+			this.onChecked();
+		}
+		if(detail.value.gameend) {
+			this.onGameFinished();
+		}
+	}
+
     private onChecked() {
         const currentKingCell = this.getCurrentKing().getCurrentCell();
         currentKingCell.changeColor(BOARD_CELL_COLOR.capture);
+		console.log(currentKingCell);
 
         setTimeout(() => {
             const currentKingCell = this.getCurrentKing().getCurrentCell()

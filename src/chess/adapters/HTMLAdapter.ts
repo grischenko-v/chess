@@ -13,8 +13,8 @@ export class HTMLAdapter {
     }
 
 	private onRevertFigureMove(data: unknown) {
-		const { detail } = data as { detail: FigureMoveEventDTO};
-		if(detail.gameend) {
+		const { detail } = data as { detail: { value: FigureMoveEventDTO }};
+		if(detail.value.gameend) {
 			 this.#body.classList.remove('finished');
 		}
 	}
@@ -24,11 +24,11 @@ export class HTMLAdapter {
     }
 
 	private onFigureMove(data: unknown) {
-		const { detail } = data as { detail: FigureMoveEventDTO};
-		if(detail.check) {
+		const { detail } = data as { detail: { value: FigureMoveEventDTO }};
+		if(detail.value.check) {
 			this.onCheked();
 		}
-		if(detail.gameend) {
+		if(detail.value.gameend) {
 			this.onGameFinished();
 		}
 	}
