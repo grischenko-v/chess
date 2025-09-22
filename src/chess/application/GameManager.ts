@@ -35,7 +35,6 @@ export class GameManager {
 
 	private onFigureMove(data: unknown) {
 		const { detail } = data as { detail: { value: FigureMoveEventDTO }};
-		console.log(detail);
 		if(detail.value.check) {
 			this.onChecked();
 		}
@@ -47,7 +46,6 @@ export class GameManager {
     private onChecked() {
         const currentKingCell = this.getCurrentKing().getCurrentCell();
         currentKingCell.changeColor(BOARD_CELL_COLOR.capture);
-		console.log(currentKingCell);
 
         setTimeout(() => {
             const currentKingCell = this.getCurrentKing().getCurrentCell()
