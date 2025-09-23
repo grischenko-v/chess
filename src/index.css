@@ -17,7 +17,6 @@ body {
 }
 
 .finished {
-    pointer-events: none;
     background-color: rgba(255, 0, 0, 0.8);
 }
 

@@ -8,13 +8,13 @@ export class HTMLAdapter {
         this.#body = document.body;
 
         eventBus.subscribe('chagePlayer', this.onChangePlayer.bind(this));
-		eventBus.subscribe('revertFigureMove', this.onRevertFigureMove.bind(this));
+		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
 		eventBus.subscribe(eventTypes.figureMove, this.onFigureMove.bind(this));
     }
 
 	private onRevertFigureMove(data: unknown) {
-		const { detail } = data as { detail: { value: FigureMoveEventDTO }};
-		if(detail.value.gameend) {
+		const { detail } = data as { detail: FigureMoveEventDTO };
+		if(detail.gameend) {
 			 this.#body.classList.remove('finished');
 		}
 	}
