@@ -17,8 +17,6 @@ import('./widgets/initWigets')
 // AIBot init
 const aibot = new AIBot()
 
-aibot.addListeners((e: string) => {
-	console.log('AIBot message:', e);
-});
+aibot.init();
 
-aibot.message('uci');
+
