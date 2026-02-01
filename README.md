@@ -5,6 +5,7 @@ Tech stack:
 - gsap
 - ThreeJS
 - VueJS/Pinia
+- AI: wasm/stockfish17.1-light-singlecore
 
 Now in progress:
 
@@ -14,7 +15,7 @@ TODO:
 - Add Pawn promotion on last field, add promotion to steps history
 - test figure moves/capture/revert
 - add localfirst
-- Add AI(like https://github.com/lichess-org/stockfish.js )
+- Add AI(stockfish https://github.com/nmrugg/stockfish.js)
 - Split Application to use-cases
 - Add history player
 - add 2d mode
