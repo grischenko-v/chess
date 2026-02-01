@@ -12,7 +12,7 @@ export class CellGeometry {
     #material: MeshStandardMaterial;
     #mesh: Mesh<BoxGeometry, MeshStandardMaterial>;
 
-    constructor(position: any, color: CELL_COLOR_TYPE, name: string) {
+    constructor(position: {x: number, z: number}, color: CELL_COLOR_TYPE, name: string) {
         this.#geometry = new BoxGeometry( 1, 1, 1 );
         this.#material = new MeshStandardMaterial( { color: BOARD_CELL_COLOR[color] } );
         this.#mesh = new Mesh( this.#geometry, this.#material );

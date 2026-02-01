@@ -1,0 +1,16 @@
+root = true
+
+[*.css]
+indent_style = space
+indent_size = 4
+charset = utf-8
+
+[*.ts]
+indent_style = tab
+indent_size = 4
+charset = utf-8
+
+[*.vue]
+indent_style = tab
+indent_size = 4
+charset = utf-8

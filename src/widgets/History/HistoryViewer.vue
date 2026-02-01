@@ -1,6 +1,6 @@
 <template>
 <div class="wrapper" ref="wrapperDiv" v-if="stepsData.length > 0">
-	<div v-for="value, index in stepsData">
+	<div v-for="value, index in stepsData" :key="index + value">
 		<HistoryStep :step="combineStepData(index, value)"/>
 	</div>
 </div>

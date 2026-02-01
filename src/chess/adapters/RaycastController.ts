@@ -6,7 +6,8 @@ import { figureRepository } from "../repository/FiguresRepository";
 import { boardMatrix } from "../constants";
 
 const dispatchEventStrategy = {
-    '': (_intercectName: string) => eventBus.dispatchEvent(eventTypes.outsideClick, {}),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    '': (_: string) => eventBus.dispatchEvent(eventTypes.outsideClick, {}),
     'figure': (intercectName: string) => {
         const figure = figureRepository.getFigure(intercectName);
         eventBus.dispatchEvent(eventTypes.figureClick, { clickedFigure: figure });
@@ -53,7 +54,7 @@ export class RaycastController {
         return '';
     }
 
-    private raycast(event: any) {
+    private raycast(event: PointerEvent) {
         this.#mouseCoordVector.x = (event.clientX / window.innerWidth) * 2 - 1;
         this.#mouseCoordVector.y = -(event.clientY / window.innerHeight) * 2 + 1;
         this.#raycaster.setFromCamera(this.#mouseCoordVector, this.#camera);

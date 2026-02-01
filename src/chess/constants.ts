@@ -66,9 +66,9 @@ export const FIGURE_COLOR = {
 function getBoardMatrix(): string[][] {
     const boardMatrix: string[][] = [];
     let counter = 0;
-    for(let row of rows) {
+    for(const row of rows) {
         boardMatrix.push([]);
-        for(let column of columns) {
+        for(const column of columns) {
             boardMatrix[counter].push(`${column}${row}`);
         }
         counter++;

@@ -1,6 +1,6 @@
 <template>
   <ul class="cuptured-list">
-    <li class="cuptured-list-item" v-for="figure in cupturedFigures">
+    <li class="cuptured-list-item" v-for="figure in cupturedFigures" :key="figure.figureType + figure.figureColor">
       <img 
       class="cuptured-figure" :src="getCupturedFigureIcon(figure)"/>
     </li>

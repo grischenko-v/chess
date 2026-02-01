@@ -6,14 +6,25 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --emptyOutDir",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "eslint": "eslint --ext .js,.jsx .",
+    "lint": "eslint ./src/",
+    "lint:fix": "eslint --fix ."
   },
   "author": "Vladimir Grishenko",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/three": "^0.158.3",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
+    "@typescript-eslint/parser": "^8.54.0",
     "@vitejs/plugin-vue": "^6.0.1",
-    "typescript": "^5.9.2",
+    "eslint": "^9.39.2",
+    "eslint-plugin-vue": "^10.7.0",
+    "globals": "^17.3.0",
+    "jiti": "^2.6.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0",
     "vite": "^7.1.5",
     "vue-ts": "^1.0.11"
   },

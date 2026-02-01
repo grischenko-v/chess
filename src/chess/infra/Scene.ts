@@ -2,7 +2,6 @@ import {
     PerspectiveCamera,
     Scene as ThreeScene,
     WebGLRenderer,
-    AxesHelper,
     AmbientLight,
     DirectionalLight,
     BasicShadowMap,
@@ -35,7 +34,7 @@ class Scene implements IScene{
     #scene: ThreeScene;
     #camera: PerspectiveCamera;
     #renderer: WebGLRenderer;
-    controls: any;
+    controls: OrbitControls;
 
     constructor() {
         this.#scene = new ThreeScene();

@@ -174,7 +174,7 @@ export const getCellsByDirection = (figure: Figure, siblingName: TCellSibiling) 
     if(!currentCell) {
         return [];
     }
-    let cellName = currentCell[siblingName](figure.getColor());
+    const cellName = currentCell[siblingName](figure.getColor());
     let cell = cellRepository.getCell(cellName);
     let nextCellName = currentCell[siblingName](figure.getColor());
     let nextCell = cellRepository.getCell(nextCellName);

@@ -12,7 +12,7 @@ const initWidget = async (pinia: Pinia, createApp: CreateAppFunction<Element>, w
 
 const widgets = [
 	{
-		name: 'History',
+		name: 'HistoryViewer',
 		mountId: '#history'
 	},
 	{
@@ -20,7 +20,7 @@ const widgets = [
 		mountId: '#cuttedFigures'
 	},
 	{
-		name: 'Rollback',
+		name: 'RollbackButton',
 		mountId: '#rollback'
 	}
 ]

@@ -15,7 +15,7 @@ type TFigureParams = {
     name: string
 }
 
-export const figureUIFactory: Record<FigureType, any> = {
+export const figureUIFactory: Record<FigureType, (params: TFigureParams) => FigureUI> = {
     'Pawn': (params: TFigureParams) => {
         const pawn = createPawn(params.color, params.name);
         return new FigureUI(pawn, params.position, params.color);
@@ -43,6 +43,7 @@ export const figureUIFactory: Record<FigureType, any> = {
 };
 
 export class FigureUI {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mesh: any;
     color: FigureColor;
 

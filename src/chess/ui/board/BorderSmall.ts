@@ -6,7 +6,7 @@ class BorderSmall {
     material;
     mesh;
 
-    constructor(position: any) {
+    constructor(position: {x: number, z: number}) {
         this.geometry = new BoxGeometry( 0.5, 1.2, 9 );
         this.material = new MeshStandardMaterial( {color: BOARD_BOX_COLOR} );
         this.mesh = new Mesh( this.geometry, this.material );

@@ -34,7 +34,7 @@ export class GameManager {
     }
 
 	private onFigureMove(data: unknown) {
-		const { detail } = data as { detail: { value: FigureMoveEventDTO }};
+		const { detail } = data as { detail: { value: FigureMoveEventDTO }};		
 		if(detail.value.check) {
 			this.onChecked();
 		}

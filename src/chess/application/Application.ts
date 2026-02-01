@@ -10,6 +10,7 @@ import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEven
 
 export class Application {
     #UIAdater: UIAdater;
+    // eslint-disable-next-line no-unused-private-class-members
     #htmlAdapter = new HTMLAdapter();
 
     #selectedFigure: Figure | null = null;
@@ -87,7 +88,7 @@ export class Application {
 		const destinationCell = cellRepository.getCell(detail.destinationCell);
 		const destinationCellFigure = destinationCell.getFigure();
 		const currentCell = cellRepository.getCell(detail.currentCell);
-		let cupturedFigure = null;
+		const cupturedFigure = null;
 		this.#gameManager.toggleCurrentPlayer();
 		if(this.#selectedFigure) {
 			this.#selectedFigure.unselect();
@@ -249,6 +250,9 @@ export class Application {
             }
         }
         
+		// this.#gameManager().
+
+
         this.#gameManager.toggleCurrentPlayer();
 		if(!this.#figureMoveEvent) {
 			throw new Error('no figure move event');
