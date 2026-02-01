@@ -1,4 +1,4 @@
-import { BoxGeometry, MeshStandardMaterial, Mesh } from 'three';
+import { BoxGeometry, MeshStandardMaterial, Mesh, Vector3 } from 'three';
 import { BOARD_BOX_COLOR } from '../../constants';
 
 class BorderSmall {
@@ -6,7 +6,7 @@ class BorderSmall {
     material;
     mesh;
 
-    constructor(position: {x: number, z: number}) {
+    constructor(position: Vector3) {
         this.geometry = new BoxGeometry( 0.5, 1.2, 9 );
         this.material = new MeshStandardMaterial( {color: BOARD_BOX_COLOR} );
         this.mesh = new Mesh( this.geometry, this.material );
