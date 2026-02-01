@@ -1,3 +1,4 @@
+import { AIBot } from './AIBot/AIBot';
 import './index.css';
 
 import('./chess/adapters/SceneAdapter')
@@ -11,3 +12,13 @@ import('./chess/adapters/SceneAdapter')
 import('./widgets/initWigets')
 .then(({ initWidgets }) => initWidgets())
 .catch(e => console.error(e));
+
+
+// AIBot init
+const aibot = new AIBot()
+
+aibot.addListeners((e: string) => {
+	console.log('AIBot message:', e);
+});
+
+aibot.message('uci');

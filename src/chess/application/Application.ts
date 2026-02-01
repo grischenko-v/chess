@@ -250,9 +250,6 @@ export class Application {
             }
         }
         
-		// this.#gameManager().
-
-
         this.#gameManager.toggleCurrentPlayer();
 		if(!this.#figureMoveEvent) {
 			throw new Error('no figure move event');
