@@ -10,12 +10,16 @@ export type FigureMoveEventDTO = {
 	check: boolean;
 	gameend: boolean;
 	enPassant: string | null;
+	transform: TransformType;
 };
 
 type RoqueData = {
 	rookDestinatioCell: string,
 	rookCell: string,
 }
+
+// for pawn transform q - queen, r - rook, b - bishop, n - knight
+type TransformType = 'q' | 'r' | 'b' | 'n' | null;
 
 export class FigureMoveEvent {
 	#figureType: FigureType;
@@ -27,6 +31,7 @@ export class FigureMoveEvent {
 	#check = false;
 	#gameend = false;
 	#enPassant: string | null = null;
+	#transform: TransformType = null;
 
 	constructor(figure: Figure, currentCell: string, destinationCell: string, isCapture?: FigureType) {
 		this.#figureType = figure.getType();
@@ -46,7 +51,8 @@ export class FigureMoveEvent {
 			rouqe: this.#rouqe,
 			check: this.#check,
 			gameend: this.#gameend,
-			enPassant: this.#enPassant
+			enPassant: this.#enPassant,
+			transform: this.#transform
 		}
 	}
 
@@ -71,5 +77,9 @@ export class FigureMoveEvent {
 
 	isEnPassant(isEnPassant: string | null) {
 		this.#enPassant = isEnPassant;
+	}
+
+	setTransform(transform: TransformType) {
+		this.#transform = transform;
 	}
 }
