@@ -28,7 +28,7 @@ TODO:
 - test figure moves/capture/revert
 - add localfirst
 - add play vs AI(stockfish) 
-- aplit Application to use-cases
+- split Application to use-cases
 - add history player
 - add 2d mode
 - add multilang support
