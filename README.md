@@ -13,6 +13,7 @@ Now in progress:
 
 TODO:   
 - Add Pawn promotion on last field, add promotion to steps history
+- Add signutures to board(A-H, 1-7)
 - test figure moves/capture/revert
 - add localfirst
 - Add AI(stockfish https://github.com/nmrugg/stockfish.js)
