@@ -10,8 +10,6 @@ import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEven
 
 export class Application {
     #UIAdater: UIAdater;
-    // eslint-disable-next-line no-unused-private-class-members
-    #htmlAdapter = new HTMLAdapter();
 
     #selectedFigure: Figure | null = null;
     #gameManager: GameManager;
@@ -21,6 +19,7 @@ export class Application {
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
         this.#gameManager = new GameManager();
+		new HTMLAdapter();
 
         eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
