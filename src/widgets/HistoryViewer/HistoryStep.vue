@@ -1,14 +1,8 @@
 <template>
-	<span class="step">
+	<span>
 		{{step}}
 	</span>
 </template>
-
-<style scoped>
-.step {
-	padding: 4px;
-}
-</style>
 
 <script lang="ts" setup>
 

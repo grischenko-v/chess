@@ -1,13 +1,13 @@
 <template>
-<div class="wrapper" ref="wrapperDiv" v-if="stepsData.length > 0">
-	<div v-for="value, index in stepsData" :key="index + value">
+<ul class="history-list" ref="wrapperDiv" v-if="stepsData.length > 0">
+	<li v-for="value, index in stepsData" :key="index + value" class="history-list-item">
 		<HistoryStep :step="combineStepData(index, value)"/>
-	</div>
-</div>
+	</li>
+</ul>
 </template>
 
 <style lang="css" scoped>
-.wrapper {
+.history-list {
 	background-color: lightgrey;
     display: flex;
     flex-direction: column;
@@ -16,6 +16,13 @@
 	width: 156px;
 	overflow: auto;
 	min-height: 24px;
+	list-style: none;
+    margin: 0;
+    padding: 8px;
+}
+
+.history-list-item {
+	padding: 4px;
 }
 </style>
 
