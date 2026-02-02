@@ -1,5 +1,5 @@
 <template>
-	<div class="help-wrapper">
+	<div class="help-wrapper" v-if="steps.isBotInited">
 		<button class="help" @click="onHelpRequest"></button>
 	</div>
 </template>
@@ -31,6 +31,9 @@
 
 <script lang="ts" setup>
 import { eventBus, eventTypes } from "@/infra/EventBus";
+import { useStepsStore } from '../../StepStore';
+
+const steps = useStepsStore();
 
 function onHelpRequest() {
 	eventBus.dispatchEvent(eventTypes.helpRequest, {})

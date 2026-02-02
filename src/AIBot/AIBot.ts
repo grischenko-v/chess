@@ -56,6 +56,7 @@ export class AIBot {
 		this.message('isready');
 		await this.waitIsReady();
 		console.info("ISREADY OK received from Stockfish");
+		eventBus.dispatchEvent(eventTypes.botInited, {})
 	}
 
 	private async onNextStepRequest(data: unknown) {

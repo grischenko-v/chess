@@ -37,9 +37,15 @@ const items = ref<FigureMoveEventDTO[]>([]);
 
 const steps = computed(() => items.value.map(item => MoveItemObjtoStepString(item)));
 
+const isBotInited = ref<boolean>(false);
+
 eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
   const { detail } = data as { detail: { value: FigureMoveEventDTO }};
   addItem(detail.value);
+})
+
+eventBus.subscribe(eventTypes.botInited, () => {
+	isBotInited.value = true;
 })
 
 function addItem(item: FigureMoveEventDTO) {
@@ -54,5 +60,5 @@ function revert() {
 	eventBus.dispatchEvent(eventTypes.revertFigureMove, revertFigureMove);
 }
 
-return {items, steps, addItem, revert}
+return {items, steps, addItem, revert, isBotInited}
 });

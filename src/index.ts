@@ -9,10 +9,20 @@ import('./chess/adapters/SceneAdapter')
 )
 .catch(e => console.error(e));
 
+const initBotAsync = () => {
+	import ('./AIBot/AIBot')
+	.then(() => {
+		const aibot = new AIBot()
+		aibot.init();
+	})
+	.catch(e =>  console.error(e));
+}
+
 import('./widgets/initWigets')
 .then(({ initWidgets }) => initWidgets())
+.then(() => {
+	initBotAsync();
+})
 .catch(e => console.error(e));
 
-const aibot = new AIBot()
 
-aibot.init();

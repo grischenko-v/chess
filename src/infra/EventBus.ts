@@ -8,6 +8,7 @@ export const eventTypes = {
 	nextStepRequest: 'nextStepRequest',
 	nextStepResponse: 'nextStepResponse',
 	helpRequest: 'helpRequest',
+	botInited: 'botInited',
 } as const;
 
 export type EventTypes = keyof typeof eventTypes;
