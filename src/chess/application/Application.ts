@@ -15,6 +15,7 @@ export class Application {
     #gameManager: GameManager;
 	#figureMoveEvent: FigureMoveEvent | null = null;
 	#moves:string[] = []
+	#transformation = false;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
@@ -134,9 +135,32 @@ export class Application {
         if(this.tryMoveFigure(destinationCell, currentCell)) {
             return;
         }
+		this.checkTransformationPosibility(destinationCell);
 
         this.unselectFigure();
     }
+
+	private checkTransformationPosibility(destinationCell: BoardCell) {
+		if(this.#selectedFigure?.getType() === 'Pawn' && 
+			this.#selectedFigure.getColor() === 'white' && 
+			destinationCell.getCellRow() === 'f'
+		) {
+			console.log('transform!')
+		}
+	}
+
+	private async isTransforamtionCompilte () {
+		return new Promise<void>((resolve) => {
+			const checkIsTransformationComplite = () => {
+				if(!this.#transformation) {
+					resolve();
+				} else {
+					setTimeout(checkIsTransformationComplite, 100);
+				}
+			}
+			checkIsTransformationComplite();
+		});
+	}
 
 	private onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO};

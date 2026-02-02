@@ -10,7 +10,17 @@ export class HTMLAdapter {
         eventBus.subscribe('chagePlayer', this.onChangePlayer.bind(this));
 		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
 		eventBus.subscribe(eventTypes.figureMove, this.onFigureMove.bind(this));
+		eventBus.subscribe(eventTypes.helpRequest, this.onRequestHelp.bind(this));
+		eventBus.subscribe(eventTypes.nextStepResponse, this.onNextStepResponse.bind(this));
     }
+
+	private onRequestHelp() {
+		this.#body.classList.add('locked');
+	}
+
+	private onNextStepResponse() {
+		this.#body.classList.remove('locked');
+	}
 
 	private onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO };

@@ -20,6 +20,10 @@ body {
     background-color: rgba(255, 0, 0, 0.8);
 }
 
+.locked {
+    pointer-events: none;
+}
+
 .widgets-wrapper {
     position: absolute;
     right: 8px;
