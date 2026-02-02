@@ -20,9 +20,7 @@ const initBotAsync = () => {
 
 import('./widgets/initWigets')
 .then(({ initWidgets }) => initWidgets())
-.then(() => {
-	initBotAsync();
-})
+.then(() => initBotAsync())
 .catch(e => console.error(e));
 
 
