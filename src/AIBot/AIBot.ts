@@ -107,7 +107,3 @@ export class AIBot {
 		});
 	}
 }
-
-function isDev() {
-	throw new Error("Function not implemented.");
-}

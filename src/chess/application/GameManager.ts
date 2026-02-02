@@ -124,8 +124,10 @@ export class GameManager {
             selectedigureCell.setFigure(null);
             selectedFigure.setCurrentCell(cell);
             cell.setFigure(selectedFigure);
-            cellFigure && figureRepository.deleteFigure(cellFigure);
-        }
+			if(cellFigure) {
+				figureRepository.deleteFigure(cellFigure);
+			}
+		}
     }
 
     private revertSimulateMove(cell: BoardCell, selectedFigure: Figure, selectedigureCell: BoardCell, cellFigure: Figure | null) {
@@ -133,8 +135,10 @@ export class GameManager {
             selectedigureCell.setFigure(selectedFigure);
             selectedFigure.setCurrentCell(selectedigureCell);
             cell.setFigure(cellFigure);
-            cellFigure && cellFigure.setCurrentCell(cell);
-            cellFigure && figureRepository.addFigure(cellFigure);
+			if(cellFigure) {
+				cellFigure.setCurrentCell(cell);
+            	figureRepository.addFigure(cellFigure);
+			}
         }
     }
 
