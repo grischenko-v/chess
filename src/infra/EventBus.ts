@@ -7,6 +7,7 @@ export const eventTypes = {
 	revertFigureMove: 'revertFigureMove',
 	nextStepRequest: 'nextStepRequest',
 	nextStepResponse: 'nextStepResponse',
+	helpRequest: 'helpRequest',
 } as const;
 
 export type EventTypes = keyof typeof eventTypes;

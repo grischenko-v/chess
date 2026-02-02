@@ -27,18 +27,59 @@ export class Application {
         eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
 		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
 		eventBus.subscribe(eventTypes.nextStepResponse, this.onNextStepResponse.bind(this));
-		eventBus.subscribe(eventTypes.figureMove, this.collectSteps.bind(this));
+		eventBus.subscribe(eventTypes.figureMove, this.collectMoves.bind(this));
+		eventBus.subscribe(eventTypes.revertFigureMove, this.revertMove.bind(this));
+		eventBus.subscribe(eventTypes.helpRequest, this.onHelpReuest.bind(this))
     }
 
     private onNextStepResponse(data: unknown) {
-		const { detail } = data as {detail: {nextStep: string}}
-        console.log('onNextStepResponse', detail.nextStep);
+		const { detail } = data as {detail: {nextStep: string, helpReuest: boolean}}
+		if(!detail.helpReuest) {
+			return;
+		}
+		const move = this.parseUCIMove(detail.nextStep);
+
+		if(!move?.from || !move.to) {
+			throw new Error('wrong respones' + detail.toString());
+		}
+
+		const currentCell = cellRepository.getCell(move?.from);
+		const currentFigure = currentCell.getFigure();
+		const destinationCell = cellRepository.getCell(move?.to);
+		this.onFigureClick({
+			detail: {
+				clickedFigure: currentFigure
+			}
+		})
+		this.onCellClick( {detail: {
+			clickedCell: destinationCell
+		}});	
     }
 
-	private collectSteps(data: unknown) {
+	private parseUCIMove(str: string) {
+		const m = str.trim().toLowerCase().match(
+			/^([a-h][1-8])([a-h][1-8])([qrbn])?$/
+		);
+		if (!m) return null;
+
+		return {
+			from: m[1],
+			to: m[2],
+			promotion: m[3] ?? null
+		};
+	}
+
+	private collectMoves(data: unknown) {
 		const { detail } = data as {detail : {value: { currentCell: string, destinationCell: string }}};
 		this.#moves.push(`${detail.value.currentCell}${detail.value.destinationCell}`)
-		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' ')})
+	}
+
+	private revertMove() {
+		this.#moves.pop();
+	}
+
+	private onHelpReuest() {
+		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: true});	 
 	}
 
     private onFigureClick(data: unknown) {
@@ -77,6 +118,7 @@ export class Application {
     private onCellClick(data: unknown) {
         const { detail } = data as { detail: { clickedCell: BoardCell }};
         const { clickedCell: destinationCell } = detail;
+
         if(!this.#selectedFigure) {
             return;
         }
@@ -99,9 +141,13 @@ export class Application {
 
 	private onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO};
-		const destinationCell = cellRepository.getCell(detail.destinationCell);
+		this.revertFigureMove(detail);
+	}
+
+	private revertFigureMove(data: FigureMoveEventDTO) {
+		const destinationCell = cellRepository.getCell(data.destinationCell);
 		const destinationCellFigure = destinationCell.getFigure();
-		const currentCell = cellRepository.getCell(detail.currentCell);
+		const currentCell = cellRepository.getCell(data.currentCell);
 		const cupturedFigure = null;
 		this.#gameManager.toggleCurrentPlayer();
 		if(this.#selectedFigure) {
@@ -119,16 +165,16 @@ export class Application {
         destinationCell.setFigure(cupturedFigure);
 		currentCell.setFigure(this.#selectedFigure);
         this.#selectedFigure = null;
-		if(detail.capture) {
+		if(data.capture) {
 			this.#UIAdater.initFigure(
-				detail.enPassant ? detail.enPassant : detail.destinationCell,
+				data.enPassant ? data.enPassant : data.destinationCell,
 				this.#gameManager.getSecondPlayerColor(),
-				detail.capture
+				data.capture
 			);
 		}
-		if(detail.rouqe) {
-			const rookDestinatioCell = cellRepository.getCell(detail.rouqe.rookDestinatioCell);
-			const rookCell = cellRepository.getCell(detail.rouqe.rookCell);
+		if(data.rouqe) {
+			const rookDestinatioCell = cellRepository.getCell(data.rouqe.rookDestinatioCell);
+			const rookCell = cellRepository.getCell(data.rouqe.rookCell);
 			const rook = rookDestinatioCell.getFigure();
 			if(!rook) {
 				return;

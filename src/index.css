@@ -29,9 +29,3 @@ body {
     gap: 8px;
     align-items: flex-end;
 }
-
-#rollback {
-    position: absolute;
-    right: 8px;
-    bottom: 8px;
-}

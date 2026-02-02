@@ -49,13 +49,13 @@ export class AIBot {
 	}
 
 	private async onNextStepRequest(data: unknown) {
-		const { detail } = data as {detail: {moves: string}};
+		const { detail } = data as {detail: {moves: string, helpReuest: boolean}};
 		this.message('position startpos moves ' + detail.moves);
 		this.message(`go depth ${THINKING_DEPTH}`);
 		await this.isThinking();
 		const nextStep = this.nextStep;
 		this.nextStep = '';
-		eventBus.dispatchEvent(eventTypes.nextStepResponse, { nextStep });
+		eventBus.dispatchEvent(eventTypes.nextStepResponse, { nextStep, helpReuest: !!detail.helpReuest });
 	}
 
 	private async isThinking() {

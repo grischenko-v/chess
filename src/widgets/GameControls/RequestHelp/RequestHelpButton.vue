@@ -1,11 +1,11 @@
 <template>
-	<div class="wrapper" v-if="steps.items.length > 0">
-		<div class="rollback" @click="onRollBack"></div>
+	<div class="help-wrapper">
+		<button class="help" @click="onHelpRequest"></button>
 	</div>
 </template>
 
 <style scoped>
-.wrapper {
+.help-wrapper {
 	width: 32px;
 	height: 32px;
 	padding: 4px;
@@ -16,22 +16,23 @@
 	align-items: center;
 }
 
-.rollback {
+.help {
 	width: 24px;
 	height: 24px;
-	background-image: url('/imgs/icons/rollback.png');
+	background-image: url('/imgs/icons/help.png');
 	background-repeat: no-repeat;
 	background-size: contain;
 	cursor: pointer;
+	background-color: transparent;
+    outline: none;
+    border: none;
 }
 </style>
 
 <script lang="ts" setup>
-import { useStepsStore } from '../StepStore';
+import { eventBus, eventTypes } from "@/infra/EventBus";
 
-const steps = useStepsStore();
-
-function onRollBack() {
-	steps.revert();
+function onHelpRequest() {
+	eventBus.dispatchEvent(eventTypes.helpRequest, {})
 }
 </script>

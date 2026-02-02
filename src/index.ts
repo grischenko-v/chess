@@ -13,10 +13,6 @@ import('./widgets/initWigets')
 .then(({ initWidgets }) => initWidgets())
 .catch(e => console.error(e));
 
-
-// AIBot init
 const aibot = new AIBot()
 
 aibot.init();
-
-

@@ -20,8 +20,8 @@ const widgets = [
 		mountId: '#cuttedFigures'
 	},
 	{
-		name: 'RollbackButton',
-		mountId: '#rollback'
+		name: 'GameControls',
+		mountId: '#gameControls'
 	}
 ]
 
