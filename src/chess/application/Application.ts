@@ -25,6 +25,11 @@ export class Application {
         eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
         eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
 		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
+		eventBus.subscribe(eventTypes.getNextStepFromAI, this.onGetNextStepFromAI.bind(this));
+    }
+
+    private onGetNextStepFromAI(data: unknown) {
+        console.log('get next step from ai', data);
     }
 
     private onFigureClick(data: unknown) {

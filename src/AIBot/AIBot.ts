@@ -1,4 +1,7 @@
+import { eventBus, eventTypes } from "../../infra/EventBus";
 const JS_BOT_WORKER_PATH = '/chess/dist/public/stockfish/stockfish-17.1-lite-single-03e3232.js';
+
+const THINKING_DEPTH = 15;
 
 export class AIBot {
 	private botWorker: Worker;
@@ -8,6 +11,7 @@ export class AIBot {
 	
 	constructor() {
 		this.botWorker = new Worker(JS_BOT_WORKER_PATH);
+		eventBus.subscribe(eventTypes.getNextStepFromAI, this.getNextStep.bind(this));
 
 		this.addListeners((e: string) => {
 			console.log("Stockfish message:", e);
@@ -41,21 +45,21 @@ export class AIBot {
 		this.message('isready');
 		await this.waitIsReady();
 		console.info("ISREADY OK received from Stockfish");
-		const nextStep = await this.getMove();
+		const nextStep = await this.getNextStep();
 		console.log('First move from Stockfish:', nextStep);
 	}
 
-	async getMove(moves: string = 'e2e4') {
+	private async getNextStep(moves: string = 'f2f4 f7f5') {
 		console.info("ISREADY OK received from Stockfish");
 		this.message('position startpos moves ' + moves);
-		this.message('go depth 15');
+		this.message(`go depth ${THINKING_DEPTH}`);
 		await this.isThinking();
 		const nextStep = this.nextStep;
 		this.nextStep = '';
-		return nextStep;
+		eventBus.dispatchEvent(eventTypes.nextStepResult, { nextStep });
 	}
 
-	async isThinking() {
+	private async isThinking() {
 		return new Promise<void>((resolve) => {
 			const checkThinking = () => {
 				if(this.nextStep) {
