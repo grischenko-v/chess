@@ -4,8 +4,8 @@
   "description": "",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "NODE_ENV='production' vite build --emptyOutDir",
+    "dev": "vite --mode development",
+    "build": "vite build --emptyOutDir --mode production",
     "preview": "vite preview",
     "eslint": "eslint --ext .js,.jsx .",
     "lint": "eslint ./src/",
