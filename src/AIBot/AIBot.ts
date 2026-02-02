@@ -1,35 +1,35 @@
 const JS_BOT_WORKER_PATH = '/chess/dist/public/stockfish/stockfish-17.1-lite-single-03e3232.js';
 
-type BotState = 'uciok' | 'readyok' | 'init';
-
-
-
 export class AIBot {
-	botWorker: Worker;
-	readyok = false;
-	uciok = false;
-	state: BotState = 'init';
+	private botWorker: Worker;
+	private readyok = false;
+	private uciok = false;
+	private nextStep = '';
 	
 	constructor() {
 		this.botWorker = new Worker(JS_BOT_WORKER_PATH);
 
 		this.addListeners((e: string) => {
+			console.log("Stockfish message:", e);
 			if(e === 'uciok') {
 				this.uciok = true;
 			}
 			if(e === 'readyok') {
 				this.readyok = true;
 			}
+			if(e.startsWith('bestmove')) {
+				this.nextStep = e.split(' ')[1];
+			}
 		});
 	}
 
-	addListeners(onMessage: (msg: string) => void) {
+	private addListeners(onMessage: (msg: string) => void) {
 		this.botWorker.addEventListener('message', function (e) {
 			onMessage(e.data);
 		});
 	}
 
-	message(msg: string) {
+	private message(msg: string) {
 		this.botWorker.postMessage(msg);
 	}
 
@@ -38,13 +38,37 @@ export class AIBot {
 		await this.waitUCIOK();
 		console.info("UCI OK received from Stockfish");
 
-		this.botWorker.postMessage('isready');
+		this.message('isready');
 		await this.waitIsReady();
 		console.info("ISREADY OK received from Stockfish");
-		this.botWorker.postMessage('ucinewgame');
+		const nextStep = await this.getMove();
+		console.log('First move from Stockfish:', nextStep);
 	}
 
-	async waitUCIOK() {
+	async getMove(moves: string = 'e2e4') {
+		console.info("ISREADY OK received from Stockfish");
+		this.message('position startpos moves ' + moves);
+		this.message('go depth 15');
+		await this.isThinking();
+		const nextStep = this.nextStep;
+		this.nextStep = '';
+		return nextStep;
+	}
+
+	async isThinking() {
+		return new Promise<void>((resolve) => {
+			const checkThinking = () => {
+				if(this.nextStep) {
+					resolve();
+				} else {
+					setTimeout(checkThinking, 100);
+				}
+			}
+			checkThinking();
+		});
+	}
+
+	private async waitUCIOK() {
 		return new Promise<void>((resolve) => {
 			const checkUCI = () => {
 				if(this.uciok) {
@@ -57,7 +81,7 @@ export class AIBot {
 		});
 	}
 
-	async waitIsReady() {
+	private async waitIsReady() {
 		return new Promise<void>((resolve) => {
 			const checkReady = () => {
 				if(this.readyok) {
