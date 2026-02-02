@@ -1,6 +1,15 @@
 import { eventBus, eventTypes } from "@/infra/EventBus";
 
-const JS_BOT_WORKER_PATH = '/chess/dist/public/stockfish/stockfish-17.1-lite-single-03e3232.js';
+const JS_BOT_WORKER_DEV_PATH = '/chess/dist/public/stockfish/stockfish-17.1-lite-single-03e3232.js';
+
+const JS_BOT_WORKER_PROD_PATH = '/chess/dist/public/stockfish/stockfish-17.1-lite-single-03e3232.js';
+
+const getBotPath = () => {
+	if(import.meta.env.PROD) {
+		return JS_BOT_WORKER_PROD_PATH;
+	}
+	return JS_BOT_WORKER_DEV_PATH;
+}
 
 const THINKING_DEPTH = 15;
 
@@ -11,7 +20,7 @@ export class AIBot {
 	private nextStep = '';
 	
 	constructor() {
-		this.botWorker = new Worker(JS_BOT_WORKER_PATH);
+		this.botWorker = new Worker(getBotPath());
 		eventBus.subscribe(eventTypes.nextStepRequest, this.onNextStepRequest.bind(this));
 
 		this.addListeners((e: string) => {
@@ -96,4 +105,8 @@ export class AIBot {
 			checkReady();
 		});
 	}
+}
+
+function isDev() {
+	throw new Error("Function not implemented.");
 }
