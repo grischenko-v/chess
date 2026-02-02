@@ -16,6 +16,7 @@ export class Application {
     #selectedFigure: Figure | null = null;
     #gameManager: GameManager;
 	#figureMoveEvent: FigureMoveEvent | null = null;
+	#moves:string[] = []
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
@@ -25,12 +26,20 @@ export class Application {
         eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
         eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
 		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
-		eventBus.subscribe(eventTypes.getNextStepFromAI, this.onGetNextStepFromAI.bind(this));
+		eventBus.subscribe(eventTypes.nextStepResponse, this.onNextStepResponse.bind(this));
+		eventBus.subscribe(eventTypes.figureMove, this.collectSteps.bind(this));
     }
 
-    private onGetNextStepFromAI(data: unknown) {
-        console.log('get next step from ai', data);
+    private onNextStepResponse(data: unknown) {
+		const { detail } = data as {detail: {nextStep: string}}
+        console.log('onNextStepResponse', detail.nextStep);
     }
+
+	private collectSteps(data: unknown) {
+		const { detail } = data as {detail : {value: { currentCell: string, destinationCell: string }}};
+		this.#moves.push(`${detail.value.currentCell}${detail.value.destinationCell}`)
+		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' ')})
+	}
 
     private onFigureClick(data: unknown) {
         const { detail } = data as { detail: { clickedFigure: Figure }};

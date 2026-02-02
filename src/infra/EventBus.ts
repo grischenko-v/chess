@@ -5,8 +5,8 @@ export const eventTypes = {
     chagePlayer: 'changePlayer',
 	figureMove: 'figureMove',
 	revertFigureMove: 'revertFigureMove',
-	getNextStepFromAI: 'getNextStepFromAI',
-	nextStepResult: 'nextStepResult',
+	nextStepRequest: 'nextStepRequest',
+	nextStepResponse: 'nextStepResponse',
 } as const;
 
 export type EventTypes = keyof typeof eventTypes;
