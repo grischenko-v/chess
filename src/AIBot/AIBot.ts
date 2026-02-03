@@ -25,6 +25,10 @@ export class AIBot {
 		this.botWorker = new Worker(getBotPath());
 		eventBus.subscribe(eventTypes.nextStepRequest, this.onNextStepRequest.bind(this));
 
+		this.initListeners()
+	}
+
+	private initListeners() {
 		this.addListeners((e: string) => {
 			console.log("Stockfish message:", e);
 			if(e === 'uciok') {
@@ -65,9 +69,8 @@ export class AIBot {
 		this.message('position startpos moves ' + detail.moves);
 		this.message(`go depth ${THINKING_DEPTH}`);
 		await this.isThinking();
-		const nextStep = this.nextStep;
+		eventBus.dispatchEvent(eventTypes.nextStepResponse, { nextStep: this.nextStep, helpReuest: !!detail.helpReuest });
 		this.nextStep = '';
-		eventBus.dispatchEvent(eventTypes.nextStepResponse, { nextStep, helpReuest: !!detail.helpReuest });
 	}
 
 	private async isThinking() {
