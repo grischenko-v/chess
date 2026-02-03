@@ -22,6 +22,10 @@ const widgets = [
 	{
 		name: 'GameControls',
 		mountId: '#gameControls'
+	},
+	{
+		name: 'MainMenu',
+		mountId: '#mainMenu'
 	}
 ]
 

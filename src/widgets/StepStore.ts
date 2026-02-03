@@ -45,6 +45,7 @@ eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
 })
 
 eventBus.subscribe(eventTypes.botInited, () => {
+	console.log(123);
 	isBotInited.value = true;
 })
 
