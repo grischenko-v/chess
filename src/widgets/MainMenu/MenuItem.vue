@@ -1,5 +1,7 @@
 <template>
-	<div class="menu-item">Hi</div>
+	<div class="menu-item">
+      <img :src="getCupturedFigureIcon(figureType, figureColor)"/>
+	</div>
 </template>
 
 <style scoped>
@@ -11,3 +13,18 @@
 	text-align: center;
 }
 </style>
+
+<script lang="ts" setup>
+import type { FigureColor, FigureType } from '@/chess/domain/Figure';
+
+type Props = {
+  figureType: FigureType,
+  figureColor: FigureColor
+}
+
+defineProps<Props>()
+
+function getCupturedFigureIcon(figureType: FigureType, figureColor: FigureColor) {
+  return `/chess/dist/imgs/figures/${figureType}${figureColor}.png`;
+}
+</script>

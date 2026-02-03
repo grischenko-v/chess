@@ -1,8 +1,10 @@
 <template>
 	<div class="main-menu-outbox">
-		<div class="main-menu-inner">
-			<MenuItem></MenuItem>
-		</div>
+		<ul class="main-menu-inner">
+			<li v-for="figure in trasformedVariantes" :key="figure" >
+				<MenuItem figure-color="black" :figure-type="figure"></MenuItem>
+			</li>
+		</ul>
 	</div>
 </template>
 
@@ -17,7 +19,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
-		display: none;
+		/* display: none; */
 	}
 	.main-menu-inner {
 		padding: 20px;
@@ -29,6 +31,8 @@
 </style>
 
 <script setup lang="ts">
+import type { FigureType } from '@/chess/domain/Figure';
 import MenuItem from './MenuItem.vue';
 
+const trasformedVariantes: FigureType[] = ['Rook'];
 </script>
