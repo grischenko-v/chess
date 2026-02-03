@@ -1,26 +1,29 @@
-import { AIBot } from './AIBot/AIBot';
 import './index.css';
 
-import('./chess/adapters/SceneAdapter')
-.then(({sceneAdater}) => 
-	import('./chess/application/Application')
-	.then(({ Application })=> new Application(sceneAdater))
-	.catch(e => console.error(e))
-)
-.catch(e => console.error(e));
+const initAppAsync = () => {
+	return import('./chess/adapters/SceneAdapter')
+		.then(({sceneAdater}) => 
+			import('./chess/application/Application')
+				.then(({ Application })=> new Application(sceneAdater))
+				.catch(e => console.error(e))
+		)
+		.then(() => initWidgetAsync())
+	.catch(e => console.error(e));
+}
+
+const initWidgetAsync = () => {
+	return import('./widgets/initWigets')
+				.then(({ initWidgets }) => initWidgets())
+}
 
 const initBotAsync = () => {
-	import ('./AIBot/AIBot')
-	.then(() => {
+	return import ('./AIBot/AIBot')
+	.then(({ AIBot }) => {
 		const aibot = new AIBot()
 		aibot.init();
 	})
 	.catch(e =>  console.error(e));
 }
 
-import('./widgets/initWigets')
-.then(({ initWidgets }) => initWidgets())
-.then(() => initBotAsync())
-.catch(e => console.error(e));
-
-
+initAppAsync()
+.then(() => initBotAsync());

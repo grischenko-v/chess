@@ -9,6 +9,8 @@ export const eventTypes = {
 	nextStepResponse: 'nextStepResponse',
 	helpRequest: 'helpRequest',
 	botInited: 'botInited',
+	pawnTransformRequest: 'pawnTransformRequest',
+	pawnTransformResponse: 'pawnTransformResponse'
 } as const;
 
 export type EventTypes = keyof typeof eventTypes;
