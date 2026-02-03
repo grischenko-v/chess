@@ -1,4 +1,5 @@
 import { eventBus, eventTypes } from "@/infra/EventBus";
+import { promisify } from "@/utils/promisify";
 
 const JS_BOT_WORKER_DEV_PATH = '/chess/dist/public/stockfish/stockfish-17.1-lite-single-03e3232.js';
 
@@ -70,41 +71,14 @@ export class AIBot {
 	}
 
 	private async isThinking() {
-		return new Promise<void>((resolve) => {
-			const checkThinking = () => {
-				if(this.nextStep) {
-					resolve();
-				} else {
-					setTimeout(checkThinking, 100);
-				}
-			}
-			checkThinking();
-		});
+		return promisify(this.nextStep);
 	}
 
 	private async waitUCIOK() {
-		return new Promise<void>((resolve) => {
-			const checkUCI = () => {
-				if(this.uciok) {
-					resolve();
-				} else {
-					setTimeout(checkUCI, 100);
-				}
-			}
-			checkUCI();
-		});
+		return promisify(this.uciok);
 	}
 
 	private async waitIsReady() {
-		return new Promise<void>((resolve) => {
-			const checkReady = () => {
-				if(this.readyok) {
-					resolve();
-				} else {
-					setTimeout(checkReady, 100);
-				}
-			}
-			checkReady();
-		});
+		return promisify(this.readyok);
 	}
 }
