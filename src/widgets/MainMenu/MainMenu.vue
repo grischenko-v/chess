@@ -1,10 +1,17 @@
 <template>
-	<div class="main-menu-outbox">
-		<ul class="main-menu-inner">
-			<li v-for="figure in trasformedVariantes" :key="figure" >
-				<MenuItem figure-color="black" :figure-type="figure"></MenuItem>
-			</li>
-		</ul>
+	<div class="main-menu-outbox" v-if="steps.isTransformMenuOpen">
+		<div class="main-menu-inner">
+			<h2 class="title">Choose figure to transform Pawn</h2>
+			<ul class="transform-figures-list">
+				<li v-for="figure in trasformedVariantes" :key="figure" >
+					<MenuItem
+						:figure-color="figureColor"
+						:figure-type="figure"
+						:figure-name="figureName">
+					</MenuItem>
+				</li>
+			</ul>
+		</div>
 	</div>
 </template>
 
@@ -19,7 +26,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
-		/* display: none; */
+		transition: all 300ms;
 	}
 	.main-menu-inner {
 		padding: 20px;
@@ -28,11 +35,39 @@
 		display: flex;
 		flex-direction: column;
 	}
+
+	.title {
+		text-align: center;
+	}
+
+	.transform-figures-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		justify-content: space-around;
+	}
 </style>
 
 <script setup lang="ts">
-import type { FigureType } from '@/chess/domain/Figure';
+import type { FigureColor, FigureType } from '@/chess/domain/Figure';
 import MenuItem from './MenuItem.vue';
+import { useStepsStore } from '../StepStore';
+import { eventBus, eventTypes } from '@/infra/EventBus';
+import { ref } from 'vue';
 
-const trasformedVariantes: FigureType[] = ['Rook'];
+const steps = useStepsStore();
+
+const figureColor = ref<FigureColor>('white');
+const figureName = ref<string>('');
+
+eventBus.subscribe(eventTypes.pawnTransformRequest, (data: unknown) => {
+	const {detail} = data as {detail: {figureName: string, currentColor: FigureColor }};
+	console.log(detail);
+	figureColor.value = detail.currentColor;
+	figureName.value = detail.figureName;
+	steps.toggleTransformMenu();
+})
+
+const trasformedVariantes: FigureType[] = ['Rook', 'Bishop', 'King', 'Queen'];
 </script>

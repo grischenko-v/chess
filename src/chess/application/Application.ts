@@ -1,7 +1,7 @@
 import { HTMLAdapter } from "../adapters/HTMLAdapter";
 import type { UIAdater } from "../adapters/SceneAdapter";
 import { BoardCell } from "../domain/BoardCell";
-import { Figure } from "../domain/Figure";
+import { Figure, type FigureType } from "../domain/Figure";
 import { eventBus, eventTypes } from "../../infra/EventBus";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
@@ -29,8 +29,19 @@ export class Application {
 		eventBus.subscribe(eventTypes.nextStepResponse, this.onNextStepResponse.bind(this));
 		eventBus.subscribe(eventTypes.figureMove, this.collectMoves.bind(this));
 		eventBus.subscribe(eventTypes.revertFigureMove, this.revertMove.bind(this));
-		eventBus.subscribe(eventTypes.helpRequest, this.onHelpReuest.bind(this))
+		eventBus.subscribe(eventTypes.helpRequest, this.onHelpReuest.bind(this));
+		eventBus.subscribe(eventTypes.pawnTransformResponse, this.onPawnTransformResponse.bind(this));
     }
+
+	private onPawnTransformResponse(data: unknown) {
+		const { detail } = data as { detail: { figureType: FigureType, figureName: string }};
+		const figure = figureRepository.getFigure(detail.figureName);
+		console.log(detail.figureName);
+		
+		console.log(figure);
+		this.#transformation = false;
+		this.#figureMoveEvent?.setTransform(detail.figureType)
+	}
 
     private onNextStepResponse(data: unknown) {
 		const { detail } = data as {detail: {nextStep: string, helpReuest: boolean}}
@@ -115,7 +126,7 @@ export class Application {
         this.#gameManager.highliteMoves(this.#selectedFigure);
     }
 
-    private onCellClick(data: unknown) {
+    private async onCellClick(data: unknown) {
         const { detail } = data as { detail: { clickedCell: BoardCell }};
         const { clickedCell: destinationCell } = detail;
 
@@ -123,6 +134,13 @@ export class Application {
             return;
         }
         const currentCell = this.#selectedFigure.getCurrentCell();
+
+		this.#figureMoveEvent = new FigureMoveEvent(
+					this.#selectedFigure,
+					currentCell.getCellName(),
+					destinationCell.getCellName());
+
+		await this.pawnTransformation(destinationCell);
 
         if(this.tryEnPassantCapture(destinationCell, currentCell)) {
             return;
@@ -135,18 +153,39 @@ export class Application {
         if(this.tryMoveFigure(destinationCell, currentCell)) {
             return;
         }
-		this.checkTransformationPosibility(destinationCell);
 
         this.unselectFigure();
     }
 
-	private checkTransformationPosibility(destinationCell: BoardCell) {
-		if(this.#selectedFigure?.getType() === 'Pawn' && 
-			this.#selectedFigure.getColor() === 'white' && 
-			destinationCell.getCellRow() === 'f'
-		) {
-			console.log('transform!')
+	private async pawnTransformation(destinationCell: BoardCell) {
+		if(this.checkTransformationPosibility(destinationCell)) {
+			eventBus.dispatchEvent(eventTypes.pawnTransformRequest,{
+				currentColor: this.#gameManager.getCurrentPlayer(),
+				figureName: this.#selectedFigure?.getName(),
+			});
+			this.#transformation = true;
 		}
+		await this.isTransforamtionCompilte();
+	}
+
+	private checkTransformationPosibility(destinationCell: BoardCell) {
+		console.log(destinationCell.getCellColumn());
+		console.log(this.#selectedFigure);
+		const destinationCellFigure = this.#selectedFigure;
+		if(!destinationCellFigure) {
+			return false;
+		}
+
+		const transformWhite = destinationCellFigure.getType() === 'Pawn' && 
+			destinationCellFigure.getColor() === 'white' && 
+			destinationCell.getCellColumn() === '8';
+		const transformBlack = destinationCellFigure.getType() === 'Pawn' && 
+			destinationCellFigure.getColor() === 'black' && 
+			destinationCell.getCellRow() === 'f';
+		if(transformWhite || transformBlack) {
+			return true;
+		}
+		return false;
 	}
 
 	private async isTransforamtionCompilte () {
@@ -217,13 +256,9 @@ export class Application {
         const currentCellFigure = currentCell.getFigure();
         if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure &&  currentCellFigure.getType() === 'Pawn'
             && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
-            && destinationCell.getCellRow() === rightSiblingCell.getCellRow()
+            && destinationCell.getCellRow() === rightSiblingCell.getCellRow() && this.#figureMoveEvent
             ) {  
-				this.#figureMoveEvent = new FigureMoveEvent(
-					this.#selectedFigure,
-					currentCell.getCellName(),
-					destinationCell.getCellName(),
-					rightSiblingCell.getFigure()?.getType());
+				this.#figureMoveEvent.setIsCapture(rightSiblingCell.getFigure()?.getType());
 				this.#figureMoveEvent.isEnPassant(rightSiblingCellName);
 				this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
 				
@@ -234,13 +269,9 @@ export class Application {
         const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
         if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure && currentCellFigure.getType() === 'Pawn'
             && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
-            && destinationCell.getCellRow() === leftSiblingCell.getCellRow()
+            && destinationCell.getCellRow() === leftSiblingCell.getCellRow() && this.#figureMoveEvent
             ) {
-				this.#figureMoveEvent = new FigureMoveEvent(
-					this.#selectedFigure,
-					currentCell.getCellName(),
-					destinationCell.getCellName(),
-					leftSiblingCell.getFigure()?.getType());
+				this.#figureMoveEvent.setIsCapture(leftSiblingCell.getFigure()?.getType())
 				this.#figureMoveEvent.isEnPassant(leftSiblingCellName);
                 this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
                 return true;
@@ -254,12 +285,8 @@ export class Application {
             return false;
         }
 
-        if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor()) {
-			this.#figureMoveEvent = new FigureMoveEvent(
-				this.#selectedFigure,
-				currentCell.getCellName(),
-				destinationCell.getCellName(),
-				destinationCell.getFigure()?.getType())
+        if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor() && this.#figureMoveEvent) {
+			this.#figureMoveEvent.setIsCapture(destinationCell.getFigure()?.getType());
             this.captureFigureRegular(currentCell, destinationCell)
 			return true;
         }
@@ -267,11 +294,7 @@ export class Application {
     }
 
     private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell){
-        if(destinationCell.getCanMove() && this.#selectedFigure) {
-			this.#figureMoveEvent = new FigureMoveEvent(
-				this.#selectedFigure,
-				currentCell.getCellName(),
-				destinationCell.getCellName())
+        if(destinationCell.getCanMove() && this.#selectedFigure &&  this.#figureMoveEvent) {
             this.moveFigure(currentCell, destinationCell);
             return true;
         }
@@ -314,8 +337,6 @@ export class Application {
         currentCell.setFigure(null);
 
 		destinationCell.setFigure(this.#selectedFigure);
-
-        this.#selectedFigure = null;
 	
         const roque = this.#gameManager.isRoqueAvailable(destinationCell);
         if(selectedFigureType === 'King' && roque) {
@@ -343,9 +364,30 @@ export class Application {
         if(this.#gameManager.isGameFinished()) {
 			this.#figureMoveEvent.isGameEnd(true);
         };
-		eventBus.dispatchEvent('figureMove', { value: this.#figureMoveEvent.toJson()});
+		const figuremoveEvent = this.#figureMoveEvent.toJson();
+		eventBus.dispatchEvent('figureMove', { value: figuremoveEvent});
+		this.animatePawnTransformation(figuremoveEvent);
+		
 		this.#figureMoveEvent = null;
+		this.#selectedFigure = null;
     }
+
+	private animatePawnTransformation(figuremoveEvent: FigureMoveEventDTO) {
+		if(!this.#selectedFigure) {
+			return;
+		}
+		const figure = this.#selectedFigure.getFigure();
+		setTimeout(() =>{
+			if(figuremoveEvent.transform) {
+				this.#UIAdater.initFigure(
+					figuremoveEvent.destinationCell,
+					figuremoveEvent.figureColor,
+					figuremoveEvent.transform
+				);
+				this.#UIAdater.remove(figure);
+			}
+		}, 1000);
+	}
 
     private captureFigureRegular(currentCell: BoardCell, destinationCell: BoardCell) {
         const capturedFigure = destinationCell.getFigure();

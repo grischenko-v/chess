@@ -19,5 +19,4 @@ import RollbackButton from './RollbackButton/RollbackButton.vue';
 	right: 8px;
 	bottom: 8px;
 }
-
 </style>

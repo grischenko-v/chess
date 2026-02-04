@@ -24,11 +24,19 @@ function getShortFigureName(obj: FigureMoveEventDTO) {
 	return figuresNameMap[obj.figureType as keyof typeof figuresNameMap];
 }
 
+function getTransformFigureShortName(obj: FigureMoveEventDTO) {
+	return ''
+	// if(!obj.transform) {
+	// 	return '';
+	// }
+	// return figuresNameMap[obj.transform as keyof typeof figuresNameMap];
+}
+
 function MoveItemObjtoStepString(obj: FigureMoveEventDTO): string {
 	if(obj.rouqe) {
 		return isShotRouque(obj) ? '0-0' : '0-0-0';
 	}
-	return `${getShortFigureName(obj)}${obj.currentCell}${obj.destinationCell}${obj.capture ? 'x' : ''}${obj.check ? '+' : ''}${obj.gameend ? '#' : ''}`;
+	return `${getShortFigureName(obj)}${obj.currentCell}${obj.destinationCell}${obj.capture ? 'x' : ''}${obj.check ? '+' : ''}${obj.gameend ? '#' : ''}${obj.transform ? `${getTransformFigureShortName(obj).toLocaleLowerCase()}` : ''}`;
 }
 
 export const useStepsStore = defineStore("stepsStore", () => {
@@ -39,8 +47,15 @@ const steps = computed(() => items.value.map(item => MoveItemObjtoStepString(ite
 
 const isBotInited = ref<boolean>(false);
 
+const isTransformMenuOpen = ref<boolean>(false);
+
+const toggleTransformMenu = () => {
+	isTransformMenuOpen.value = !isTransformMenuOpen.value ;
+}
+
 eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
   const { detail } = data as { detail: { value: FigureMoveEventDTO }};
+  console.log(detail.value);
   addItem(detail.value);
 })
 
@@ -60,5 +75,5 @@ function revert() {
 	eventBus.dispatchEvent(eventTypes.revertFigureMove, revertFigureMove);
 }
 
-return {items, steps, addItem, revert, isBotInited}
+return {items, steps, addItem, revert, isBotInited, toggleTransformMenu, isTransformMenuOpen}
 });

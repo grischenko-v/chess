@@ -38,6 +38,10 @@ export class Figure {
         return this.#type;
     }
 
+	setType(type: FigureType) {
+		this.#type = type;
+	}
+
     getName() {
         return this.#name;
     }

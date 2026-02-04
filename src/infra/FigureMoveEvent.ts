@@ -19,7 +19,7 @@ type RoqueData = {
 }
 
 // for pawn transform q - queen, r - rook, b - bishop, n - knight
-type TransformType = 'q' | 'r' | 'b' | 'n' | null;
+type TransformType = FigureType | undefined;
 
 export class FigureMoveEvent {
 	#figureType: FigureType;
@@ -31,14 +31,13 @@ export class FigureMoveEvent {
 	#check = false;
 	#gameend = false;
 	#enPassant: string | null = null;
-	#transform: TransformType = null;
+	#transform: TransformType = undefined;
 
-	constructor(figure: Figure, currentCell: string, destinationCell: string, isCapture?: FigureType) {
+	constructor(figure: Figure, currentCell: string, destinationCell: string) {
 		this.#figureType = figure.getType();
 		this.#figureColor = figure.getColor();
 		this.#currentCell = currentCell;
 		this.#destinationCell = destinationCell;
-		this.#capture = isCapture;
 	}
 
 	toJson(): FigureMoveEventDTO {
@@ -56,11 +55,10 @@ export class FigureMoveEvent {
 		}
 	}
 
-	initStep(figureType: FigureType, currentCell: string, destinationCell: string, isCapture: FigureType) {
+	initStep(figureType: FigureType, currentCell: string, destinationCell: string) {
 		this.#figureType = figureType;
 		this.#currentCell = currentCell;
 		this.#destinationCell = destinationCell;
-		this.#capture = isCapture;
 	}
 
 	isRouqe(isRouqe: RoqueData) {
@@ -77,6 +75,10 @@ export class FigureMoveEvent {
 
 	isEnPassant(isEnPassant: string | null) {
 		this.#enPassant = isEnPassant;
+	}
+
+	setIsCapture(captured?: FigureType) {
+		this.#capture = captured;
 	}
 
 	setTransform(transform: TransformType) {

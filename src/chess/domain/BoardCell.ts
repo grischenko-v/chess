@@ -21,10 +21,12 @@ export class BoardCell {
     #canmove = false;
     #color: CELL_COLOR_TYPE;
     #row: string;
+	#column: string;
 
     constructor( row: string, column: string, boardCoords: {x: number, z: number}) {
         this.#name = `${row}${column}`;
         this.#row = row;
+		this.#column = column;
         this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
         this.#cellGeometry = new CellGeometry(
             {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, this.#color, this.#name 
@@ -120,6 +122,10 @@ export class BoardCell {
     getCellRow() {
         return this.#row;
     }
+	
+	getCellColumn() {
+		return this.#column;
+	}
 
     getCellPosition() {
         return this.#cellGeometry.getPosition();
