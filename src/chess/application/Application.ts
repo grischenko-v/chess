@@ -21,7 +21,7 @@ export class Application {
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
         this.#gameManager = new GameManager();
-		this.#pawnTrasformationController = new PawnTrasformationController();
+		this.#pawnTrasformationController = new PawnTrasformationController(UIAdater);
 		new HTMLAdapter();
 
         eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
@@ -201,17 +201,7 @@ export class Application {
             rookCell.setFigure(rook);
 		}
 		if(data.transform) {
-			const figure = currentCell.getFigure();
-			if(!figure) {
-				return;
-			}
-			setTimeout(() => {
-				this.#UIAdater.remove(figure.getFigure());
-				this.#UIAdater.initFigure(
-						currentCell.getCellName(),
-						this.#gameManager.getCurrentPlayer(),
-						'Pawn'
-					);}, 1000);
+			this.#pawnTrasformationController.animateRevert(currentCell);
 		}
 	}
 
@@ -334,27 +324,10 @@ export class Application {
         };
 		const figuremoveEvent = this.#figureMoveEvent.toJson();
 		eventBus.dispatchEvent('figureMove', { value: figuremoveEvent});
-		this.animatePawnTransformation(figuremoveEvent);
+		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
 		
 		this.#figureMoveEvent = null;
 		this.#selectedFigure = null;
-    }
-
-	private animatePawnTransformation(figuremoveEvent: FigureMoveEventDTO) {
-		if(!this.#selectedFigure) {
-			return;
-		}
-		const figure = this.#selectedFigure.getFigure();
-		setTimeout(() =>{
-			if(figuremoveEvent.transform) {
-				this.#UIAdater.initFigure(
-					figuremoveEvent.destinationCell,
-					figuremoveEvent.figureColor,
-					figuremoveEvent.transform
-				);
-				this.#UIAdater.remove(figure);
-			}
-		}, 1000);
 	}
 
     private captureFigureRegular(currentCell: BoardCell, destinationCell: BoardCell) {

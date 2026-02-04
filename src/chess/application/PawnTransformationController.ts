@@ -1,10 +1,16 @@
 import { eventBus, eventTypes } from "@/infra/EventBus";
 import type { BoardCell } from "../domain/BoardCell";
 import type { Figure } from "../domain/Figure";
+import type { UIAdater } from "../adapters/SceneAdapter";
+import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 
 export class PawnTrasformationController {
 	#transformation = false;
+	#UIAdater: UIAdater;
 
+	constructor( UIAdater: UIAdater) {
+		this.#UIAdater = UIAdater;
+	}
 	async pawnTransformation(destinationCell: BoardCell, selectedFigure: Figure) {
 		if(this.checkTransformationPosibility(destinationCell, selectedFigure)) {
 			eventBus.dispatchEvent(eventTypes.pawnTransformRequest,{
@@ -18,6 +24,38 @@ export class PawnTrasformationController {
 
 	transformationComplite() {
 		this.#transformation = false;
+	}
+
+	animate(figuremoveEvent: FigureMoveEventDTO, selectedFigure?: Figure) {
+		if(!selectedFigure) {
+			return;
+		}
+		const figure = selectedFigure.getFigure();
+		setTimeout(() =>{
+			if(figuremoveEvent.transform) {
+				this.#UIAdater.initFigure(
+					figuremoveEvent.destinationCell,
+					figuremoveEvent.figureColor,
+					figuremoveEvent.transform
+				);
+				this.#UIAdater.remove(figure);
+			}
+		}, 1000);
+	}
+
+	animateRevert(currentCell: BoardCell) {
+		const figure = currentCell.getFigure();
+		if(!figure) {
+			return;
+		}
+		setTimeout(() => {
+			this.#UIAdater.remove(figure.getFigure());
+			this.#UIAdater.initFigure(
+				currentCell.getCellName(),
+				figure.getColor(),
+				'Pawn'
+			);
+		}, 1000);
 	}
 
 	private checkTransformationPosibility(destinationCell: BoardCell, selectedFigure: Figure) {
