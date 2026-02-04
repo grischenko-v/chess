@@ -25,7 +25,6 @@ Features
 
 TODO:   
 - add signutures to board(A-H, 1-7)
-- fix bord rotation a-f 1-7
 - test figure moves/capture/revert
 - add localfirst
 - add play vs AI(stockfish) 
