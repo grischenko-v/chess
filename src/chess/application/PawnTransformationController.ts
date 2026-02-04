@@ -69,7 +69,7 @@ export class PawnTrasformationController {
 			destinationCell.getCellColumn() === '8';
 		const transformBlack = destinationCellFigure.getType() === 'Pawn' && 
 			destinationCellFigure.getColor() === 'black' && 
-			destinationCell.getCellRow() === 'f';
+			destinationCell.getCellRow() === '1';
 		if(transformWhite || transformBlack) {
 			return true;
 		}
