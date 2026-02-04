@@ -6,7 +6,6 @@ const JS_BOT_WORKER_PROD_PATH = '/chess/dist/stockfish/stockfish-17.1-lite-singl
 
 const getBotPath = () => {
 	if(import.meta.env.DEV) {
-		console.log('DEV');
 		return JS_BOT_WORKER_DEV_PATH;
 	}
 	return JS_BOT_WORKER_PROD_PATH ;
@@ -29,7 +28,7 @@ export class AIBot {
 
 	private initListeners() {
 		this.addListeners((e: string) => {
-			console.log("Stockfish message:", e);
+			console.info("Stockfish message:", e);
 			if(e === 'uciok') {
 				this.uciok = true;
 			}

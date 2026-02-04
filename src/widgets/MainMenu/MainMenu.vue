@@ -63,7 +63,6 @@ const figureName = ref<string>('');
 
 eventBus.subscribe(eventTypes.pawnTransformRequest, (data: unknown) => {
 	const {detail} = data as {detail: {figureName: string, currentColor: FigureColor }};
-	console.log(detail);
 	figureColor.value = detail.currentColor;
 	figureName.value = detail.figureName;
 	steps.toggleTransformMenu();

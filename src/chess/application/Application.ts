@@ -166,8 +166,6 @@ export class Application {
 	}
 
 	private checkTransformationPosibility(destinationCell: BoardCell) {
-		console.log(destinationCell.getCellColumn());
-		console.log(this.#selectedFigure);
 		const destinationCellFigure = this.#selectedFigure;
 		if(!destinationCellFigure) {
 			return false;
