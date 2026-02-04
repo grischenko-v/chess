@@ -7,6 +7,7 @@ import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
 import { GameManager } from "./GameManager";
 import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
+import { PawnTrasformationController } from "./PawnTransformationController";
 
 export class Application {
     #UIAdater: UIAdater;
@@ -15,11 +16,12 @@ export class Application {
     #gameManager: GameManager;
 	#figureMoveEvent: FigureMoveEvent | null = null;
 	#moves:string[] = []
-	#transformation = false;
+	#pawnTrasformationController: PawnTrasformationController;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
         this.#gameManager = new GameManager();
+		this.#pawnTrasformationController = new PawnTrasformationController();
 		new HTMLAdapter();
 
         eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
@@ -36,7 +38,7 @@ export class Application {
 	private onPawnTransformResponse(data: unknown) {
 		const { detail } = data as { detail: { figureType: FigureType, figureName: string }};
 		this.#selectedFigure?.setType(detail.figureType);
-		this.#transformation = false;
+		this.#pawnTrasformationController.transformationComplite();
 		this.#figureMoveEvent?.setTransform(detail.figureType)
 	}
 
@@ -137,7 +139,7 @@ export class Application {
 					currentCell.getCellName(),
 					destinationCell.getCellName());
 
-		await this.pawnTransformation(destinationCell);
+		await this.#pawnTrasformationController.pawnTransformation(destinationCell, this.#selectedFigure);
 
         if(this.tryEnPassantCapture(destinationCell, currentCell)) {
             return;
@@ -153,48 +155,6 @@ export class Application {
 
         this.unselectFigure();
     }
-
-	private async pawnTransformation(destinationCell: BoardCell) {
-		if(this.checkTransformationPosibility(destinationCell)) {
-			eventBus.dispatchEvent(eventTypes.pawnTransformRequest,{
-				currentColor: this.#gameManager.getCurrentPlayer(),
-				figureName: this.#selectedFigure?.getName(),
-			});
-			this.#transformation = true;
-		}
-		await this.isTransforamtionCompilte();
-	}
-
-	private checkTransformationPosibility(destinationCell: BoardCell) {
-		const destinationCellFigure = this.#selectedFigure;
-		if(!destinationCellFigure) {
-			return false;
-		}
-
-		const transformWhite = destinationCellFigure.getType() === 'Pawn' && 
-			destinationCellFigure.getColor() === 'white' && 
-			destinationCell.getCellColumn() === '8';
-		const transformBlack = destinationCellFigure.getType() === 'Pawn' && 
-			destinationCellFigure.getColor() === 'black' && 
-			destinationCell.getCellRow() === 'f';
-		if(transformWhite || transformBlack) {
-			return true;
-		}
-		return false;
-	}
-
-	private async isTransforamtionCompilte () {
-		return new Promise<void>((resolve) => {
-			const checkIsTransformationComplite = () => {
-				if(!this.#transformation) {
-					resolve();
-				} else {
-					setTimeout(checkIsTransformationComplite, 100);
-				}
-			}
-			checkIsTransformationComplite();
-		});
-	}
 
 	private onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO};
