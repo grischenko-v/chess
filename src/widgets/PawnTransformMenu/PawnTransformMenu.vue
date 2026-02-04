@@ -1,14 +1,14 @@
 <template>
-	<div class="main-menu-outbox" v-if="steps.isTransformMenuOpen">
-		<div class="main-menu-inner">
+	<div class="menu-outbox" v-if="steps.isTransformMenuOpen">
+		<div class="menu-inner">
 			<h2 class="title">Choose figure to transform Pawn</h2>
 			<ul class="transform-figures-list">
 				<li v-for="figure in trasformedVariantes" :key="figure" >
-					<MenuItem
+					<PawnTransformVariant
 						:figure-color="figureColor"
 						:figure-type="figure"
 						:figure-name="figureName">
-					</MenuItem>
+					</PawnTransformVariant>
 				</li>
 			</ul>
 		</div>
@@ -16,7 +16,7 @@
 </template>
 
 <style scoped>
-	.main-menu-outbox {
+	.menu-outbox {
 		position: absolute;
 		top: 0px;
 		left: 0px;
@@ -28,7 +28,7 @@
 		justify-content: space-around;
 		transition: all 300ms;
 	}
-	.main-menu-inner {
+	.menu-inner {
 		padding: 20px;
 		background: #ccc;
 		border-radius: 4px;
@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import type { FigureColor, FigureType } from '@/chess/domain/Figure';
-import MenuItem from './MenuItem.vue';
+import PawnTransformVariant from './PawnTransformVariant.vue';
 import { useStepsStore } from '../StepStore';
 import { eventBus, eventTypes } from '@/infra/EventBus';
 import { ref } from 'vue';

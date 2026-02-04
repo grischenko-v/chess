@@ -24,8 +24,8 @@ const widgets = [
 		mountId: '#gameControls'
 	},
 	{
-		name: 'MainMenu',
-		mountId: '#mainMenu'
+		name: 'PawnTransformMenu',
+		mountId: '#pawnTransformMenu'
 	}
 ]
 

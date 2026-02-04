@@ -1,12 +1,12 @@
 <template>
-	<div class="menu-item" @click="onFigureSelect">
+	<div class="pawn-transform-variant" @click="onFigureSelect">
       <img :src="getCupturedFigureIcon(figureType, figureColor)" class="figure-icon"/>
 	  <span>{{figureType}}</span>
 	</div>
 </template>
 
 <style scoped>
-.menu-item {
+.pawn-transform-variant {
 	border: 1px solid #777;
 	border-radius: 4px;
 	padding: 8px;
