@@ -1,14 +1,9 @@
 import { eventBus, eventTypes } from "@/infra/EventBus";
 
-const JS_BOT_WORKER_DEV_PATH = '/chess/dist/public/stockfish/stockfish-17.1-lite-single-03e3232.js';
-
-const JS_BOT_WORKER_PROD_PATH = '/chess/dist/stockfish/stockfish-17.1-lite-single-03e3232.js';
+const JS_BOT_WORKER_PATH = '/chess/dist/stockfish/stockfish-17.1-lite-single-03e3232.js';
 
 const getBotPath = () => {
-	if(import.meta.env.DEV) {
-		return JS_BOT_WORKER_DEV_PATH;
-	}
-	return JS_BOT_WORKER_PROD_PATH ;
+	return JS_BOT_WORKER_PATH ;
 }
 
 const THINKING_DEPTH = 15;
