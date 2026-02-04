@@ -35,10 +35,7 @@ export class Application {
 
 	private onPawnTransformResponse(data: unknown) {
 		const { detail } = data as { detail: { figureType: FigureType, figureName: string }};
-		const figure = figureRepository.getFigure(detail.figureName);
-		console.log(detail.figureName);
-		
-		console.log(figure);
+		this.#selectedFigure?.setType(detail.figureType);
 		this.#transformation = false;
 		this.#figureMoveEvent?.setTransform(detail.figureType)
 	}
@@ -244,6 +241,19 @@ export class Application {
 			rook.move(rookCell);
             rookDestinatioCell.setFigure(null);
             rookCell.setFigure(rook);
+		}
+		if(data.transform) {
+			const figure = currentCell.getFigure();
+			if(!figure) {
+				return;
+			}
+			setTimeout(() => {
+				this.#UIAdater.remove(figure.getFigure());
+				this.#UIAdater.initFigure(
+						currentCell.getCellName(),
+						this.#gameManager.getCurrentPlayer(),
+						'Pawn'
+					);}, 1000);
 		}
 	}
 
