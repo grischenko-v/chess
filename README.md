@@ -18,13 +18,14 @@ Features
 - Revert steps button
 - Figures captures(incliding enPassant capture)
 - Roques
+- Pawn upgrades
 - Highlight avalible path
 - Check for check and checkmate
 - Play with help from Stockfish(button with '?')
 
 TODO:   
-- add Pawn promotion on last field, add promotion to steps history
 - add signutures to board(A-H, 1-7)
+- fix bord rotation a-f 1-7
 - test figure moves/capture/revert
 - add localfirst
 - add play vs AI(stockfish) 
