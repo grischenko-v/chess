@@ -54,7 +54,6 @@ const toggleTransformMenu = () => {
 
 eventBus.subscribe(eventTypes.figureMove, (data: unknown) => {
   const { detail } = data as { detail: { value: FigureMoveEventDTO }};
-  console.log(detail.value);
   addItem(detail.value);
 })
 
