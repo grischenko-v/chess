@@ -25,18 +25,17 @@ function getShortFigureName(obj: FigureMoveEventDTO) {
 }
 
 function getTransformFigureShortName(obj: FigureMoveEventDTO) {
-	return ''
-	// if(!obj.transform) {
-	// 	return '';
-	// }
-	// return figuresNameMap[obj.transform as keyof typeof figuresNameMap];
+	if(!obj.transform) {
+		return '';
+	}
+	return figuresNameMap[obj.transform as keyof typeof figuresNameMap].toLowerCase();
 }
 
 function MoveItemObjtoStepString(obj: FigureMoveEventDTO): string {
 	if(obj.rouqe) {
 		return isShotRouque(obj) ? '0-0' : '0-0-0';
 	}
-	return `${getShortFigureName(obj)}${obj.currentCell}${obj.destinationCell}${obj.capture ? 'x' : ''}${obj.check ? '+' : ''}${obj.gameend ? '#' : ''}${obj.transform ? `${getTransformFigureShortName(obj).toLocaleLowerCase()}` : ''}`;
+	return `${getShortFigureName(obj)}${obj.currentCell}${obj.destinationCell}${obj.capture ? 'x' : ''}${obj.check ? '+' : ''}${obj.gameend ? '#' : ''}${obj.transform ? `${getTransformFigureShortName(obj)}` : ''}`;
 }
 
 export const useStepsStore = defineStore("stepsStore", () => {
