@@ -43,19 +43,15 @@ export class Application {
 	}
 
     private onNextStepResponse(data: unknown) {
-		const { detail } = data as {detail: {nextStep: string, helpReuest: boolean}}
+		const { detail } = data as {detail: {nextStep: {from: string, to: string,promotion?: string}, helpReuest: boolean}}
+		
 		if(!detail.helpReuest) {
 			return;
 		}
-		const move = this.parseUCIMove(detail.nextStep);
 
-		if(!move?.from || !move.to) {
-			throw new Error('wrong respones' + detail.toString());
-		}
-
-		const currentCell = cellRepository.getCell(move?.from);
+		const currentCell = cellRepository.getCell(detail.nextStep.from);
 		const currentFigure = currentCell.getFigure();
-		const destinationCell = cellRepository.getCell(move?.to);
+		const destinationCell = cellRepository.getCell(detail.nextStep.to);
 		this.onFigureClick({
 			detail: {
 				clickedFigure: currentFigure
@@ -65,19 +61,6 @@ export class Application {
 			clickedCell: destinationCell
 		}});	
     }
-
-	private parseUCIMove(str: string) {
-		const m = str.trim().toLowerCase().match(
-			/^([a-h][1-8])([a-h][1-8])([qrbn])?$/
-		);
-		if (!m) return null;
-
-		return {
-			from: m[1],
-			to: m[2],
-			promotion: m[3] ?? null
-		};
-	}
 
 	private collectMoves(data: unknown) {
 		const { detail } = data as {detail : {value: { currentCell: string, destinationCell: string }}};

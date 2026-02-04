@@ -8,6 +8,20 @@ const getBotPath = () => {
 
 const THINKING_DEPTH = 15;
 
+const parseUCIMove = (str: string) => {
+	const m = str.trim().toLowerCase().match(
+		/^([a-h][1-8])([a-h][1-8])([qrbn])?$/
+	);
+	
+	if (!m) return null;
+
+	return {
+		from: m[1],
+		to: m[2],
+		promotion: m[3] ?? null
+	};
+}
+
 export class AIBot {
 	private botWorker: Worker;
 	private readyok = false;
@@ -62,7 +76,9 @@ export class AIBot {
 		this.message('position startpos moves ' + detail.moves);
 		this.message(`go depth ${THINKING_DEPTH}`);
 		await this.isThinking();
-		eventBus.dispatchEvent(eventTypes.nextStepResponse, { nextStep: this.nextStep, helpReuest: !!detail.helpReuest });
+		eventBus.dispatchEvent(eventTypes.nextStepResponse, {
+			nextStep: parseUCIMove(this.nextStep),
+			helpReuest: !!detail.helpReuest });
 		this.nextStep = '';
 	}
 
