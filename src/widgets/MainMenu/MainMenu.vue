@@ -68,5 +68,5 @@ eventBus.subscribe(eventTypes.pawnTransformRequest, (data: unknown) => {
 	steps.toggleTransformMenu();
 })
 
-const trasformedVariantes: FigureType[] = ['Rook', 'Bishop', 'King', 'Queen'];
+const trasformedVariantes: FigureType[] = ['Rook', 'Bishop', 'Queen', 'Knight'];
 </script>
