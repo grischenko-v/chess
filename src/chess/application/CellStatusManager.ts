@@ -2,12 +2,12 @@ import { BoardCell } from "../domain/BoardCell";
 import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
 import { cellRepository } from "../repository/CellRepository";
 
-interface IFigureMoveService {
+interface ICellStatusManager {
     getAvalibleMoveCells: (figure: Figure) => BoardCell[];
     getCaptureCells: (figure: Figure) =>  BoardCell[];
 }
 
-export class FigureMoveService implements IFigureMoveService {
+export class CellStatusManager implements ICellStatusManager {
     getAvalibleMoveCells(figure: Figure) {
         const figureType = figure.getType();
         return moveStrategy[figureType](figure);
@@ -168,7 +168,7 @@ const getKingAvalibleCells = (king: Figure): BoardCell[] => {
 
 type TCellSibiling = 'getTopSibling' | 'getBottomSibling' | 'getLeftSibling' | 'getRightSibling' | 'getTopLeftSibling' | 'getTopRightSibling' | 'getBottomLeftSibling' | 'getBottomRightSibling';
 
-export const getCellsByDirection = (figure: Figure, siblingName: TCellSibiling) => {
+const getCellsByDirection = (figure: Figure, siblingName: TCellSibiling) => {
     const currentCell = figure.getCurrentCell();
     const result = [];
     if(!currentCell) {

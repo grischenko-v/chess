@@ -3,15 +3,15 @@ import { BoardCell } from "../domain/BoardCell";
 import { Figure, type FigureColor } from "../domain/Figure";
 import { eventBus, eventTypes } from "../../infra/EventBus";
 import { figureRepository } from "../repository/FiguresRepository";
-import { FigureMoveService } from "../service/FigureMoveService";
+import { CellStatusManager } from "./FigureMoveService";
 import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 
 export class GameManager {
     #currentPlayerColor: FigureColor = 'white';
-    #figureMoveService: FigureMoveService;
+    #cellStatusManager: CellStatusManager;
 
     constructor() {
-        this.#figureMoveService = new FigureMoveService();
+        this.#cellStatusManager = new CellStatusManager();
 		eventBus.subscribe(eventTypes.figureMove, this.onFigureMove.bind(this));
     }
 
@@ -73,7 +73,7 @@ export class GameManager {
         const figuresWithAttackedCells = figures.flatMap(figure => {
             return {
                 figure: figure,
-                cells: this.#figureMoveService.getCaptureCells(figure)
+                cells: this.#cellStatusManager.getCaptureCells(figure)
             }
         })
 
@@ -89,7 +89,7 @@ export class GameManager {
     isGameFinished(): boolean {
         const figures = figureRepository.getFiguresByColor(this.#currentPlayerColor);
         const avalibleMoves = figures.flatMap(figure => {
-            const movies = this.#figureMoveService.getAvalibleMoveCells(figure)
+            const movies = this.#cellStatusManager.getAvalibleMoveCells(figure)
             return this.filterAvalibleCellsByKingCheck(movies, figure);
         });
 
@@ -143,12 +143,12 @@ export class GameManager {
     }
 
     highliteMoves(figure: Figure) {
-        const avalibleCells = this.#figureMoveService.getAvalibleMoveCells(figure);
+        const avalibleCells = this.#cellStatusManager.getAvalibleMoveCells(figure);
         this.filterAvalibleCellsByKingCheck(avalibleCells, figure).forEach((cell: BoardCell) => cell.setCanMove(true));
     }
 
     unhighliteMoves(figure: Figure) {
-        const avalibleCells = this.#figureMoveService.getAvalibleMoveCells(figure);
+        const avalibleCells = this.#cellStatusManager.getAvalibleMoveCells(figure);
         avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
     }
 
