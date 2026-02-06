@@ -1,1 +1,0 @@
-import{_ as e}from"./plugin-vue_export-helper-DlAUqK2U.js";import{a as t,o as c}from"./runtime-core.esm-bundler-BGigarjO.js";const o={},s={class:"menu-item"};function n(r,_){return c(),t("div",s,"Hi")}const i=e(o,[["render",n],["__scopeId","data-v-630b450c"]]);export{i as default};
