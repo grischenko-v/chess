@@ -22,11 +22,12 @@ Features
 - Highlight avalible path
 - Check for check and checkmate
 - Play with help from Stockfish(button with '?')
+- Single and Multi playing modes (Single vs Stockfish v17.1 lite siingle )
 
 TODO:
 - test figure moves/capture/revert
 - add localfirst
-- add play vs AI(stockfish) 
+- fix revert step for Single player mode
 - split Application to use-cases
 - add history player
 - add 2d mode

@@ -26,6 +26,10 @@ const widgets = [
 	{
 		name: 'PawnTransformMenu',
 		mountId: '#pawnTransformMenu'
+	},
+	{
+		name: 'MainMenu',
+		mountId: '#mainMenu'
 	}
 ]
 

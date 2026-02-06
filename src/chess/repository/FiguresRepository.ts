@@ -23,7 +23,7 @@ class FigureRepository implements IFigureRepository {
         delete this.#figures[figureName];
     }
 
-    getFiguresByColor(color: FigureColor) {
+    getFiguresByColor(color: Omit<FigureColor, 'selected'>) {
         const result: Figure[] = [];
         Object.keys(this.#figures).forEach(figureName => {
             if(this.#figures[figureName].getColor() === color) {

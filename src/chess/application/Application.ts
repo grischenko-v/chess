@@ -1,7 +1,7 @@
 import { HTMLAdapter } from "../adapters/HTMLAdapter";
 import type { UIAdater } from "../adapters/SceneAdapter";
 import { BoardCell } from "../domain/BoardCell";
-import { Figure, type FigureType } from "../domain/Figure";
+import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
 import { eventBus, eventTypes } from "../../infra/EventBus";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
@@ -9,6 +9,8 @@ import { GameManager } from "./GameManager";
 import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 import { PawnTrasformationController } from "./PawnTransformationController";
 
+
+type gameMode = 'single' | 'multi';
 export class Application {
     #UIAdater: UIAdater;
 
@@ -17,6 +19,8 @@ export class Application {
 	#figureMoveEvent: FigureMoveEvent | null = null;
 	#moves:string[] = []
 	#pawnTrasformationController: PawnTrasformationController;
+	#mode: gameMode = 'multi';
+	#AIBotPlayerColor: Omit<FigureColor, 'selected'> = 'black';
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
@@ -24,8 +28,8 @@ export class Application {
 		this.#pawnTrasformationController = new PawnTrasformationController(UIAdater);
 		new HTMLAdapter();
 
-        eventBus.subscribe(eventTypes.cellClick, this.onCellClick.bind(this));
-        eventBus.subscribe(eventTypes.figureClick, this.onFigureClick.bind(this));
+        eventBus.subscribe(eventTypes.cellClick, this.onUserCellClick.bind(this));
+        eventBus.subscribe(eventTypes.figureClick, this.onUserFigureClick.bind(this));
         eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));
 		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
 		eventBus.subscribe(eventTypes.nextStepResponse, this.onNextStepResponse.bind(this));
@@ -33,7 +37,17 @@ export class Application {
 		eventBus.subscribe(eventTypes.revertFigureMove, this.revertMove.bind(this));
 		eventBus.subscribe(eventTypes.helpRequest, this.onHelpReuest.bind(this));
 		eventBus.subscribe(eventTypes.pawnTransformResponse, this.onPawnTransformResponse.bind(this));
+		eventBus.subscribe(eventTypes.gameModeSelect, this.onGameModeSelect.bind(this));
     }
+
+	onGameModeSelect(data: unknown) {
+		const { detail } = data as { detail: { selectedMode:  gameMode}};
+		this.setMode(detail.selectedMode);
+	}
+
+	setMode(mode: gameMode){
+		this.#mode = mode;
+	}
 
 	private onPawnTransformResponse(data: unknown) {
 		const { detail } = data as { detail: { figureType: FigureType, figureName: string }};
@@ -44,10 +58,6 @@ export class Application {
 
     private onNextStepResponse(data: unknown) {
 		const { detail } = data as {detail: {nextStep: {from: string, to: string,promotion?: string}, helpReuest: boolean}}
-		
-		if(!detail.helpReuest) {
-			return;
-		}
 
 		const currentCell = cellRepository.getCell(detail.nextStep.from);
 		const currentFigure = currentCell.getFigure();
@@ -72,7 +82,17 @@ export class Application {
 	}
 
 	private onHelpReuest() {
+		if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
+			return;
+		}
 		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: true});	 
+	}
+
+	private onUserFigureClick(data: unknown) {
+		if(this.#mode === 'single' && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
+			return;
+		}
+		this.onFigureClick(data);
 	}
 
     private onFigureClick(data: unknown) {
@@ -108,6 +128,13 @@ export class Application {
         this.#gameManager.highliteMoves(this.#selectedFigure);
     }
 
+	private async onUserCellClick(data: unknown) {
+		if(this.#mode === 'single' && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
+			return;
+		}
+		await this.onCellClick(data);
+	}
+
     private async onCellClick(data: unknown) {
         const { detail } = data as { detail: { clickedCell: BoardCell }};
         const { clickedCell: destinationCell } = detail;
@@ -140,6 +167,9 @@ export class Application {
     }
 
 	private onRevertFigureMove(data: unknown) {
+		if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
+			return;
+		}
 		const { detail } = data as { detail: FigureMoveEventDTO};
 		this.revertFigureMove(detail);
 	}
@@ -296,9 +326,14 @@ export class Application {
         }
         
         this.#gameManager.toggleCurrentPlayer();
+		if(this.#mode === 'multi') {
+			eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
+		}
+
 		if(!this.#figureMoveEvent) {
 			throw new Error('no figure move event');
 		}
+
         if(this.#gameManager.isKingUnderCheck()) {
 			this.#figureMoveEvent.isCheck(true);
         }
@@ -309,6 +344,14 @@ export class Application {
 		eventBus.dispatchEvent('figureMove', { value: figuremoveEvent});
 		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
 		
+
+		setTimeout(() => {
+			if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single') {
+				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+			}
+		}, 1500)
+		
+
 		this.#figureMoveEvent = null;
 		this.#selectedFigure = null;
 	}

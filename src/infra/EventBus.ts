@@ -10,7 +10,8 @@ export const eventTypes = {
 	helpRequest: 'helpRequest',
 	botInited: 'botInited',
 	pawnTransformRequest: 'pawnTransformRequest',
-	pawnTransformResponse: 'pawnTransformResponse'
+	pawnTransformResponse: 'pawnTransformResponse',
+	gameModeSelect: 'gameModeSelect',
 } as const;
 
 export type EventTypes = keyof typeof eventTypes;

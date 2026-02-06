@@ -7,7 +7,7 @@ import { CellStatusManager } from "./CellStatusManager";
 import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 
 export class GameManager {
-    #currentPlayerColor: FigureColor = 'white';
+    #currentPlayerColor: Omit<FigureColor, 'selected'> = 'white';
     #cellStatusManager: CellStatusManager;
 
     constructor() {
@@ -26,11 +26,9 @@ export class GameManager {
     toggleCurrentPlayer() {
         if (this.#currentPlayerColor === 'white') {
             this.#currentPlayerColor = 'black'
-			eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#currentPlayerColor});
             return;
         }
         this.#currentPlayerColor = 'white';
-		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#currentPlayerColor});
     }
 
 	private onFigureMove(data: unknown) {
