@@ -3,7 +3,7 @@ import { BoardCell } from "../domain/BoardCell";
 import { Figure, type FigureColor } from "../domain/Figure";
 import { eventBus, eventTypes } from "../../infra/EventBus";
 import { figureRepository } from "../repository/FiguresRepository";
-import { CellStatusManager } from "./FigureMoveService";
+import { CellStatusManager } from "./CellStatusManager";
 import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 
 export class GameManager {

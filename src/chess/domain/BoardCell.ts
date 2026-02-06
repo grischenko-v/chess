@@ -1,6 +1,7 @@
 import { Figure, type FigureColor } from './Figure';
 import { type CELL_COLOR_TYPE, CellGeometry } from '../ui/board/CellGeometry';
 import { BOARD_CELL_COLOR, boardMatrix } from '../constants';
+import type { Vector3 } from 'three';
 
 export type TSiblings = {
     bottom: string | null,
@@ -23,13 +24,13 @@ export class BoardCell {
     #row: string;
 	#column: string;
 
-    constructor( row: string, column: string, boardCoords: {x: number, z: number}) {
+    constructor( row: string, column: string, boardCoords: Vector3) {
         this.#name = `${row}${column}`;
         this.#row = row;
 		this.#column = column;
         this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
         this.#cellGeometry = new CellGeometry(
-            {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5}, this.#color, this.#name 
+            {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5} as Vector3, this.#color, this.#name 
         );
         this.#siblings = this.initCellSublings(this.#name);
     }

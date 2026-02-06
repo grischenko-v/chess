@@ -1,5 +1,5 @@
 import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
-import { Object3D } from "three";
+import { Object3D, Vector3 } from "three";
 import { RaycastController } from "./RaycastController";
 import { BLACK_FIGURES_INITIAL_POSITIONS, columns, rows, WHITE_FIGURES_INITIAL_POSITIONS } from "../constants";
 import { BoardCell } from "../domain/BoardCell";
@@ -69,7 +69,7 @@ class SceneAdapter {
 
         for(const [x, column ] of rows.entries()) {
             for(const [z, row] of columns.entries()) {
-                const cell = new BoardCell(`${row}`,`${column}`, {x, z});
+                const cell = new BoardCell(`${row}`,`${column}`, {x, z} as Vector3);
                 cellRepository.addCell(cell)
                 this.draw(cell);
             }
