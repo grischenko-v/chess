@@ -23,8 +23,7 @@ Features
 - Check for check and checkmate
 - Play with help from Stockfish(button with '?')
 
-TODO:   
-- add signutures to board(A-H, 1-7)
+TODO:
 - test figure moves/capture/revert
 - add localfirst
 - add play vs AI(stockfish) 
