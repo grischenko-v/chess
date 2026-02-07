@@ -7,7 +7,6 @@ const initAppAsync = () => {
 				.then(({ Application })=> new Application(sceneAdater))
 				.catch(e => console.error(e))
 		)
-		.then(() => initWidgetAsync())
 	.catch(e => console.error(e));
 }
 
@@ -25,5 +24,6 @@ const initBotAsync = () => {
 	.catch(e =>  console.error(e));
 }
 
-initAppAsync()
+initWidgetAsync()
+.then(() => initAppAsync())
 .then(() => initBotAsync());
