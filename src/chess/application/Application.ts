@@ -45,14 +45,11 @@ export class Application {
 		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
 		this.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
-		
+
 		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
 			this.#htmlAdapter.setSinglePlayerBlackColor();
-			
-			setTimeout(() => {
-				this.#UIAdater.setSinglePlayerBlackColor();
-				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
-			}, 1500)
+			this.#UIAdater.setSinglePlayerBlackColor();
+			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
 		}
 	}
 
