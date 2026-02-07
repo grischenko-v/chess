@@ -21,12 +21,13 @@ export class Application {
 	#pawnTrasformationController: PawnTrasformationController;
 	#mode: gameMode = 'multi';
 	#AIBotPlayerColor: Omit<FigureColor, 'selected'> = 'black';
+	#htmlAdapter: HTMLAdapter;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
         this.#gameManager = new GameManager();
 		this.#pawnTrasformationController = new PawnTrasformationController(UIAdater);
-		new HTMLAdapter();
+		this.#htmlAdapter = new HTMLAdapter();
 
         eventBus.subscribe(eventTypes.cellClick, this.onUserCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onUserFigureClick.bind(this));
@@ -41,10 +42,23 @@ export class Application {
     }
 
 	onGameModeSelect(data: unknown) {
-		const { detail } = data as { detail: { selectedMode:  gameMode}};
+		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
 		this.setMode(detail.selectedMode);
+		this.setAIBotColor(detail.AIBotPlayerColor);
+		
+		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
+			this.#htmlAdapter.setSinglePlayerBlackColor();
+			
+			setTimeout(() => {
+				this.#UIAdater.setSinglePlayerBlackColor();
+				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+			}, 1500)
+		}
 	}
 
+	setAIBotColor(color: Omit<FigureColor, 'selected'>){
+		this.#AIBotPlayerColor = color;
+	}
 	setMode(mode: gameMode){
 		this.#mode = mode;
 	}
@@ -343,7 +357,6 @@ export class Application {
 		const figuremoveEvent = this.#figureMoveEvent.toJson();
 		eventBus.dispatchEvent('figureMove', { value: figuremoveEvent});
 		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
-		
 
 		setTimeout(() => {
 			if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single') {

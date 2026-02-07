@@ -16,6 +16,7 @@ interface ISceenObject {
 export interface UIAdater {
     remove: (deletedFigure: ISceenObject) => void;
 	initFigure: (cellName: string, color: FigureColor, type: FigureType) => void;
+	setSinglePlayerBlackColor: () => void;
 }
 class SceneAdapter {
     #scene = scene
@@ -31,6 +32,10 @@ class SceneAdapter {
 	private onChangePlayer(data: unknown) {
 		 const { detail } = data as { detail: { currentPlayer: 'white' | 'black' }};
 		 this.#scene.changeCameraPosition(detail.currentPlayer);
+	}
+
+	setSinglePlayerBlackColor() {
+		this.#scene.changeCameraPosition('black');
 	}
 
     private draw(sceenObject: ISceenObject) {

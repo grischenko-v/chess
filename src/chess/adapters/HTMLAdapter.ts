@@ -29,6 +29,10 @@ export class HTMLAdapter {
 		}
 	}
 
+	setSinglePlayerBlackColor() {
+		this.#body.classList.add('black');
+	}
+
     private onChangePlayer() {
         this.#body.classList.toggle('black')
     }
