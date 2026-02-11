@@ -76,6 +76,7 @@ import { ref } from 'vue';
 import { useMainMenuStore } from './MainMenuStore';
 import MenuFigure from './MenuFigure.vue';
 import { storeToRefs } from 'pinia';
+import indexedDbWrapper from '@/infra/IndexedDb';
 
 
 const mainMenuStore = useMainMenuStore()
@@ -86,9 +87,11 @@ const {
 const isOpened = ref(true);
 
 function onGameStart() {
+	const botColor = selectedColor.value === 'white' ? 'black' : 'white';
 	eventBus.dispatchEvent(eventTypes.gameModeSelect, {
 		selectedMode: selectedMode.value,
-		AIBotPlayerColor: selectedColor.value === 'white' ? 'black' : 'white' });
+		AIBotPlayerColor: botColor });
+	indexedDbWrapper.initGame(selectedMode.value, botColor)
 	isOpened.value = false;
 }
 

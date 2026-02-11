@@ -3,7 +3,7 @@ import type { FigureMoveEventDTO } from "./FigureMoveEvent";
 
 type Game = {
 	mode: 'single' | 'multi',
-	selectedColor: 'black' | 'white' | undefined,
+	botColor: 'black' | 'white' | undefined,
 }
 
 class IndexedDbWrapper {
@@ -27,11 +27,11 @@ class IndexedDbWrapper {
 		await this.#events.add(event);
 	}
 
-	async initGame(mode: 'single' | 'multi', selectedColor: 'black' | 'white' | undefined) {
+	async initGame(mode: 'single' | 'multi', botColor: 'black' | 'white' | undefined) {
 		await this.#game.clear();
 		await this.#game.add({
 			mode,
-			selectedColor,
+			botColor,
 		})
 	}
 
