@@ -1,11 +1,13 @@
 import './index.css';
-import indexedDbWrapper from './infra/IndexedDb';
 
 const initAppAsync = () => {
 	return import('./chess/adapters/SceneAdapter')
 		.then(({sceneAdater}) => 
 			import('./chess/application/Application')
-				.then(({ Application })=> new Application(sceneAdater))
+				.then(({ Application })=> {
+					const app =  new Application(sceneAdater);
+					app.initStateFromIndexedDb();
+				})
 				.catch(e => console.error(e))
 		)
 	.catch(e => console.error(e));
@@ -21,7 +23,6 @@ const initBotAsync = () => {
 	.then(({ AIBot }) => {
 		const aibot = new AIBot()
 		aibot.init();
-		indexedDbWrapper.getEvents().then(events => console.log(events));
 	})
 	.catch(e =>  console.error(e));
 }

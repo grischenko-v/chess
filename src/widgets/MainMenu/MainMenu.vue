@@ -78,7 +78,6 @@ import MenuFigure from './MenuFigure.vue';
 import { storeToRefs } from 'pinia';
 import indexedDbWrapper from '@/infra/IndexedDb';
 
-
 const mainMenuStore = useMainMenuStore()
 const {
 	selectedMode,

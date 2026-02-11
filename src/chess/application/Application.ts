@@ -42,6 +42,11 @@ export class Application {
 		eventBus.subscribe(eventTypes.gameModeSelect, this.onGameModeSelect.bind(this));
     }
 
+	async initStateFromIndexedDb () {
+		const events = await indexedDbWrapper.getEvents();
+		console.log(events);
+	}
+
 	onGameModeSelect(data: unknown) {
 		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
 		this.setMode(detail.selectedMode);
