@@ -8,6 +8,7 @@ import { figureRepository } from "../repository/FiguresRepository";
 import { GameManager } from "./GameManager";
 import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 import { PawnTrasformationController } from "./PawnTransformationController";
+import indexedDbWrapper from "@/infra/IndexedDb";
 
 
 type gameMode = 'single' | 'multi';
@@ -28,6 +29,8 @@ export class Application {
         this.#gameManager = new GameManager();
 		this.#pawnTrasformationController = new PawnTrasformationController(UIAdater);
 		this.#htmlAdapter = new HTMLAdapter();
+
+		console.log(indexedDbWrapper.events);
 
         eventBus.subscribe(eventTypes.cellClick, this.onUserCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onUserFigureClick.bind(this));
@@ -353,6 +356,7 @@ export class Application {
         };
 		const figuremoveEvent = this.#figureMoveEvent.toJson();
 		eventBus.dispatchEvent('figureMove', { value: figuremoveEvent});
+		indexedDbWrapper.addEvent(figuremoveEvent);
 		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
 
 		setTimeout(() => {
