@@ -30,8 +30,6 @@ export class Application {
 		this.#pawnTrasformationController = new PawnTrasformationController(UIAdater);
 		this.#htmlAdapter = new HTMLAdapter();
 
-		console.log(indexedDbWrapper.events);
-
         eventBus.subscribe(eventTypes.cellClick, this.onUserCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onUserFigureClick.bind(this));
         eventBus.subscribe(eventTypes.outsideClick, this.onOutsideClick.bind(this));

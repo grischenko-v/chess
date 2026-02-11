@@ -1,4 +1,5 @@
 import './index.css';
+import indexedDbWrapper from './infra/IndexedDb';
 
 const initAppAsync = () => {
 	return import('./chess/adapters/SceneAdapter')
@@ -20,6 +21,7 @@ const initBotAsync = () => {
 	.then(({ AIBot }) => {
 		const aibot = new AIBot()
 		aibot.init();
+		indexedDbWrapper.getEvents().then(events => console.log(events));
 	})
 	.catch(e =>  console.error(e));
 }
