@@ -26,6 +26,7 @@ Features
 - save game in indexedDB(Dexie)
 
 TODO:
+- add loader till all data loaded
 - add game restart button
 - test figure moves/capture/revert
 - fix revert step for Single player mode
