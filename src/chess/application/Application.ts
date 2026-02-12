@@ -23,6 +23,7 @@ export class Application {
 	#mode: gameMode = 'multi';
 	#AIBotPlayerColor: Omit<FigureColor, 'selected'> = 'black';
 	#htmlAdapter: HTMLAdapter;
+	#isHistoryLoaded = false;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
@@ -44,7 +45,11 @@ export class Application {
 
 	async initStateFromIndexedDb () {
 		const events = await indexedDbWrapper.getEvents();
-		console.log(events);
+		
+		for(const event of events) {
+			await this.makeMove({from: event.currentCell, to: event.destinationCell});
+		}
+		this.#isHistoryLoaded = true;
 	}
 
 	onGameModeSelect(data: unknown) {
@@ -73,21 +78,25 @@ export class Application {
 		this.#figureMoveEvent?.setTransform(detail.figureType)
 	}
 
-    private onNextStepResponse(data: unknown) {
+    private async onNextStepResponse(data: unknown) {
 		const { detail } = data as {detail: {nextStep: {from: string, to: string,promotion?: string}, helpReuest: boolean}}
 
-		const currentCell = cellRepository.getCell(detail.nextStep.from);
+		await this.makeMove(detail.nextStep);
+    }
+
+	private async makeMove(data: {from: string, to: string}) {
+		const currentCell = cellRepository.getCell(data.from);
 		const currentFigure = currentCell.getFigure();
-		const destinationCell = cellRepository.getCell(detail.nextStep.to);
+		const destinationCell = cellRepository.getCell(data.to);
 		this.onFigureClick({
 			detail: {
 				clickedFigure: currentFigure
 			}
 		})
-		this.onCellClick( {detail: {
+		return await this.onCellClick( {detail: {
 			clickedCell: destinationCell
 		}});	
-    }
+	}
 
 	private collectMoves(data: unknown) {
 		const { detail } = data as {detail : {value: { currentCell: string, destinationCell: string }}};
@@ -358,8 +367,12 @@ export class Application {
 			this.#figureMoveEvent.isGameEnd(true);
         };
 		const figuremoveEvent = this.#figureMoveEvent.toJson();
-		eventBus.dispatchEvent('figureMove', { value: figuremoveEvent});
-		indexedDbWrapper.addEvent(figuremoveEvent);
+		
+		if(this.#isHistoryLoaded) {
+			eventBus.dispatchEvent('figureMove', { value: figuremoveEvent});
+			indexedDbWrapper.addEvent(figuremoveEvent);
+		}
+		
 		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
 
 		setTimeout(() => {

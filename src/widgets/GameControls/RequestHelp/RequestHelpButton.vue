@@ -32,8 +32,12 @@
 <script lang="ts" setup>
 import { eventBus, eventTypes } from "@/infra/EventBus";
 import { useStepsStore } from '../../StepStore';
+import { onMounted, onUnmounted } from "vue";
 
 const steps = useStepsStore();
+
+onMounted(() => steps.start());
+onUnmounted(() => steps.stop());
 
 function onHelpRequest() {
 	eventBus.dispatchEvent(eventTypes.helpRequest, {})

@@ -1,4 +1,4 @@
-import Dexie, { type Table } from "dexie";
+import Dexie, { liveQuery, type Table } from "dexie";
 import type { FigureMoveEventDTO } from "./FigureMoveEvent";
 
 type Game = {
@@ -38,6 +38,14 @@ class IndexedDbWrapper {
 	async getEvents() {
     	return await this.#events.toArray();
   	}
+
+	getEvents$() {
+    	return liveQuery(() => this.#events.toArray());
+  	}
+
+	async getGame() {
+		return await this.#game.toArray();
+	}
 
 	async clearEvents() {
 		return await this.#events.clear();

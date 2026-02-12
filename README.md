@@ -23,10 +23,11 @@ Features
 - Check for check and checkmate
 - Play with help from Stockfish(button with '?')
 - Single and Multi playing modes (Single vs Stockfish v17.1 lite siingle )
+- save game in indexedDB(Dexie)
 
 TODO:
+- add game restart button
 - test figure moves/capture/revert
-- add localfirst
 - fix revert step for Single player mode
 - split Application to use-cases
 - add history player

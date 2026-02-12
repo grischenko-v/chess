@@ -1,5 +1,7 @@
 import { eventBus, eventTypes } from "@/infra/EventBus";
 import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
+import indexedDbWrapper from "@/infra/IndexedDb";
+import type { Subscription } from "dexie";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
@@ -39,10 +41,23 @@ function MoveItemObjtoStepString(obj: FigureMoveEventDTO): string {
 }
 
 export const useStepsStore = defineStore("stepsStore", () => {
-	
-const items = ref<FigureMoveEventDTO[]>([]);
 
-const steps = computed(() => items.value.map(item => MoveItemObjtoStepString(item)));
+	let sub: Subscription | undefined;
+	const items = ref<FigureMoveEventDTO[]>([]);
+	const steps = computed(() => items.value.map(item => MoveItemObjtoStepString(item)));
+
+	async function start() {
+		if (sub) {
+			return;
+		}
+		const events = await indexedDbWrapper.getEvents();
+		items.value = events;
+	}
+
+	function stop() {
+		sub?.unsubscribe();
+		sub = undefined;
+	}
 
 const isBotInited = ref<boolean>(false);
 
@@ -73,5 +88,5 @@ function revert() {
 	eventBus.dispatchEvent(eventTypes.revertFigureMove, revertFigureMove);
 }
 
-return {items, steps, addItem, revert, isBotInited, toggleTransformMenu, isTransformMenuOpen}
+return {items, steps, addItem, revert, isBotInited, toggleTransformMenu, isTransformMenuOpen, start, stop}
 });

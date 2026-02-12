@@ -21,7 +21,6 @@ function onSelectWhite() {
 
 function onSelectSingleMode() {
 	selectedMode.value = 'single';
-	console.log(213);
 }
 
 function onSelectMultiMode() {

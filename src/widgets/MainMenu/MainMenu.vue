@@ -72,7 +72,7 @@
 
 <script lang="ts" setup>
 import { eventBus, eventTypes } from '@/infra/EventBus';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useMainMenuStore } from './MainMenuStore';
 import MenuFigure from './MenuFigure.vue';
 import { storeToRefs } from 'pinia';
@@ -84,6 +84,20 @@ const {
 	selectedColor} = storeToRefs(mainMenuStore);
 
 const isOpened = ref(true);
+
+onMounted(() => {
+	(async () => {
+		const gamedata = await indexedDbWrapper.getGame();
+		if(!gamedata.length) {
+			return;
+		}
+		eventBus.dispatchEvent(eventTypes.gameModeSelect, {
+			selectedMode: gamedata[0].mode,
+			AIBotPlayerColor: gamedata[0].botColor
+		});
+		isOpened.value = false;
+	})()
+});
 
 function onGameStart() {
 	const botColor = selectedColor.value === 'white' ? 'black' : 'white';
