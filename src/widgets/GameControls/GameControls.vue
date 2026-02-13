@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import RequestHelpButton from './RequestHelp/RequestHelpButton.vue';
 import RollbackButton from './RollbackButton/RollbackButton.vue';
+import StartNewGame from './StartNewGame/StartNewGame.vue';
 
 </script>
 
@@ -8,6 +9,7 @@ import RollbackButton from './RollbackButton/RollbackButton.vue';
 	<div class="wrapper">
 		<RollbackButton/>
  		<RequestHelpButton/>
+		<StartNewGame/>
  	</div>
 </template>
 
