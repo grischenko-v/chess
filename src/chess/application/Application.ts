@@ -37,7 +37,6 @@ export class Application {
 		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
 		eventBus.subscribe(eventTypes.nextStepResponse, this.onNextStepResponse.bind(this));
 		eventBus.subscribe(eventTypes.figureMove, this.collectMoves.bind(this));
-		eventBus.subscribe(eventTypes.revertFigureMove, this.revertMove.bind(this));
 		eventBus.subscribe(eventTypes.helpRequest, this.onHelpReuest.bind(this));
 		eventBus.subscribe(eventTypes.pawnTransformResponse, this.onPawnTransformResponse.bind(this));
 		eventBus.subscribe(eventTypes.gameModeSelect, this.onGameModeSelect.bind(this));
@@ -192,12 +191,14 @@ export class Application {
         this.unselectFigure();
     }
 
-	private onRevertFigureMove(data: unknown) {
-		if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
-			return;
-		}
+	private async onRevertFigureMove(data: unknown) {
+		// if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
+			// return;
+		// }
 		const { detail } = data as { detail: FigureMoveEventDTO};
+		this.revertMove();
 		this.revertFigureMove(detail);
+		await indexedDbWrapper.revertMoveEvent();
 	}
 
 	private revertFigureMove(data: FigureMoveEventDTO) {
@@ -242,6 +243,7 @@ export class Application {
 		if(data.transform) {
 			this.#pawnTrasformationController.animateRevert(currentCell);
 		}
+		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
 	}
 
     private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {

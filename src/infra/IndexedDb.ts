@@ -39,6 +39,13 @@ class IndexedDbWrapper {
     	return await this.#events.toArray();
   	}
 
+	async revertMoveEvent() {
+		const last = await this.#events.orderBy("id").last();
+		if (last) {
+  			await this.#events.delete(last.id);
+		}
+	}
+
 	getEvents$() {
     	return liveQuery(() => this.#events.toArray());
   	}

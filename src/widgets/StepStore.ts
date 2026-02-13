@@ -84,6 +84,7 @@ function revert() {
 	if(!items.value.length) {
 		return;
 	}
+
 	const revertFigureMove = items.value.pop();
 	eventBus.dispatchEvent(eventTypes.revertFigureMove, revertFigureMove);
 }
