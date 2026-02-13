@@ -72,7 +72,7 @@
 
 <script lang="ts" setup>
 import { eventBus, eventTypes } from '@/infra/EventBus';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import { useMainMenuStore } from './MainMenuStore';
 import MenuFigure from './MenuFigure.vue';
 import { storeToRefs } from 'pinia';
@@ -99,6 +99,12 @@ onMounted(() => {
 		stepStore.closeMainMenu();
 	})()
 });
+
+watch(isMainMenuOpened, () => {
+  if(isMainMenuOpened) {
+		mainMenuStore.reset();
+  }
+})
 
 function onGameStart() {
 	let botColor: 'white' | 'black' | undefined = undefined;

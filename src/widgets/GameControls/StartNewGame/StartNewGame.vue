@@ -1,40 +1,13 @@
 <template>
-	<div class="newgame-wrapper">
-		<button class="newgame" @click="startNewGame"></button>
-	</div>
+	<BaseButton v-if="steps.items.length > 0"  @click="startNewGame" img="plus"></BaseButton>
 </template>
-
-<style scoped>
-.newgame-wrapper {
-	width: 32px;
-	height: 32px;
-	padding: 4px;
-	background-color: lightgrey;
-	border-radius: 50%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.newgame {
-	width: 24px;
-	height: 24px;
-	background-image: url('/imgs/icons/plus.png');
-	background-repeat: no-repeat;
-	background-size: contain;
-	cursor: pointer;
-	background-color: transparent;
-    outline: none;
-    border: none;
-}
-</style>
 
 <script lang="ts" setup>
 import indexedDbWrapper from '@/infra/IndexedDb';
 import { useStepsStore } from '../../StepStore';
+import BaseButton from "../BaseButton.vue";
 
 const steps = useStepsStore();
-
 
 async function startNewGame () {
 	while(steps.items.length > 0) {

@@ -28,5 +28,10 @@ function onSelectMultiMode() {
 	selectedColor.value = undefined;
 }
 
-return {selectedMode, selectedColor, onSelectBlack, onSelectWhite, onSelectSingleMode, onSelectMultiMode}
+function reset() {
+	selectedMode.value = undefined;
+	selectedColor.value = undefined;
+}
+
+return {selectedMode, selectedColor, onSelectBlack, onSelectWhite, onSelectSingleMode, onSelectMultiMode, reset}
 })
