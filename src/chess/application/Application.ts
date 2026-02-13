@@ -191,9 +191,6 @@ export class Application {
     }
 
 	private async onRevertFigureMove(data: unknown) {
-		// if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
-			// return;
-		// }
 		const { detail } = data as { detail: FigureMoveEventDTO};
 		this.revertMove();
 		this.revertFigureMove(detail);

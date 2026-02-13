@@ -40,10 +40,15 @@ class IndexedDbWrapper {
   	}
 
 	async revertMoveEvent() {
-		const last = await this.#events.orderBy("id").last();
+		const last = await this.getLastEvent();
+		console.log(last);
 		if (last && last.id) {
   			await this.#events.delete(last.id.toString());
 		}
+	}
+
+	async getLastEvent() {
+		return await this.#events.orderBy("id").last();
 	}
 
 	getEvents$() {
