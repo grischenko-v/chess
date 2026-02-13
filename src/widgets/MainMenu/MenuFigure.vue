@@ -45,7 +45,7 @@ type Props = {
   color: FigureColor,
 }
 
-const props =defineProps<Props>();
+const props = defineProps<Props>();
 
 const mainMenuStore = useMainMenuStore();
 const {	selectedMode, selectedColor } = storeToRefs(mainMenuStore);

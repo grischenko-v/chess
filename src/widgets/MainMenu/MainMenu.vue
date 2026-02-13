@@ -1,5 +1,5 @@
 <template>
-	<div class="main-menu-outer" v-if="isOpened">
+	<div class="main-menu-outer" v-if="isMainMenuOpened">
 		<div class="main-menu-inner">
 			<h2>Select Game Mode</h2>
 			<div :class="{'menu-item': true, 'selected': selectedMode === 'single'}" @click="mainMenuStore.onSelectSingleMode">Single</div>
@@ -72,18 +72,19 @@
 
 <script lang="ts" setup>
 import { eventBus, eventTypes } from '@/infra/EventBus';
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { useMainMenuStore } from './MainMenuStore';
 import MenuFigure from './MenuFigure.vue';
 import { storeToRefs } from 'pinia';
 import indexedDbWrapper from '@/infra/IndexedDb';
+import { useStepsStore } from '../StepStore';
 
 const mainMenuStore = useMainMenuStore()
+const stepStore = useStepsStore();
 const {
 	selectedMode,
 	selectedColor} = storeToRefs(mainMenuStore);
-
-const isOpened = ref(true);
+const { isMainMenuOpened } = storeToRefs(stepStore);
 
 onMounted(() => {
 	(async () => {
@@ -95,17 +96,21 @@ onMounted(() => {
 			selectedMode: gamedata[0].mode,
 			AIBotPlayerColor: gamedata[0].botColor
 		});
-		isOpened.value = false;
+		stepStore.closeMainMenu();
 	})()
 });
 
 function onGameStart() {
-	const botColor = selectedColor.value === 'white' ? 'black' : 'white';
+	let botColor: 'white' | 'black' | undefined = undefined;
+	if(selectedColor.value) {
+		botColor = selectedColor.value === 'white' ? 'black' : 'white';;
+	}
+
 	eventBus.dispatchEvent(eventTypes.gameModeSelect, {
 		selectedMode: selectedMode.value,
 		AIBotPlayerColor: botColor });
 	indexedDbWrapper.initGame(selectedMode.value, botColor)
-	isOpened.value = false;
+	stepStore.closeMainMenu();
 }
 
 </script>

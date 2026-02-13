@@ -30,14 +30,17 @@
 </style>
 
 <script lang="ts" setup>
+import indexedDbWrapper from '@/infra/IndexedDb';
 import { useStepsStore } from '../../StepStore';
 
 const steps = useStepsStore();
 
 
-function startNewGame () {
+async function startNewGame () {
 	while(steps.items.length > 0) {
 		steps.revert();
 	}
+	await indexedDbWrapper.clearGameData();
+	steps.openMainMenu();
 }
 </script>

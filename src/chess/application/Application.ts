@@ -56,7 +56,7 @@ export class Application {
 		this.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
 
-		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
+		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white' && this.#moves.length === 0) {
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
 			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
@@ -79,7 +79,6 @@ export class Application {
 
     private async onNextStepResponse(data: unknown) {
 		const { detail } = data as {detail: {nextStep: {from: string, to: string,promotion?: string}, helpReuest: boolean}}
-
 		await this.makeMove(detail.nextStep);
     }
 

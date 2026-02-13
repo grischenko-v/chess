@@ -60,8 +60,16 @@ export const useStepsStore = defineStore("stepsStore", () => {
 	}
 
 const isBotInited = ref<boolean>(false);
-
 const isTransformMenuOpen = ref<boolean>(false);
+const isMainMenuOpened = ref(true);
+
+function openMainMenu() {
+	isMainMenuOpened.value = true;
+}
+
+function closeMainMenu() {
+	isMainMenuOpened.value = false;
+}
 
 const toggleTransformMenu = () => {
 	isTransformMenuOpen.value = !isTransformMenuOpen.value ;
@@ -89,5 +97,18 @@ function revert() {
 	eventBus.dispatchEvent(eventTypes.revertFigureMove, revertFigureMove);
 }
 
-return {items, steps, addItem, revert, isBotInited, toggleTransformMenu, isTransformMenuOpen, start, stop}
+return {
+	items,
+	steps,
+	addItem,
+	revert,
+	isBotInited,
+	toggleTransformMenu,
+	isTransformMenuOpen,
+	start,
+	stop,
+	isMainMenuOpened,
+	openMainMenu,
+	closeMainMenu
+}
 });

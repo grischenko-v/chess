@@ -15,7 +15,7 @@ export class HTMLAdapter {
     }
 
 	private onRequestHelp() {
-		this.#body.classList.add('locked');
+		// this.#body.classList.add('locked');
 	}
 
 	private onNextStepResponse() {
