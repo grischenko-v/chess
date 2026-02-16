@@ -1,6 +1,6 @@
 import './index.css';
 
-const initAppAsync = () => {
+const initAppAsync = async () => {
 	return import('./chess/adapters/SceneAdapter')
 		.then(({sceneAdater}) => 
 			import('./chess/application/Application')
@@ -13,12 +13,12 @@ const initAppAsync = () => {
 	.catch(e => console.error(e));
 }
 
-const initWidgetAsync = () => {
+const initWidgetAsync = async () => {
 	return import('./widgets/initWigets')
 				.then(({ initWidgets }) => initWidgets())
 }
 
-const initBotAsync = () => {
+const initBotAsync = async () => {
 	return import ('./AIBot/AIBot')
 	.then(({ AIBot }) => {
 		const aibot = new AIBot()
