@@ -10,15 +10,16 @@ export class HTMLAdapter {
         eventBus.subscribe('chagePlayer', this.onChangePlayer.bind(this));
 		eventBus.subscribe(eventTypes.revertFigureMove, this.onRevertFigureMove.bind(this));
 		eventBus.subscribe(eventTypes.figureMove, this.onFigureMove.bind(this));
-		eventBus.subscribe(eventTypes.helpRequest, this.onRequestHelp.bind(this));
-		eventBus.subscribe(eventTypes.nextStepResponse, this.onNextStepResponse.bind(this));
+		eventBus.subscribe(eventTypes.helpRequest, this.lockScreen.bind(this));
+		eventBus.subscribe(eventTypes.nextStepResponse, this.unlockScreen.bind(this));
+		eventBus.subscribe(eventTypes.botInited, this.unlockScreen.bind(this));
     }
 
-	private onRequestHelp() {
+	private lockScreen() {
 		this.#body.classList.add('locked');
 	}
 
-	private onNextStepResponse() {
+	private unlockScreen() {
 		this.#body.classList.remove('locked');
 	}
 
