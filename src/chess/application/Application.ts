@@ -61,7 +61,6 @@ export class Application {
 		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
 		this.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
-		console.log(detail);
 		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white' && this.#moves.length === 0) {
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
@@ -85,6 +84,7 @@ export class Application {
 
     private async onNextStepResponse(data: unknown) {
 		const { detail } = data as {detail: {nextStep: {from: string, to: string,promotion?: string}, helpReuest: boolean}}
+		this.unselectFigure();
 		await this.makeMove(detail.nextStep);
     }
 
@@ -104,7 +104,7 @@ export class Application {
 
 	private collectMoves(data: unknown) {
 		const { detail } = data as {detail : {value: { currentCell: string, destinationCell: string }}};
-		this.#moves.push(`${detail.value.currentCell}${detail.value.destinationCell}`)
+		this.#moves.push(`${detail.value.currentCell}${detail.value.destinationCell}`);
 	}
 
 	private revertMove() {
@@ -134,7 +134,7 @@ export class Application {
             return;
         }
 
-        if(clickedFigure.getColor() !== this.#gameManager.getCurrentPlayer()) {
+        if(this.#mode === 'multi' && clickedFigure.getColor() !== this.#gameManager.getCurrentPlayer()) {
             return;
         }
 
@@ -334,6 +334,7 @@ export class Application {
         const selectedFigureType = this.#selectedFigure.getType();
         this.#gameManager.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
+		console.log(this.#selectedFigure);
         this.#selectedFigure.move(destinationCell);
         currentCell.setFigure(null);
 
@@ -388,6 +389,7 @@ export class Application {
 
 		this.#figureMoveEvent = null;
 		this.#selectedFigure = null;
+		console.log(this.#selectedFigure);
 	}
 
     private captureFigureRegular(currentCell: BoardCell, destinationCell: BoardCell) {
