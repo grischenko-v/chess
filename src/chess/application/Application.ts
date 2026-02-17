@@ -44,7 +44,10 @@ export class Application {
 
 	async initStateFromIndexedDb () {
 		const events = await indexedDbWrapper.getEvents();
-		
+		if(!events || events.length == 0) {
+			this.#isHistoryLoaded = true;
+			return;
+		}
 		for(const event of events) {
 			await this.makeMove({from: event.currentCell, to: event.destinationCell});
 			this.#moves.push((`${event.currentCell}${event.destinationCell}`))
