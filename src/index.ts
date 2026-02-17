@@ -28,5 +28,7 @@ const initBotAsync = async () => {
 }
 
 initWidgetAsync()
-.then(() => initAppAsync())
+.then(() => {
+	initAppAsync()
+})
 .then(() => initBotAsync());

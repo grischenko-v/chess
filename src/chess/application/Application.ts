@@ -48,6 +48,12 @@ export class Application {
 		for(const event of events) {
 			await this.makeMove({from: event.currentCell, to: event.destinationCell});
 		}
+			const gamedata = await indexedDbWrapper.getGame();
+		this.onGameModeSelect({ 
+			detail: {
+				selectedMode: gamedata[0].mode,
+				AIBotPlayerColor: gamedata[0].botColor
+			}})
 		this.#isHistoryLoaded = true;
 	}
 
@@ -55,7 +61,7 @@ export class Application {
 		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
 		this.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
-
+		console.log(detail);
 		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white' && this.#moves.length === 0) {
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();

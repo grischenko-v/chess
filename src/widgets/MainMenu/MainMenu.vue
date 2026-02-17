@@ -92,10 +92,6 @@ onMounted(() => {
 		if(!gamedata.length) {
 			return;
 		}
-		eventBus.dispatchEvent(eventTypes.gameModeSelect, {
-			selectedMode: gamedata[0].mode,
-			AIBotPlayerColor: gamedata[0].botColor
-		});
 		stepStore.closeMainMenu();
 	})()
 });
