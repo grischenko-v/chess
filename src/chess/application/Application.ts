@@ -47,8 +47,9 @@ export class Application {
 		
 		for(const event of events) {
 			await this.makeMove({from: event.currentCell, to: event.destinationCell});
+			this.#moves.push((`${event.currentCell}${event.destinationCell}`))
 		}
-			const gamedata = await indexedDbWrapper.getGame();
+		const gamedata = await indexedDbWrapper.getGame();
 		this.onGameModeSelect({ 
 			detail: {
 				selectedMode: gamedata[0].mode,
@@ -334,7 +335,6 @@ export class Application {
         const selectedFigureType = this.#selectedFigure.getType();
         this.#gameManager.unhighliteMoves(this.#selectedFigure);
         this.#selectedFigure.unselect();
-		console.log(this.#selectedFigure);
         this.#selectedFigure.move(destinationCell);
         currentCell.setFigure(null);
 
@@ -381,7 +381,7 @@ export class Application {
 		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
 
 		setTimeout(() => {
-			if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single') {
+			if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single' && this.#isHistoryLoaded) {
 				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
 			}
 		}, 1500)
@@ -389,7 +389,6 @@ export class Application {
 
 		this.#figureMoveEvent = null;
 		this.#selectedFigure = null;
-		console.log(this.#selectedFigure);
 	}
 
     private captureFigureRegular(currentCell: BoardCell, destinationCell: BoardCell) {
