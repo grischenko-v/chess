@@ -26,7 +26,6 @@ Features
 - save game in indexedDB(Dexie)
 
 TODO:
-- fix localfirst errors with AIbot and revert button
 - fix revert step for Single player mode
 - test figure moves/capture/revert
 - split Application to use-cases
