@@ -111,10 +111,6 @@ export class Application {
 		this.#moves.push(`${detail.value.currentCell}${detail.value.destinationCell}`);
 	}
 
-	private revertMove() {
-		this.#moves.pop();
-	}
-
 	private onHelpReuest() {
 		if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
 			return;
@@ -202,7 +198,7 @@ export class Application {
 
 	private async onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO};
-		this.revertMove();
+		this.#moves.pop();
 		this.revertFigureMove(detail);
 		await indexedDbWrapper.revertMoveEvent();
 	}
