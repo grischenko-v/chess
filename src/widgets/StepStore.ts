@@ -94,7 +94,6 @@ async function  revert() {
 	const gamedata = await indexedDbWrapper.getGame();
 
 	if(gamedata[0].mode === 'single') {
-		console.log(123);
 		revertFigureMove();
 	}
 }
