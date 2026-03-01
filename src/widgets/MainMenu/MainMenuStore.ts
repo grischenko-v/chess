@@ -4,12 +4,16 @@ import { ref } from 'vue';
 export const useMainMenuStore = defineStore("mainMenuStore", () => {
 const selectedMode = ref();
 const selectedColor = ref();
+const botColor = ref<'white' | 'black' | undefined>();
+
+console.log('MainMenuStore module instance', import.meta.url);
 
 function onSelectBlack() {
 	if(selectedMode.value === 'multi') {
 		return;
 	}
 	selectedColor.value = 'black'
+	botColor.value = 'white';
 }
 
 function onSelectWhite() {
@@ -17,6 +21,7 @@ function onSelectWhite() {
 		return;
 	}
 	selectedColor.value = 'white'
+	botColor.value = 'black';
 }
 
 function onSelectSingleMode() {
@@ -33,5 +38,5 @@ function reset() {
 	selectedColor.value = undefined;
 }
 
-return {selectedMode, selectedColor, onSelectBlack, onSelectWhite, onSelectSingleMode, onSelectMultiMode, reset}
+return {selectedMode, selectedColor, botColor, onSelectBlack, onSelectWhite, onSelectSingleMode, onSelectMultiMode, reset}
 })

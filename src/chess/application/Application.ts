@@ -201,6 +201,7 @@ export class Application {
 		this.#moves.pop();
 		this.revertFigureMove(detail);
 		await indexedDbWrapper.revertMoveEvent();
+		console.log('revert');
 	}
 
 	private revertFigureMove(data: FigureMoveEventDTO) {

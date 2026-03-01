@@ -88,13 +88,24 @@ function addItem(item: FigureMoveEventDTO) {
   items.value.push(item);
 }
 
-function revert() {
+async function  revert() {
+	revertFigureMove();
+	
+	const gamedata = await indexedDbWrapper.getGame();
+
+	if(gamedata[0].mode === 'single') {
+		console.log(123);
+		revertFigureMove();
+	}
+}
+
+function revertFigureMove() {
 	if(!items.value.length) {
 		return;
 	}
 
-	const revertFigureMove = items.value.pop();
-	eventBus.dispatchEvent(eventTypes.revertFigureMove, revertFigureMove);
+	const figureMoveForRevert = items.value.pop();
+	eventBus.dispatchEvent(eventTypes.revertFigureMove, figureMoveForRevert);
 }
 
 return {

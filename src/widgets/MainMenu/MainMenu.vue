@@ -83,7 +83,8 @@ const mainMenuStore = useMainMenuStore()
 const stepStore = useStepsStore();
 const {
 	selectedMode,
-	selectedColor} = storeToRefs(mainMenuStore);
+	selectedColor,
+	botColor} = storeToRefs(mainMenuStore);
 const { isMainMenuOpened } = storeToRefs(stepStore);
 
 onMounted(() => {
@@ -92,6 +93,8 @@ onMounted(() => {
 		if(!gamedata.length) {
 			return;
 		}
+
+		mainMenuStore.setMode(gamedata[0].mode)
 		stepStore.closeMainMenu();
 	})()
 });
@@ -103,15 +106,10 @@ watch(isMainMenuOpened, () => {
 })
 
 function onGameStart() {
-	let botColor: 'white' | 'black' | undefined = undefined;
-	if(selectedColor.value) {
-		botColor = selectedColor.value === 'white' ? 'black' : 'white';;
-	}
-
 	eventBus.dispatchEvent(eventTypes.gameModeSelect, {
 		selectedMode: selectedMode.value,
-		AIBotPlayerColor: botColor });
-	indexedDbWrapper.initGame(selectedMode.value, botColor)
+		AIBotPlayerColor: botColor.value });
+	indexedDbWrapper.initGame(selectedMode.value, botColor.value);
 	stepStore.closeMainMenu();
 }
 

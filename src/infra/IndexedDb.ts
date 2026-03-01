@@ -10,7 +10,7 @@ class IndexedDbWrapper {
 	#eventsdb: Dexie;
 
 	#game: Table<Game, string>;
-	#events: Table<FigureMoveEventDTO & {id?: number}, string>
+	#events: Table<FigureMoveEventDTO & {id?: string}, string>
 
 
 	constructor() {
@@ -19,7 +19,7 @@ class IndexedDbWrapper {
 			events: '++id',
 			game: '++id',
 		})
-		this.#events = this.#eventsdb.table<FigureMoveEventDTO & {id?: number}, string>("events");
+		this.#events = this.#eventsdb.table<FigureMoveEventDTO & {id?: string}, string>("events");
 		this.#game = this.#eventsdb.table<Game, string>("game");
 	}
 
@@ -42,7 +42,7 @@ class IndexedDbWrapper {
 	async revertMoveEvent() {
 		const last = await this.getLastEvent();
 		if (last && last.id) {
-  			await this.#events.delete(last.id.toString());
+  			await this.#events.delete(last.id);
 		}
 	}
 
