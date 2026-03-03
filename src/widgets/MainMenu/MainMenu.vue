@@ -94,7 +94,6 @@ onMounted(() => {
 			return;
 		}
 
-		mainMenuStore.setMode(gamedata[0].mode)
 		stepStore.closeMainMenu();
 	})()
 });
