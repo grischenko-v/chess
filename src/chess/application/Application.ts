@@ -201,7 +201,11 @@ export class Application {
 		this.#moves.pop();
 		this.revertFigureMove(detail);
 		await indexedDbWrapper.revertMoveEvent();
-		console.log('revert');
+		if(!this.#moves.length && this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
+			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+			this.#htmlAdapter.setSinglePlayerBlackColor();
+			this.#UIAdater.setSinglePlayerBlackColor();
+		}
 	}
 
 	private revertFigureMove(data: FigureMoveEventDTO) {
