@@ -68,7 +68,9 @@ export class Application {
 		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white' && this.#moves.length === 0) {
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
-			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+			setTimeout(() => {
+				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+			}, 1500);
 		}
 	}
 
@@ -384,11 +386,10 @@ export class Application {
 		
 		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
 
-		setTimeout(() => {
-			if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single' && this.#isHistoryLoaded) {
+		if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single' && this.#isHistoryLoaded) {
+			setTimeout(() => {
 				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
-			}
-		}, 1500)
+		}, 1500)}
 		
 
 		this.#figureMoveEvent = null;
