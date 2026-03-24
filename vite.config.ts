@@ -7,7 +7,7 @@ export default defineConfig({
     port: 9000
   },
   plugins: [vue()],
-  base: '/chess/dist',
+  base: '/chess/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src/'),
