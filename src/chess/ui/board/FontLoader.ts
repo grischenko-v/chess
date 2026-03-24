@@ -3,7 +3,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import { Mesh, MeshStandardMaterial } from 'three';
 
 
-const fontPath = '/chess/dist/fonts/helvetiker_regular.typeface.json';
+const fontPath = '/chess//fonts/helvetiker_regular.typeface.json';
 
 class FontGeometryGenerator {
 	private fontLoader: FontLoader;
