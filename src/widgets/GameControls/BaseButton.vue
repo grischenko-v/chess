@@ -1,6 +1,6 @@
 <template>
 	<div class="button-wrapper">
-		<button class="button" :style="{backgroundImage: `url(/chess/dist/imgs/icons/${img}.png)`}"></button>
+		<button class="button" :style="{backgroundImage: `url(/chess//imgs/icons/${img}.png)`}"></button>
 	</div>
 </template>
 

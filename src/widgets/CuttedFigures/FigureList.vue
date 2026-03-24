@@ -36,6 +36,6 @@ type Props = {
 defineProps<Props>()
 
 function getCupturedFigureIcon(figure: {figureType: FigureType, figureColor: FigureColor}) {
-  return `/chess/dist/imgs/figures/${figure.figureType}${figure.figureColor}.png`;
+  return `/chess//imgs/figures/${figure.figureType}${figure.figureColor}.png`;
 }
 </script>

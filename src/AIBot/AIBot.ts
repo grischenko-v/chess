@@ -1,6 +1,6 @@
 import { eventBus, eventTypes } from "@/infra/EventBus";
 
-const JS_BOT_WORKER_PATH = '/chess/dist/stockfish/stockfish-17.1-lite-single-03e3232.js';
+const JS_BOT_WORKER_PATH = '/chess/stockfish/stockfish-17.1-lite-single-03e3232.js';
 
 const getBotPath = () => {
 	return JS_BOT_WORKER_PATH ;

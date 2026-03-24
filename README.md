@@ -1,4 +1,4 @@
-## Chess [demo](https://grischenko-v.github.io/chess/dist/index.html)
+## Chess [demo](https://grischenko-v.github.io/chess/)
 
 Tech stack:
 - Typescript

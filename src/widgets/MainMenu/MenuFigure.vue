@@ -51,7 +51,7 @@ const mainMenuStore = useMainMenuStore();
 const {	selectedMode, selectedColor } = storeToRefs(mainMenuStore);
 
 function getCupturedFigureIcon() {
-  return `/chess/dist/imgs/figures/King${props.color}.png`;
+  return `/chess//imgs/figures/King${props.color}.png`;
 }
 
 </script>

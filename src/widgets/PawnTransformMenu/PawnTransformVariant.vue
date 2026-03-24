@@ -52,6 +52,6 @@ function onFigureSelect() {
 }
 
 function getCupturedFigureIcon(figureType: FigureType, figureColor: FigureColor) {
-  return `/chess/dist/imgs/figures/${figureType}${figureColor}.png`;
+  return `/chess//imgs/figures/${figureType}${figureColor}.png`;
 }
 </script>
