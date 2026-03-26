@@ -9,6 +9,7 @@ import { GameManager } from "./GameManager";
 import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 import { PawnTrasformationController } from "./PawnTransformationController";
 import indexedDbWrapper from "@/infra/IndexedDb";
+import { RevertFigureMove } from "./use-cases/RevertFigureMove";
 
 
 type gameMode = 'single' | 'multi';
@@ -22,12 +23,14 @@ export class Application {
 	#AIBotPlayerColor: Omit<FigureColor, 'selected'> = 'black';
 	#htmlAdapter: HTMLAdapter;
 	#isHistoryLoaded = false;
+	#revertFigureMove: RevertFigureMove;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
         this.#gameManager = new GameManager();
 		this.#pawnTrasformationController = new PawnTrasformationController(UIAdater);
 		this.#htmlAdapter = new HTMLAdapter();
+		this.#revertFigureMove = new RevertFigureMove(this.#gameManager, this.#UIAdater, this.#pawnTrasformationController);
 
         eventBus.subscribe(eventTypes.cellClick, this.onUserCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onUserFigureClick.bind(this));
@@ -199,62 +202,18 @@ export class Application {
 	private async onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO};
 		this.#moves.pop();
-		this.revertFigureMove(detail);
+		this.#revertFigureMove.execute(detail);
 		await indexedDbWrapper.revertMoveEvent();
+		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
+		this.requestFirstWhiteStep();
+	}
+
+	private requestFirstWhiteStep() {
 		if(!this.#moves.length && this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
 			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
 		}
-	}
-
-	private revertFigureMove(data: FigureMoveEventDTO) {
-		const destinationCell = cellRepository.getCell(data.destinationCell);
-		const destinationCellFigure = destinationCell.getFigure();
-		const currentCell = cellRepository.getCell(data.currentCell);
-		const cupturedFigure = null;
-		
-		this.#gameManager.toggleCurrentPlayer();
-
-		if(destinationCellFigure) {
-			this.#gameManager.setSelectedFigure(destinationCellFigure);
-		}
-
-		const selectedFigure = this.#gameManager.getSelectedFigure();
-
-		if(selectedFigure) {
-			this.#gameManager.unhighliteMoves();
-		}
-
-		this.#gameManager.unhighliteMoves();
-		this.#gameManager.revertFigureMove(currentCell);
-
-		destinationCell.setFigure(cupturedFigure);
-		currentCell.setFigure(selectedFigure);
-		this.#gameManager.unselectFigure();
-
-		if(data.capture) {
-			this.#UIAdater.initFigure(
-				data.enPassant ? data.enPassant : data.destinationCell,
-				this.#gameManager.getSecondPlayerColor(),
-				data.capture
-			);
-		}
-		if(data.rouqe) {
-			const rookDestinatioCell = cellRepository.getCell(data.rouqe.rookDestinatioCell);
-			const rookCell = cellRepository.getCell(data.rouqe.rookCell);
-			const rook = rookDestinatioCell.getFigure();
-			if(!rook) {
-				return;
-			}
-			rook.move(rookCell);
-            rookDestinatioCell.setFigure(null);
-            rookCell.setFigure(rook);
-		}
-		if(data.transform) {
-			this.#pawnTrasformationController.animateRevert(currentCell);
-		}
-		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
 	}
 
     private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
