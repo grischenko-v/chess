@@ -14,8 +14,6 @@ import indexedDbWrapper from "@/infra/IndexedDb";
 type gameMode = 'single' | 'multi';
 export class Application {
     #UIAdater: UIAdater;
-
-    #selectedFigure: Figure | null = null;
     #gameManager: GameManager;
 	#figureMoveEvent: FigureMoveEvent | null = null;
 	#moves:string[] = []
@@ -83,7 +81,8 @@ export class Application {
 
 	private onPawnTransformResponse(data: unknown) {
 		const { detail } = data as { detail: { figureType: FigureType, figureName: string }};
-		this.#selectedFigure?.setType(detail.figureType);
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+		selectedFigure?.setType(detail.figureType);
 		this.#pawnTrasformationController.transformationComplite();
 		this.#figureMoveEvent?.setTransform(detail.figureType)
 	}
@@ -130,8 +129,9 @@ export class Application {
     private onFigureClick(data: unknown) {
         const { detail } = data as { detail: { clickedFigure: Figure }};
         const { clickedFigure } = detail;
+		const selectedFigure = this.#gameManager.getSelectedFigure();
 
-        if(this.#selectedFigure && clickedFigure.getCurrentCell().getCanMove()) {
+        if(selectedFigure && clickedFigure.getCurrentCell().getCanMove()) {
 			this.onCellClick({ detail: { clickedCell: clickedFigure.getCurrentCell() } })
             return;
         }
@@ -140,24 +140,21 @@ export class Application {
             return;
         }
 
-        if(this.#selectedFigure && this.#selectedFigure.getName() !== clickedFigure.getName() ) {
-            this.#gameManager.unhighliteMoves(this.#selectedFigure);
-            this.#selectedFigure.unselect();
-            this.#selectedFigure = clickedFigure;
-            this.#selectedFigure.select();
-            this.#gameManager.highliteMoves(this.#selectedFigure);
+        if(selectedFigure && selectedFigure.getName() !== clickedFigure.getName() ) {
+            this.#gameManager.unhighliteMoves();
+            this.#gameManager.unselectFigure();
+			this.#gameManager.setSelectedFigure(clickedFigure);
+            this.#gameManager.highliteMoves();
             return;
         }
 
-        if(this.#selectedFigure) {
-            this.#gameManager.unhighliteMoves(this.#selectedFigure);
-            this.#selectedFigure.unselect();
+        if(selectedFigure) {
+            this.#gameManager.unhighliteMoves();
             return;
         }
 
-        this.#selectedFigure = clickedFigure;
-        this.#selectedFigure.select();
-        this.#gameManager.highliteMoves(this.#selectedFigure);
+		this.#gameManager.setSelectedFigure(clickedFigure);
+        this.#gameManager.highliteMoves();
     }
 
 	private async onUserCellClick(data: unknown) {
@@ -170,18 +167,19 @@ export class Application {
     private async onCellClick(data: unknown) {
         const { detail } = data as { detail: { clickedCell: BoardCell }};
         const { clickedCell: destinationCell } = detail;
+		const selectedFigure = this.#gameManager.getSelectedFigure();
 
-        if(!this.#selectedFigure) {
+        if(!selectedFigure) {
             return;
         }
-        const currentCell = this.#selectedFigure.getCurrentCell();
+        const currentCell = selectedFigure.getCurrentCell();
 
 		this.#figureMoveEvent = new FigureMoveEvent(
-					this.#selectedFigure,
+					selectedFigure,
 					currentCell.getCellName(),
 					destinationCell.getCellName());
 
-		await this.#pawnTrasformationController.pawnTransformation(destinationCell, this.#selectedFigure);
+		await this.#pawnTrasformationController.pawnTransformation(destinationCell, selectedFigure);
 
         if(this.tryEnPassantCapture(destinationCell, currentCell)) {
             return;
@@ -215,22 +213,26 @@ export class Application {
 		const destinationCellFigure = destinationCell.getFigure();
 		const currentCell = cellRepository.getCell(data.currentCell);
 		const cupturedFigure = null;
+		
 		this.#gameManager.toggleCurrentPlayer();
-		if(this.#selectedFigure) {
-			this.#selectedFigure.unselect();
-			this.#gameManager.unhighliteMoves(this.#selectedFigure);
-		}
-		this.#selectedFigure = destinationCellFigure;
-		if(!this.#selectedFigure) {
-			return;
+
+		if(destinationCellFigure) {
+			this.#gameManager.setSelectedFigure(destinationCellFigure);
 		}
 
-		this.#gameManager.unhighliteMoves(this.#selectedFigure);
-        this.#selectedFigure.unselect();
-        this.#selectedFigure.revert(currentCell);
-        destinationCell.setFigure(cupturedFigure);
-		currentCell.setFigure(this.#selectedFigure);
-        this.#selectedFigure = null;
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+
+		if(selectedFigure) {
+			this.#gameManager.unhighliteMoves();
+		}
+
+		this.#gameManager.unhighliteMoves();
+		this.#gameManager.revertFigureMove(currentCell);
+
+		destinationCell.setFigure(cupturedFigure);
+		currentCell.setFigure(selectedFigure);
+		this.#gameManager.unselectFigure();
+
 		if(data.capture) {
 			this.#UIAdater.initFigure(
 				data.enPassant ? data.enPassant : data.destinationCell,
@@ -256,14 +258,16 @@ export class Application {
 	}
 
     private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
-        if(!this.#selectedFigure) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+
+        if(!selectedFigure) {
             return false;
         }
-        const rightSiblingCellName = currentCell.getRightSibling(this.#selectedFigure.getColor());
+        const rightSiblingCellName = currentCell.getRightSibling(selectedFigure.getColor());
         const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
         const currentCellFigure = currentCell.getFigure();
         if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure &&  currentCellFigure.getType() === 'Pawn'
-            && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
+            && rightSiblingCell && rightSiblingCell.canEnPassantCupture(selectedFigure.getColor())
             && destinationCell.getCellRow() === rightSiblingCell.getCellRow() && this.#figureMoveEvent
             ) {  
 				this.#figureMoveEvent.setIsCapture(rightSiblingCell.getFigure()?.getType());
@@ -273,10 +277,10 @@ export class Application {
                 return true;
         }
         
-        const leftSiblingCellName = currentCell.getLeftSibling(this.#selectedFigure.getColor());
+        const leftSiblingCellName = currentCell.getLeftSibling(selectedFigure.getColor());
         const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
         if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure && currentCellFigure.getType() === 'Pawn'
-            && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
+            && leftSiblingCell && leftSiblingCell.canEnPassantCupture(selectedFigure.getColor())
             && destinationCell.getCellRow() === leftSiblingCell.getCellRow() && this.#figureMoveEvent
             ) {
 				this.#figureMoveEvent.setIsCapture(leftSiblingCell.getFigure()?.getType())
@@ -289,11 +293,12 @@ export class Application {
     }
 
     private tryRegularCapture(destinationCell: BoardCell, currentCell: BoardCell) {
-        if(!this.#selectedFigure) {	
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(!selectedFigure) {	
             return false;
         }
 
-        if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor() && this.#figureMoveEvent) {
+        if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== selectedFigure.getColor() && this.#figureMoveEvent) {
 			this.#figureMoveEvent.setIsCapture(destinationCell.getFigure()?.getType());
             this.captureFigureRegular(currentCell, destinationCell)
 			return true;
@@ -301,8 +306,9 @@ export class Application {
         return false;
     }
 
-    private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell){
-        if(destinationCell.getCanMove() && this.#selectedFigure &&  this.#figureMoveEvent) {
+    private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(destinationCell.getCanMove() && selectedFigure &&  this.#figureMoveEvent) {
             this.moveFigure(currentCell, destinationCell);
             return true;
         }
@@ -310,41 +316,44 @@ export class Application {
     }
 
     private unselectFigure() {
-        if(!this.#selectedFigure) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(!selectedFigure) {
             return;
         }
-        this.#gameManager.unhighliteMoves(this.#selectedFigure);
+        this.#gameManager.unhighliteMoves();
         this.unSelectCurrentFigure();
     }
 
     private onOutsideClick() {
-        if(!this.#selectedFigure) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(!selectedFigure) {
             return;
         }
-        this.#gameManager.unhighliteMoves(this.#selectedFigure);
+        this.#gameManager.unhighliteMoves();
         this.unSelectCurrentFigure();
     }
 
     private unSelectCurrentFigure() {
-        if(!this.#selectedFigure) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(!selectedFigure) {
             return;
         }
-        this.#selectedFigure.unselect();
-        this.#selectedFigure = null;
+		this.#gameManager.unselectFigure();
     }
 
     private moveFigure(currentCell: BoardCell, destinationCell: BoardCell) {
-        if(!this.#selectedFigure) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(!selectedFigure) {
             return;
         }
 
-        const selectedFigureType = this.#selectedFigure.getType();
-        this.#gameManager.unhighliteMoves(this.#selectedFigure);
-        this.#selectedFigure.unselect();
-        this.#selectedFigure.move(destinationCell);
+        const selectedFigureType = selectedFigure.getType();
+        this.#gameManager.unhighliteMoves();
+        // this.#selectedFigure.unselect();
+        selectedFigure.move(destinationCell);
         currentCell.setFigure(null);
 
-		destinationCell.setFigure(this.#selectedFigure);
+		destinationCell.setFigure(selectedFigure);
 	
         const roque = this.#gameManager.isRoqueAvailable(destinationCell);
         if(selectedFigureType === 'King' && roque) {
@@ -384,7 +393,7 @@ export class Application {
 			indexedDbWrapper.addEvent(figuremoveEvent);
 		}
 		
-		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
+		this.#pawnTrasformationController.animate(figuremoveEvent, selectedFigure);
 
 		if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single' && this.#isHistoryLoaded) {
 			setTimeout(() => {
@@ -393,7 +402,7 @@ export class Application {
 		
 
 		this.#figureMoveEvent = null;
-		this.#selectedFigure = null;
+		this.#gameManager.unselectFigure();
 	}
 
     private captureFigureRegular(currentCell: BoardCell, destinationCell: BoardCell) {

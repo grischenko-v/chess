@@ -9,11 +9,31 @@ import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 export class GameManager {
     #currentPlayerColor: Omit<FigureColor, 'selected'> = 'white';
     #cellStatusManager: CellStatusManager;
+	#selectedFigure: Figure | null = null;
+	// #celectedCell: Cell | null = null;
 
     constructor() {
         this.#cellStatusManager = new CellStatusManager();
 		eventBus.subscribe(eventTypes.figureMove, this.onFigureMove.bind(this));
     }
+
+	setSelectedFigure(figure: Figure | null) {
+		this.#selectedFigure = figure;
+		this.#selectedFigure?.select();
+	}
+
+	getSelectedFigure() {
+		return this.#selectedFigure;
+	}
+
+	revertFigureMove(cell: BoardCell) {
+		this.#selectedFigure?.revert(cell);
+	}
+
+	unselectFigure() {
+		this.#selectedFigure?.unselect();
+		this.#selectedFigure = null;
+	}
 
     getCurrentPlayer() {
         return this.#currentPlayerColor;
@@ -140,14 +160,22 @@ export class GameManager {
         }
     }
 
-    highliteMoves(figure: Figure) {
-        const avalibleCells = this.#cellStatusManager.getAvalibleMoveCells(figure);
-        this.filterAvalibleCellsByKingCheck(avalibleCells, figure).forEach((cell: BoardCell) => cell.setCanMove(true));
+    highliteMoves() {
+		if(!this.#selectedFigure) {
+			return;
+		}
+        const avalibleCells = this.#cellStatusManager.getAvalibleMoveCells(this.#selectedFigure);
+        this.filterAvalibleCellsByKingCheck(avalibleCells, this.#selectedFigure).forEach((cell: BoardCell) => cell.setCanMove(true));
     }
 
-    unhighliteMoves(figure: Figure) {
-        const avalibleCells = this.#cellStatusManager.getAvalibleMoveCells(figure);
+    unhighliteMoves() {
+		if(!this.#selectedFigure) {
+			return;
+		}
+		this.#selectedFigure.unselect();
+        const avalibleCells = this.#cellStatusManager.getAvalibleMoveCells(this.#selectedFigure);
         avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
+		// this.unselectFigure();
     }
 
     upgradePawn() {
