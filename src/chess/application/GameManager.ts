@@ -10,6 +10,7 @@ export class GameManager {
     #currentPlayerColor: Omit<FigureColor, 'selected'> = 'white';
     #cellStatusManager: CellStatusManager;
 	#selectedFigure: Figure | null = null;
+	#moves: string[] = [];
 	// #celectedCell: Cell | null = null;
 
     constructor() {
@@ -50,6 +51,22 @@ export class GameManager {
         }
         this.#currentPlayerColor = 'white';
     }
+
+	addMove(move: string) {
+		this.#moves.push(move);
+	}
+
+	removeMove() {
+		this.#moves.pop();
+	}
+
+	getMovesCount() {
+		return this.#moves.length;
+	}
+
+	getMoveinUCI() {
+		return this.#moves.join(' ');
+	}
 
 	private onFigureMove(data: unknown) {
 		const { detail } = data as { detail: { value: FigureMoveEventDTO }};		

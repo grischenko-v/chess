@@ -17,7 +17,6 @@ export class Application {
     #UIAdater: UIAdater;
     #gameManager: GameManager;
 	#figureMoveEvent: FigureMoveEvent | null = null;
-	#moves:string[] = []
 	#pawnTrasformationController: PawnTrasformationController;
 	#mode: gameMode = 'multi';
 	#AIBotPlayerColor: Omit<FigureColor, 'selected'> = 'black';
@@ -51,7 +50,7 @@ export class Application {
 		}
 		for(const event of events) {
 			await this.makeMove({from: event.currentCell, to: event.destinationCell});
-			this.#moves.push((`${event.currentCell}${event.destinationCell}`))
+			this.#gameManager.addMove(`${event.currentCell}${event.destinationCell}`)
 		}
 		const gamedata = await indexedDbWrapper.getGame();
 		this.onGameModeSelect({ 
@@ -66,11 +65,11 @@ export class Application {
 		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
 		this.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
-		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white' && this.#moves.length === 0) {
+		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white' && this.#gameManager.getMovesCount() === 0) {
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
 			setTimeout(() => {
-				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: false});
 			}, 1500);
 		}
 	}
@@ -112,14 +111,14 @@ export class Application {
 
 	private collectMoves(data: unknown) {
 		const { detail } = data as {detail : {value: { currentCell: string, destinationCell: string }}};
-		this.#moves.push(`${detail.value.currentCell}${detail.value.destinationCell}`);
+		this.#gameManager.addMove(`${detail.value.currentCell}${detail.value.destinationCell}`);
 	}
 
 	private onHelpReuest() {
 		if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
 			return;
 		}
-		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: true});	 
+		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: true});	 
 	}
 
 	private onUserFigureClick(data: unknown) {
@@ -201,7 +200,7 @@ export class Application {
 
 	private async onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO};
-		this.#moves.pop();
+		this.#gameManager.removeMove();
 		this.#revertFigureMove.execute(detail);
 		await indexedDbWrapper.revertMoveEvent();
 		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
@@ -209,8 +208,8 @@ export class Application {
 	}
 
 	private requestFirstWhiteStep() {
-		if(!this.#moves.length && this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
-			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+		if(!this.#gameManager.getMovesCount() && this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
+			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: false});
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
 		}
@@ -308,7 +307,6 @@ export class Application {
 
         const selectedFigureType = selectedFigure.getType();
         this.#gameManager.unhighliteMoves();
-        // this.#selectedFigure.unselect();
         selectedFigure.move(destinationCell);
         currentCell.setFigure(null);
 
@@ -356,7 +354,7 @@ export class Application {
 
 		if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single' && this.#isHistoryLoaded) {
 			setTimeout(() => {
-				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: false});
 		}, 1500)}
 		
 
