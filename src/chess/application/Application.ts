@@ -58,7 +58,7 @@ export class Application {
 		this.#isHistoryLoaded = true;
 	}
 
-	onGameModeSelect(data: unknown) {
+	private onGameModeSelect(data: unknown) {
 		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
 		this.#gameManager.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
@@ -71,7 +71,7 @@ export class Application {
 		}
 	}
 
-	setAIBotColor(color: Omit<FigureColor, 'selected'>){
+	private setAIBotColor(color: Omit<FigureColor, 'selected'>){
 		this.#AIBotPlayerColor = color;
 	}
 
@@ -91,7 +91,7 @@ export class Application {
 
 	private async makeMove(data: {from: string, to: string}) {
 		const figuremove = await this.#figureMove.execute(data);
-		
+
 		if(!figuremove) {
 			return;
 		}

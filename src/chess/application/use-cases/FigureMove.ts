@@ -102,108 +102,107 @@ export class FigureMove {
 	}
 
 	private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
-			const selectedFigure = this.gameManager.getSelectedFigure();
-	
-			if(!selectedFigure) {
-				return false;
-			}
-			const rightSiblingCellName = currentCell.getRightSibling(selectedFigure.getColor());
-			const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
-			const currentCellFigure = currentCell.getFigure();
-			if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure &&  currentCellFigure.getType() === 'Pawn'
-				&& rightSiblingCell && rightSiblingCell.canEnPassantCupture(selectedFigure.getColor())
-				&& destinationCell.getCellRow() === rightSiblingCell.getCellRow() && this.figureMoveEvent
-				) {  
-					this.figureMoveEvent.setIsCapture(rightSiblingCell.getFigure()?.getType());
-					this.figureMoveEvent.isEnPassant(rightSiblingCellName);
-					this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
-					
-					return true;
-			}
-			
-			const leftSiblingCellName = currentCell.getLeftSibling(selectedFigure.getColor());
-			const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
-			if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure && currentCellFigure.getType() === 'Pawn'
-				&& leftSiblingCell && leftSiblingCell.canEnPassantCupture(selectedFigure.getColor())
-				&& destinationCell.getCellRow() === leftSiblingCell.getCellRow() && this.figureMoveEvent
-				) {
-					this.figureMoveEvent.setIsCapture(leftSiblingCell.getFigure()?.getType())
-					this.figureMoveEvent.isEnPassant(leftSiblingCellName);
-					this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
-					return true;
-			}
-	
-			return false;
-		}
-
-		private tryRegularCapture(destinationCell: BoardCell, currentCell: BoardCell) {
-			const selectedFigure = this.gameManager.getSelectedFigure();
-			if(!selectedFigure) {	
-				return false;
-			}
-
-			if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== selectedFigure.getColor() && this.figureMoveEvent) {
-				this.figureMoveEvent.setIsCapture(destinationCell.getFigure()?.getType());
-				this.captureFigureRegular(currentCell, destinationCell)
-				return true;
-			}
-			return false;
-		}
-
-		private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell) {
-			const selectedFigure = this.gameManager.getSelectedFigure();
-			if(destinationCell.getCanMove() && selectedFigure) {
-				this.moveFigure(currentCell, destinationCell);
-				return true;
-			}
-			return false;
-		}
-
-		private unselectFigure() {
-			const selectedFigure = this.gameManager.getSelectedFigure();
-			if(!selectedFigure) {
-				return;
-			}
-			this.gameManager.unhighliteMoves();
-			this.unSelectCurrentFigure();
-		}
-
-		private unSelectCurrentFigure() {
-			const selectedFigure = this.gameManager.getSelectedFigure();
-        	if(!selectedFigure) {
-            	return;
-        	}
-			this.gameManager.unselectFigure();
-    	}
-
-		    private moveFigure(currentCell: BoardCell, destinationCell: BoardCell) {
 		const selectedFigure = this.gameManager.getSelectedFigure();
-        if(!selectedFigure) {
-            return;
-        }
+	
+		if(!selectedFigure) {
+			return false;
+		}
+		const rightSiblingCellName = currentCell.getRightSibling(selectedFigure.getColor());
+		const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
+		const currentCellFigure = currentCell.getFigure();
+		if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure &&  currentCellFigure.getType() === 'Pawn'
+			&& rightSiblingCell && rightSiblingCell.canEnPassantCupture(selectedFigure.getColor())
+			&& destinationCell.getCellRow() === rightSiblingCell.getCellRow() && this.figureMoveEvent
+			) {  
+				this.figureMoveEvent.setIsCapture(rightSiblingCell.getFigure()?.getType());
+				this.figureMoveEvent.isEnPassant(rightSiblingCellName);
+				this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);	
+				return true;
+		}
+			
+		const leftSiblingCellName = currentCell.getLeftSibling(selectedFigure.getColor());
+		const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
+		if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure && currentCellFigure.getType() === 'Pawn'
+			&& leftSiblingCell && leftSiblingCell.canEnPassantCupture(selectedFigure.getColor())
+			&& destinationCell.getCellRow() === leftSiblingCell.getCellRow() && this.figureMoveEvent
+			) {
+				this.figureMoveEvent.setIsCapture(leftSiblingCell.getFigure()?.getType())
+				this.figureMoveEvent.isEnPassant(leftSiblingCellName);
+				this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
+				return true;
+		}
+	
+		return false;
+	}
+
+	private tryRegularCapture(destinationCell: BoardCell, currentCell: BoardCell) {
+		const selectedFigure = this.gameManager.getSelectedFigure();
+		if(!selectedFigure) {	
+			return false;
+		}
+
+		if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== selectedFigure.getColor() && this.figureMoveEvent) {
+			this.figureMoveEvent.setIsCapture(destinationCell.getFigure()?.getType());
+			this.captureFigureRegular(currentCell, destinationCell)
+			return true;
+		}
+		return false;
+	}
+
+	private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell) {
+		const selectedFigure = this.gameManager.getSelectedFigure();
+		if(destinationCell.getCanMove() && selectedFigure) {
+			this.moveFigure(currentCell, destinationCell);
+			return true;
+		}
+		return false;
+	}
+
+	private unselectFigure() {
+		const selectedFigure = this.gameManager.getSelectedFigure();
+		if(!selectedFigure) {
+			return;
+		}
+		this.gameManager.unhighliteMoves();
+		this.unSelectCurrentFigure();
+	}
+
+	private unSelectCurrentFigure() {
+		const selectedFigure = this.gameManager.getSelectedFigure();
+		if(!selectedFigure) {
+			return;
+		}
+		this.gameManager.unselectFigure();
+	}
+
+	private moveFigure(currentCell: BoardCell, destinationCell: BoardCell) {
+		const selectedFigure = this.gameManager.getSelectedFigure();
+		if(!selectedFigure) {
+			return;
+		}
 					
-        const selectedFigureType = selectedFigure.getType();
-        this.gameManager.unhighliteMoves();
-        selectedFigure.move(destinationCell);
-        currentCell.setFigure(null);
+		const selectedFigureType = selectedFigure.getType();
+		this.gameManager.unhighliteMoves();
+		selectedFigure.move(destinationCell);
+		currentCell.setFigure(null);
 
 		destinationCell.setFigure(selectedFigure);
 	
-        const roque = this.gameManager.isRoqueAvailable(destinationCell);
-        if(selectedFigureType === 'King' && roque) {
-            const rookCell = cellRepository.getCell(roque.rookDefualtCellName);
-            const rookDestinatioCell = cellRepository.getCell(roque.rookDestinationCellName);
-            const rook = rookCell.getFigure();
-            if(rook) {
-                rook.move(rookDestinatioCell);
-                rookDestinatioCell.setFigure(rook);
-                rookCell.setFigure(null);
+		const roque = this.gameManager.isRoqueAvailable(destinationCell);
+		if(selectedFigureType === 'King' && roque) {
+			const rookCell = cellRepository.getCell(roque.rookDefualtCellName);
+			const rookDestinatioCell = cellRepository.getCell(roque.rookDestinationCellName);
+			const rook = rookCell.getFigure();
+			if(rook) {
+				rook.move(rookDestinatioCell);
+				rookDestinatioCell.setFigure(rook);
+				rookCell.setFigure(null);
 				this.figureMoveEvent?.isRouqe({
 					rookDestinatioCell: roque.rookDestinationCellName,
 					rookCell: roque.rookDefualtCellName,
 				});
-            }
-        }
+			}
+		}
 	}
 
  	private captureFigureRegular(currentCell: BoardCell, destinationCell: BoardCell) {
