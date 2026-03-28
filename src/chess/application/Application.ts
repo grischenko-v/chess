@@ -5,20 +5,17 @@ import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
 import { eventBus, eventTypes } from "../../infra/EventBus";
 import { cellRepository } from "../repository/CellRepository";
 import { figureRepository } from "../repository/FiguresRepository";
-import { GameManager } from "./GameManager";
+import { GameManager, type gameMode } from "./GameManager";
 import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 import { PawnTrasformationController } from "./PawnTransformationController";
 import indexedDbWrapper from "@/infra/IndexedDb";
 import { RevertFigureMove } from "./use-cases/RevertFigureMove";
 
-
-type gameMode = 'single' | 'multi';
 export class Application {
     #UIAdater: UIAdater;
     #gameManager: GameManager;
 	#figureMoveEvent: FigureMoveEvent | null = null;
 	#pawnTrasformationController: PawnTrasformationController;
-	#mode: gameMode = 'multi';
 	#AIBotPlayerColor: Omit<FigureColor, 'selected'> = 'black';
 	#htmlAdapter: HTMLAdapter;
 	#isHistoryLoaded = false;
@@ -63,9 +60,9 @@ export class Application {
 
 	onGameModeSelect(data: unknown) {
 		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
-		this.setMode(detail.selectedMode);
+		this.#gameManager.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
-		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white' && this.#gameManager.getMovesCount() === 0) {
+		if(this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === 'white' && this.#gameManager.getMovesCount() === 0) {
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
 			setTimeout(() => {
@@ -76,9 +73,6 @@ export class Application {
 
 	setAIBotColor(color: Omit<FigureColor, 'selected'>){
 		this.#AIBotPlayerColor = color;
-	}
-	setMode(mode: gameMode){
-		this.#mode = mode;
 	}
 
 	private onPawnTransformResponse(data: unknown) {
@@ -115,14 +109,14 @@ export class Application {
 	}
 
 	private onHelpReuest() {
-		if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
+		if(this.#gameManager.modeisMulti() && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
 			return;
 		}
 		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: true});	 
 	}
 
 	private onUserFigureClick(data: unknown) {
-		if(this.#mode === 'single' && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
+		if(this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
 			return;
 		}
 		this.onFigureClick(data);
@@ -138,7 +132,7 @@ export class Application {
             return;
         }
 
-        if(this.#mode === 'multi' && clickedFigure.getColor() !== this.#gameManager.getCurrentPlayer()) {
+        if(this.#gameManager.modeisMulti() && clickedFigure.getColor() !== this.#gameManager.getCurrentPlayer()) {
             return;
         }
 
@@ -160,7 +154,7 @@ export class Application {
     }
 
 	private async onUserCellClick(data: unknown) {
-		if(this.#mode === 'single' && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
+		if(this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
 			return;
 		}
 		await this.onCellClick(data);
@@ -208,7 +202,7 @@ export class Application {
 	}
 
 	private requestFirstWhiteStep() {
-		if(!this.#gameManager.getMovesCount() && this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
+		if(!this.#gameManager.getMovesCount() && this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === 'white') {
 			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: false});
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
@@ -329,7 +323,7 @@ export class Application {
         }
         
         this.#gameManager.toggleCurrentPlayer();
-		if(this.#mode === 'multi') {
+		if(this.#gameManager.modeisMulti()) {
 			eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
 		}
 
@@ -352,7 +346,7 @@ export class Application {
 		
 		this.#pawnTrasformationController.animate(figuremoveEvent, selectedFigure);
 
-		if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single' && this.#isHistoryLoaded) {
+		if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#gameManager.modeIsSingle() && this.#isHistoryLoaded) {
 			setTimeout(() => {
 				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: false});
 		}, 1500)}

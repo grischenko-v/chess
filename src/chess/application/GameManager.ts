@@ -6,17 +6,30 @@ import { figureRepository } from "../repository/FiguresRepository";
 import { CellStatusManager } from "./CellStatusManager";
 import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 
+export type gameMode = 'single' | 'multi';
 export class GameManager {
     #currentPlayerColor: Omit<FigureColor, 'selected'> = 'white';
     #cellStatusManager: CellStatusManager;
 	#selectedFigure: Figure | null = null;
 	#moves: string[] = [];
-	// #celectedCell: Cell | null = null;
+	#mode: gameMode = 'multi';
 
     constructor() {
         this.#cellStatusManager = new CellStatusManager();
 		eventBus.subscribe(eventTypes.figureMove, this.onFigureMove.bind(this));
     }
+
+	setMode(mode: gameMode) {
+		this.#mode = mode;
+	}
+
+	modeisMulti() {
+		return this.#mode === 'multi';
+	}
+
+	modeIsSingle() {
+		return this.#mode === 'single';
+	}
 
 	setSelectedFigure(figure: Figure | null) {
 		this.#selectedFigure = figure;
@@ -192,10 +205,5 @@ export class GameManager {
 		this.#selectedFigure.unselect();
         const avalibleCells = this.#cellStatusManager.getAvalibleMoveCells(this.#selectedFigure);
         avalibleCells.forEach((cell: BoardCell) => cell.setCanMove(false));
-		// this.unselectFigure();
-    }
-
-    upgradePawn() {
-
     }
 }
