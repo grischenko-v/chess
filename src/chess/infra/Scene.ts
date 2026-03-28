@@ -80,6 +80,16 @@ class Scene implements IScene{
 			});
 	}
 
+
+	private handleResize() {
+		const width = window.innerWidth;
+		const height = window.innerHeight;
+
+		// this.#camera.aspect = width / height;
+		this.#camera.updateProjectionMatrix();
+		this.#renderer.setSize(width, height, false);
+  	}
+
     private setup() {
        //axis helperif need
         // const axesHelper = new AxesHelper(15);
@@ -89,6 +99,7 @@ class Scene implements IScene{
         this.setupRenderer();
 
         document.body.appendChild(this.#renderer.domElement);
+		window.addEventListener('resize', () => this.handleResize());
     }
 
     private initLights() {

@@ -1,35 +1,32 @@
 import { HTMLAdapter } from "../adapters/HTMLAdapter";
 import type { UIAdater } from "../adapters/SceneAdapter";
-import { BoardCell } from "../domain/BoardCell";
-import { Figure, type FigureColor, type FigureType } from "../domain/Figure";
+import { type FigureColor, type FigureType } from "../domain/Figure";
 import { eventBus, eventTypes } from "../../infra/EventBus";
-import { cellRepository } from "../repository/CellRepository";
-import { figureRepository } from "../repository/FiguresRepository";
-import { GameManager } from "./GameManager";
+import { GameManager, type gameMode } from "./GameManager";
 import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
 import { PawnTrasformationController } from "./PawnTransformationController";
 import indexedDbWrapper from "@/infra/IndexedDb";
+import { RevertFigureMove } from "./use-cases/RevertFigureMove";
+import { FigureMove } from "./use-cases/FigureMove";
 
-
-type gameMode = 'single' | 'multi';
 export class Application {
     #UIAdater: UIAdater;
-
-    #selectedFigure: Figure | null = null;
     #gameManager: GameManager;
 	#figureMoveEvent: FigureMoveEvent | null = null;
-	#moves:string[] = []
 	#pawnTrasformationController: PawnTrasformationController;
-	#mode: gameMode = 'multi';
 	#AIBotPlayerColor: Omit<FigureColor, 'selected'> = 'black';
 	#htmlAdapter: HTMLAdapter;
 	#isHistoryLoaded = false;
+	#revertFigureMove: RevertFigureMove;
+	#figureMove: FigureMove;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
         this.#gameManager = new GameManager();
 		this.#pawnTrasformationController = new PawnTrasformationController(UIAdater);
 		this.#htmlAdapter = new HTMLAdapter();
+		this.#revertFigureMove = new RevertFigureMove(this.#gameManager, this.#UIAdater, this.#pawnTrasformationController);
+		this.#figureMove = new FigureMove(this.#gameManager, this.#UIAdater, this.#pawnTrasformationController);
 
         eventBus.subscribe(eventTypes.cellClick, this.onUserCellClick.bind(this));
         eventBus.subscribe(eventTypes.figureClick, this.onUserFigureClick.bind(this));
@@ -50,7 +47,7 @@ export class Application {
 		}
 		for(const event of events) {
 			await this.makeMove({from: event.currentCell, to: event.destinationCell});
-			this.#moves.push((`${event.currentCell}${event.destinationCell}`))
+			this.#gameManager.addMove(`${event.currentCell}${event.destinationCell}`)
 		}
 		const gamedata = await indexedDbWrapper.getGame();
 		this.onGameModeSelect({ 
@@ -61,29 +58,27 @@ export class Application {
 		this.#isHistoryLoaded = true;
 	}
 
-	onGameModeSelect(data: unknown) {
+	private onGameModeSelect(data: unknown) {
 		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
-		this.setMode(detail.selectedMode);
+		this.#gameManager.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
-		if(this.#mode === 'single' && this.#AIBotPlayerColor === 'white' && this.#moves.length === 0) {
+		if(this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === 'white' && this.#gameManager.getMovesCount() === 0) {
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
 			setTimeout(() => {
-				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: false});
 			}, 1500);
 		}
 	}
 
-	setAIBotColor(color: Omit<FigureColor, 'selected'>){
+	private setAIBotColor(color: Omit<FigureColor, 'selected'>){
 		this.#AIBotPlayerColor = color;
-	}
-	setMode(mode: gameMode){
-		this.#mode = mode;
 	}
 
 	private onPawnTransformResponse(data: unknown) {
 		const { detail } = data as { detail: { figureType: FigureType, figureName: string }};
-		this.#selectedFigure?.setType(detail.figureType);
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+		selectedFigure?.setType(detail.figureType);
 		this.#pawnTrasformationController.transformationComplite();
 		this.#figureMoveEvent?.setTransform(detail.figureType)
 	}
@@ -95,275 +90,104 @@ export class Application {
     }
 
 	private async makeMove(data: {from: string, to: string}) {
-		const currentCell = cellRepository.getCell(data.from);
-		const currentFigure = currentCell.getFigure();
-		const destinationCell = cellRepository.getCell(data.to);
-		this.onFigureClick({
-			detail: {
-				clickedFigure: currentFigure
-			}
-		})
-		return await this.onCellClick( {detail: {
-			clickedCell: destinationCell
-		}});	
+		const figuremove = await this.#figureMove.execute(data);
+
+		if(!figuremove) {
+			return;
+		}
+		this.#figureMoveEvent = figuremove;
+		this.checkGameState();
 	}
 
 	private collectMoves(data: unknown) {
 		const { detail } = data as {detail : {value: { currentCell: string, destinationCell: string }}};
-		this.#moves.push(`${detail.value.currentCell}${detail.value.destinationCell}`);
+		this.#gameManager.addMove(`${detail.value.currentCell}${detail.value.destinationCell}`);
 	}
 
 	private onHelpReuest() {
-		if(this.#mode === 'multi' && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
+		if(this.#gameManager.modeisMulti() && this.#AIBotPlayerColor == this.#gameManager.getCurrentPlayer()) {
 			return;
 		}
-		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: true});	 
+		eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: true});	 
 	}
 
-	private onUserFigureClick(data: unknown) {
-		if(this.#mode === 'single' && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
+	private async onUserFigureClick(data: unknown) {
+		if(this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
 			return;
 		}
-		this.onFigureClick(data);
+		
+		const figuremove = await this.#figureMove.onFigureClick(data);
+		if(!figuremove) {
+			return;
+		}
+		this.#figureMoveEvent = figuremove;
+		this.checkGameState();
 	}
-
-    private onFigureClick(data: unknown) {
-        const { detail } = data as { detail: { clickedFigure: Figure }};
-        const { clickedFigure } = detail;
-
-        if(this.#selectedFigure && clickedFigure.getCurrentCell().getCanMove()) {
-			this.onCellClick({ detail: { clickedCell: clickedFigure.getCurrentCell() } })
-            return;
-        }
-
-        if(this.#mode === 'multi' && clickedFigure.getColor() !== this.#gameManager.getCurrentPlayer()) {
-            return;
-        }
-
-        if(this.#selectedFigure && this.#selectedFigure.getName() !== clickedFigure.getName() ) {
-            this.#gameManager.unhighliteMoves(this.#selectedFigure);
-            this.#selectedFigure.unselect();
-            this.#selectedFigure = clickedFigure;
-            this.#selectedFigure.select();
-            this.#gameManager.highliteMoves(this.#selectedFigure);
-            return;
-        }
-
-        if(this.#selectedFigure) {
-            this.#gameManager.unhighliteMoves(this.#selectedFigure);
-            this.#selectedFigure.unselect();
-            return;
-        }
-
-        this.#selectedFigure = clickedFigure;
-        this.#selectedFigure.select();
-        this.#gameManager.highliteMoves(this.#selectedFigure);
-    }
 
 	private async onUserCellClick(data: unknown) {
-		if(this.#mode === 'single' && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
+		if(this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === this.#gameManager.getCurrentPlayer()) {
 			return;
 		}
-		await this.onCellClick(data);
-	}
 
-    private async onCellClick(data: unknown) {
-        const { detail } = data as { detail: { clickedCell: BoardCell }};
-        const { clickedCell: destinationCell } = detail;
-
-        if(!this.#selectedFigure) {
-            return;
-        }
-        const currentCell = this.#selectedFigure.getCurrentCell();
-
-		this.#figureMoveEvent = new FigureMoveEvent(
-					this.#selectedFigure,
-					currentCell.getCellName(),
-					destinationCell.getCellName());
-
-		await this.#pawnTrasformationController.pawnTransformation(destinationCell, this.#selectedFigure);
-
-        if(this.tryEnPassantCapture(destinationCell, currentCell)) {
-            return;
-        }
-
-        if(this.tryRegularCapture(destinationCell, currentCell)) {
-            return
-        }
-
-        if(this.tryMoveFigure(destinationCell, currentCell)) {
-            return;
-        }
-
-        this.unselectFigure();
-    }
+		const figuremove = await this.#figureMove.onCellClick(data);
+		if(!figuremove) {
+			return;
+		}
+		this.#figureMoveEvent = figuremove;
+		this.checkGameState();
+	}	
 
 	private async onRevertFigureMove(data: unknown) {
 		const { detail } = data as { detail: FigureMoveEventDTO};
-		this.#moves.pop();
-		this.revertFigureMove(detail);
+		this.#gameManager.removeMove();
+		this.#revertFigureMove.execute(detail);
 		await indexedDbWrapper.revertMoveEvent();
-		if(!this.#moves.length && this.#mode === 'single' && this.#AIBotPlayerColor === 'white') {
-			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
+		this.requestFirstWhiteStep();
+	}
+
+	private requestFirstWhiteStep() {
+		if(!this.#gameManager.getMovesCount() && this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === 'white') {
+			eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: false});
 			this.#htmlAdapter.setSinglePlayerBlackColor();
 			this.#UIAdater.setSinglePlayerBlackColor();
 		}
 	}
-
-	private revertFigureMove(data: FigureMoveEventDTO) {
-		const destinationCell = cellRepository.getCell(data.destinationCell);
-		const destinationCellFigure = destinationCell.getFigure();
-		const currentCell = cellRepository.getCell(data.currentCell);
-		const cupturedFigure = null;
-		this.#gameManager.toggleCurrentPlayer();
-		if(this.#selectedFigure) {
-			this.#selectedFigure.unselect();
-			this.#gameManager.unhighliteMoves(this.#selectedFigure);
-		}
-		this.#selectedFigure = destinationCellFigure;
-		if(!this.#selectedFigure) {
-			return;
-		}
-
-		this.#gameManager.unhighliteMoves(this.#selectedFigure);
-        this.#selectedFigure.unselect();
-        this.#selectedFigure.revert(currentCell);
-        destinationCell.setFigure(cupturedFigure);
-		currentCell.setFigure(this.#selectedFigure);
-        this.#selectedFigure = null;
-		if(data.capture) {
-			this.#UIAdater.initFigure(
-				data.enPassant ? data.enPassant : data.destinationCell,
-				this.#gameManager.getSecondPlayerColor(),
-				data.capture
-			);
-		}
-		if(data.rouqe) {
-			const rookDestinatioCell = cellRepository.getCell(data.rouqe.rookDestinatioCell);
-			const rookCell = cellRepository.getCell(data.rouqe.rookCell);
-			const rook = rookDestinatioCell.getFigure();
-			if(!rook) {
-				return;
-			}
-			rook.move(rookCell);
-            rookDestinatioCell.setFigure(null);
-            rookCell.setFigure(rook);
-		}
-		if(data.transform) {
-			this.#pawnTrasformationController.animateRevert(currentCell);
-		}
-		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
-	}
-
-    private tryEnPassantCapture(destinationCell: BoardCell, currentCell: BoardCell) {
-        if(!this.#selectedFigure) {
-            return false;
-        }
-        const rightSiblingCellName = currentCell.getRightSibling(this.#selectedFigure.getColor());
-        const rightSiblingCell = cellRepository.getCell(rightSiblingCellName);
-        const currentCellFigure = currentCell.getFigure();
-        if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure &&  currentCellFigure.getType() === 'Pawn'
-            && rightSiblingCell && rightSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
-            && destinationCell.getCellRow() === rightSiblingCell.getCellRow() && this.#figureMoveEvent
-            ) {  
-				this.#figureMoveEvent.setIsCapture(rightSiblingCell.getFigure()?.getType());
-				this.#figureMoveEvent.isEnPassant(rightSiblingCellName);
-				this.captureFigureEnPassant(currentCell, destinationCell, rightSiblingCell);
-				
-                return true;
-        }
-        
-        const leftSiblingCellName = currentCell.getLeftSibling(this.#selectedFigure.getColor());
-        const leftSiblingCell = cellRepository.getCell(leftSiblingCellName);
-        if(destinationCell.getCanMove() && !destinationCell.hasFigure() && currentCellFigure && currentCellFigure.getType() === 'Pawn'
-            && leftSiblingCell && leftSiblingCell.canEnPassantCupture(this.#selectedFigure.getColor())
-            && destinationCell.getCellRow() === leftSiblingCell.getCellRow() && this.#figureMoveEvent
-            ) {
-				this.#figureMoveEvent.setIsCapture(leftSiblingCell.getFigure()?.getType())
-				this.#figureMoveEvent.isEnPassant(leftSiblingCellName);
-                this.captureFigureEnPassant(currentCell, destinationCell, leftSiblingCell);
-                return true;
-        }
-
-        return false;
-    }
-
-    private tryRegularCapture(destinationCell: BoardCell, currentCell: BoardCell) {
-        if(!this.#selectedFigure) {	
-            return false;
-        }
-
-        if(destinationCell.getCanMove() && destinationCell.hasFigure() && destinationCell.hasFigureColor() !== this.#selectedFigure.getColor() && this.#figureMoveEvent) {
-			this.#figureMoveEvent.setIsCapture(destinationCell.getFigure()?.getType());
-            this.captureFigureRegular(currentCell, destinationCell)
-			return true;
-        }
-        return false;
-    }
-
-    private tryMoveFigure(destinationCell: BoardCell, currentCell: BoardCell){
-        if(destinationCell.getCanMove() && this.#selectedFigure &&  this.#figureMoveEvent) {
-            this.moveFigure(currentCell, destinationCell);
-            return true;
-        }
-        return false;
-    }
-
+  
     private unselectFigure() {
-        if(!this.#selectedFigure) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(!selectedFigure) {
             return;
         }
-        this.#gameManager.unhighliteMoves(this.#selectedFigure);
+        this.#gameManager.unhighliteMoves();
         this.unSelectCurrentFigure();
     }
 
     private onOutsideClick() {
-        if(!this.#selectedFigure) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(!selectedFigure) {
             return;
         }
-        this.#gameManager.unhighliteMoves(this.#selectedFigure);
+        this.#gameManager.unhighliteMoves();
         this.unSelectCurrentFigure();
     }
 
     private unSelectCurrentFigure() {
-        if(!this.#selectedFigure) {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
+        if(!selectedFigure) {
             return;
         }
-        this.#selectedFigure.unselect();
-        this.#selectedFigure = null;
+		this.#gameManager.unselectFigure();
     }
 
-    private moveFigure(currentCell: BoardCell, destinationCell: BoardCell) {
-        if(!this.#selectedFigure) {
-            return;
-        }
+	private checkGameState() {
+		const selectedFigure = this.#gameManager.getSelectedFigure();
 
-        const selectedFigureType = this.#selectedFigure.getType();
-        this.#gameManager.unhighliteMoves(this.#selectedFigure);
-        this.#selectedFigure.unselect();
-        this.#selectedFigure.move(destinationCell);
-        currentCell.setFigure(null);
-
-		destinationCell.setFigure(this.#selectedFigure);
-	
-        const roque = this.#gameManager.isRoqueAvailable(destinationCell);
-        if(selectedFigureType === 'King' && roque) {
-            const rookCell = cellRepository.getCell(roque.rookDefualtCellName);
-            const rookDestinatioCell = cellRepository.getCell(roque.rookDestinationCellName);
-            const rook = rookCell.getFigure();
-            if(rook) {
-                rook.move(rookDestinatioCell);
-                rookDestinatioCell.setFigure(rook);
-                rookCell.setFigure(null);
-				this.#figureMoveEvent?.isRouqe({
-					rookDestinatioCell: roque.rookDestinationCellName,
-					rookCell: roque.rookDefualtCellName,
-				});
-            }
-        }
-        
-        this.#gameManager.toggleCurrentPlayer();
-		if(this.#mode === 'multi') {
+		if(!selectedFigure) {
+			return;
+		}
+		this.#gameManager.toggleCurrentPlayer();
+		if(this.#gameManager.modeisMulti()) {
 			eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
 		}
 
@@ -384,37 +208,15 @@ export class Application {
 			indexedDbWrapper.addEvent(figuremoveEvent);
 		}
 		
-		this.#pawnTrasformationController.animate(figuremoveEvent, this.#selectedFigure);
+		this.#pawnTrasformationController.animate(figuremoveEvent, selectedFigure);
 
-		if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#mode === 'single' && this.#isHistoryLoaded) {
+		if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#gameManager.modeIsSingle() && this.#isHistoryLoaded) {
 			setTimeout(() => {
-				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#moves.join(' '), helpReuest: false});
+				eventBus.dispatchEvent(eventTypes.nextStepRequest, {moves: this.#gameManager.getMoveinUCI(), helpReuest: false});
 		}, 1500)}
 		
 
 		this.#figureMoveEvent = null;
-		this.#selectedFigure = null;
-	}
-
-    private captureFigureRegular(currentCell: BoardCell, destinationCell: BoardCell) {
-        const capturedFigure = destinationCell.getFigure();
-        if(!capturedFigure) {
-            return;
-        }
-       this.captureFigure(capturedFigure, currentCell, destinationCell);
-    }
-
-    private captureFigureEnPassant(currentCell: BoardCell, destinationCell: BoardCell, cupturedCell: BoardCell) {
-        const capturedFigure = cupturedCell.getFigure();
-        if(!capturedFigure) {
-            return;
-        }
-        this.captureFigure(capturedFigure, currentCell, destinationCell);
-    }
-
-	private captureFigure(capturedFigure: Figure, currentCell: BoardCell, destinationCell: BoardCell) {
-		this.#UIAdater.remove(capturedFigure.getFigure());
-        figureRepository.deleteFigure(capturedFigure);
-        this.moveFigure(currentCell, destinationCell);
+		this.#gameManager.unselectFigure();
 	}
 }
