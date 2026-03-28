@@ -26,7 +26,6 @@ Features
 - save game in indexedDB(Dexie)
 
 TODO:
-- split Application to use-cases
 - add history player
 - add 2d mode
 - add multilang support
