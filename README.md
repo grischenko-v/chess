@@ -24,8 +24,3 @@ Features
 - Play with help from Stockfish(button with '?')
 - Single and Multi playing modes (Single vs Stockfish v17.1 lite siingle )
 - save game in indexedDB(Dexie)
-
-TODO:
-- add history player
-- add 2d mode
-- add multilang support
