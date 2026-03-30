@@ -54,7 +54,7 @@ export class RevertFigureMove {
 			if(!rook) {
 				return;
 			}
-			rook.move(rookCell);
+			rook.revert(rookCell);
 			rookDestinatioCell.setFigure(null);
 			rookCell.setFigure(rook);
 		}

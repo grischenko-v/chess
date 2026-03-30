@@ -162,7 +162,7 @@ const getKingAvalibleCells = (king: Figure): BoardCell[] => {
 		cellsOnLeft.splice(3, 1);
 		result.push(...cellsOnLeft);
 	}
-
+	
 	return result;
 }
 

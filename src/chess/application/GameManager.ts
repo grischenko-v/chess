@@ -152,8 +152,10 @@ export class GameManager {
 		const selectedigureCell = selectedFigure.getCurrentCell();
 		const isKingUnderCheck = this.isKingUnderCheck();
 		const isKingSelected = selectedFigure.getType() === 'King';
+
 		return avalibleCells.filter(cell => {
-			const roque = this.isRoqueAvailable(cell)
+			const roque = this.isRoqueAvailable(cell);
+
 			if(isKingSelected && isKingUnderCheck && roque) {
 				return false;
 			}
