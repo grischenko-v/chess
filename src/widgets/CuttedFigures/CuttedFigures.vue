@@ -17,7 +17,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import FigureList from './FigureList.vue';
-import { useStepsStore } from '../StepStore';
+import { useStepsStore } from '../ChessStore';
 
 const stepStore = useStepsStore();
 

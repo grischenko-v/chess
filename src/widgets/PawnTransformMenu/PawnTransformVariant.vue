@@ -33,10 +33,10 @@
 
 <script lang="ts" setup>
 import type { FigureColor, FigureType } from '@/chess/domain/Figure';
-import { useStepsStore } from '../StepStore';
+import { useChessStore } from '../ChessStore';
 import { eventBus, eventTypes } from '@/infra/EventBus';
 
-const steps = useStepsStore();
+const chessStore = useChessStore();
 
 type Props = {
   figureType: FigureType,
@@ -48,7 +48,7 @@ const props = defineProps<Props>()
 
 function onFigureSelect() {
 	eventBus.dispatchEvent(eventTypes.pawnTransformResponse, {figureType: props.figureType, figureName: props.figureName});
-	steps.toggleTransformMenu();
+	chessStore.toggleTransformMenu();
 }
 
 function getCupturedFigureIcon(figureType: FigureType, figureColor: FigureColor) {

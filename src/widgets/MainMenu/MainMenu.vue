@@ -1,5 +1,5 @@
 <template>
-	<div class="main-menu-outer" v-if="isMainMenuOpened" @click="stepStore.closeMainMenu">
+	<div class="main-menu-outer" v-if="isMainMenuOpened" @click="chessStore.closeMainMenu">
 		<div class="main-menu-inner" @click.stop>
 			<h2>Select Game Mode</h2>
 			<div :class="{'menu-item': true, 'selected': selectedMode === 'single'}" @click="mainMenuStore.onSelectSingleMode">Single</div>
@@ -77,15 +77,15 @@ import { useMainMenuStore } from './MainMenuStore';
 import MenuFigure from './MenuFigure.vue';
 import { storeToRefs } from 'pinia';
 import indexedDbWrapper from '@/infra/IndexedDb';
-import { useStepsStore } from '../StepStore';
+import { useChessStore } from '../ChessStore';
 
 const mainMenuStore = useMainMenuStore()
-const stepStore = useStepsStore();
+const chessStore = useChessStore();
 const {
 	selectedMode,
 	selectedColor,
 	botColor} = storeToRefs(mainMenuStore);
-const { isMainMenuOpened } = storeToRefs(stepStore);
+const { isMainMenuOpened } = storeToRefs(chessStore);
 
 onMounted(() => {
 	(async () => {
@@ -94,7 +94,7 @@ onMounted(() => {
 			return;
 		}
 
-		stepStore.closeMainMenu();
+		chessStore.closeMainMenu();
 	})()
 });
 
@@ -105,14 +105,14 @@ watch(isMainMenuOpened, () => {
 })
 
 function onGameStart() {
-	while(stepStore.steps.length > 0) {
-		stepStore.revert();
+	while(chessStore.steps.length > 0) {
+		chessStore.revert();
 	}
 	eventBus.dispatchEvent(eventTypes.gameModeSelect, {
 		selectedMode: selectedMode.value,
 		AIBotPlayerColor: botColor.value });
 	indexedDbWrapper.initGame(selectedMode.value, botColor.value);
-	stepStore.closeMainMenu();
+	chessStore.closeMainMenu();
 }
 
 </script>

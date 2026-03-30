@@ -40,7 +40,7 @@ function MoveItemObjtoStepString(obj: FigureMoveEventDTO): string {
 	return `${getShortFigureName(obj)}${obj.currentCell}${obj.transform ? `${getTransformFigureShortName(obj)}` : ''}${obj.destinationCell}${obj.capture ? 'x' : ''}${obj.check ? '+' : ''}${obj.gameend ? '#' : ''}`;
 }
 
-export const useStepsStore = defineStore("stepsStore", () => {
+export const useChessStore = defineStore("chessStore", () => {
 
 	let sub: Subscription | undefined;
 	const items = ref<FigureMoveEventDTO[]>([]);

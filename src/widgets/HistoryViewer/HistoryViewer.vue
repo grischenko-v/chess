@@ -28,17 +28,17 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue';
-import { useStepsStore } from '../StepStore';
+import { useChessStore } from '../ChessStore';
 import HistoryStep from './HistoryStep.vue';
 
 const wrapperDiv = ref<HTMLDivElement | null>(null);
-const stepStore = useStepsStore();
+const chessStore = useChessStore();
 
-const stepsData = computed(() => stepStore.steps
+const stepsData = computed(() => chessStore.steps
 	.filter((_, index) => index % 2 === 0)
     .map((step, index) => {
       const originalIndex = index * 2;
-      const nextStep = stepStore.steps[originalIndex + 1];
+      const nextStep = chessStore.steps[originalIndex + 1];
       return nextStep ? `${step} ${nextStep}` : step;
     })
 );
@@ -56,5 +56,5 @@ const scrollToBottom = () => {
   });
 }
 
-watch(stepStore.items, () => scrollToBottom()); 
+watch(chessStore.items, () => scrollToBottom()); 
 </script>

@@ -1,5 +1,5 @@
 <template>
-	<div class="menu-outbox" v-if="steps.isTransformMenuOpen">
+	<div class="menu-outbox" v-if="chessStore.isTransformMenuOpen">
 		<div class="menu-inner">
 			<h2 class="title">Choose figure to transform Pawn</h2>
 			<ul class="transform-figures-list">
@@ -52,11 +52,11 @@
 <script setup lang="ts">
 import type { FigureColor, FigureType } from '@/chess/domain/Figure';
 import PawnTransformVariant from './PawnTransformVariant.vue';
-import { useStepsStore } from '../StepStore';
+import { useChessStore } from '../ChessStore';
 import { eventBus, eventTypes } from '@/infra/EventBus';
 import { ref } from 'vue';
 
-const steps = useStepsStore();
+const chessStore = useChessStore();
 
 const figureColor = ref<FigureColor>('white');
 const figureName = ref<string>('');
@@ -65,7 +65,7 @@ eventBus.subscribe(eventTypes.pawnTransformRequest, (data: unknown) => {
 	const {detail} = data as {detail: {figureName: string, currentColor: FigureColor }};
 	figureColor.value = detail.currentColor;
 	figureName.value = detail.figureName;
-	steps.toggleTransformMenu();
+	chessStore.toggleTransformMenu();
 })
 
 const trasformedVariantes: FigureType[] = ['Rook', 'Bishop', 'Queen', 'Knight'];

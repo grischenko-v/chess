@@ -1,14 +1,14 @@
 <template>
-	<BaseButton v-if="steps.items.length > 0"  @click="onRollBack" img="rollback"></BaseButton>
+	<BaseButton v-if="chessStore.items.length > 0"  @click="onRollBack" img="rollback"></BaseButton>
 </template>
 
 <script lang="ts" setup>
-import { useStepsStore } from '../../StepStore';
+import { useChessStore } from '../../ChessStore';
 import BaseButton from "../BaseButton.vue";
 
-const steps = useStepsStore();
+const chessStore = useChessStore();
 
 function onRollBack() {
-	steps.revert();
+	chessStore.revert();
 }
 </script>
