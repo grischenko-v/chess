@@ -1,6 +1,6 @@
 <template>
-	<div class="main-menu-outer" v-if="isMainMenuOpened">
-		<div class="main-menu-inner">
+	<div class="main-menu-outer" v-if="isMainMenuOpened" @click="stepStore.closeMainMenu">
+		<div class="main-menu-inner" @click.stop>
 			<h2>Select Game Mode</h2>
 			<div :class="{'menu-item': true, 'selected': selectedMode === 'single'}" @click="mainMenuStore.onSelectSingleMode">Single</div>
 			<div :class="{'menu-item': true, 'selected': selectedMode === 'multi'}" @click="mainMenuStore.onSelectMultiMode">Multi</div>
