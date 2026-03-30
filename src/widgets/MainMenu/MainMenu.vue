@@ -105,6 +105,9 @@ watch(isMainMenuOpened, () => {
 })
 
 function onGameStart() {
+	while(stepStore.steps.length > 0) {
+		stepStore.revert();
+	}
 	eventBus.dispatchEvent(eventTypes.gameModeSelect, {
 		selectedMode: selectedMode.value,
 		AIBotPlayerColor: botColor.value });

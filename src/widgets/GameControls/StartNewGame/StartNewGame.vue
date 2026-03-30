@@ -10,9 +10,6 @@ import BaseButton from "../BaseButton.vue";
 const steps = useStepsStore();
 
 async function startNewGame () {
-	while(steps.items.length > 0) {
-		steps.revert();
-	}
 	await indexedDbWrapper.clearGameData();
 	steps.openMainMenu();
 }
