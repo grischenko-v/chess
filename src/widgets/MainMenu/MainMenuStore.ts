@@ -6,8 +6,6 @@ const selectedMode = ref();
 const selectedColor = ref();
 const botColor = ref<'white' | 'black' | undefined>();
 
-console.log('MainMenuStore module instance', import.meta.url);
-
 function onSelectBlack() {
 	if(selectedMode.value === 'multi') {
 		return;
