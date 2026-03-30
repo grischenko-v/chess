@@ -4,146 +4,146 @@ import { BOARD_CELL_COLOR, boardMatrix } from '../constants';
 import type { Vector3 } from 'three';
 
 export type TSiblings = {
-    bottom: string | null,
-    top: string | null,
-    left: string | null,
-    right: string | null,
-    bottomLeft: string | null,
-    bottomRight: string | null,
-    topLeft: string | null,
-    topRight: string | null,
+	bottom: string | null,
+	top: string | null,
+	left: string | null,
+	right: string | null,
+	bottomLeft: string | null,
+	bottomRight: string | null,
+	topLeft: string | null,
+	topRight: string | null,
 }
 
 export class BoardCell {
-    #name: string;
-    #figure: Figure | null = null;
-    #cellGeometry: CellGeometry;
-    #siblings: TSiblings;
-    #canmove = false;
-    #color: CELL_COLOR_TYPE;
-    #row: string;
+	#name: string;
+	#figure: Figure | null = null;
+	#cellGeometry: CellGeometry;
+	#siblings: TSiblings;
+	#canmove = false;
+	#color: CELL_COLOR_TYPE;
+	#row: string;
 	#column: string;
 
-    constructor( row: string, column: string, boardCoords: Vector3) {
-        this.#name = `${row}${column}`;
-        this.#row = row;
+	constructor( row: string, column: string, boardCoords: Vector3) {
+		this.#name = `${row}${column}`;
+		this.#row = row;
 		this.#column = column;
-        this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
-        this.#cellGeometry = new CellGeometry(
-            {x: boardCoords.x - 3.5, z: boardCoords.z - 3.5} as Vector3, this.#color, this.#name 
-        );
-        this.#siblings = this.initCellSublings(this.#name);
-    }
+		this.#color = (boardCoords.x + boardCoords.z) % 2 ? 'white' : 'black';
+		this.#cellGeometry = new CellGeometry(
+			{x: boardCoords.x - 3.5, z: boardCoords.z - 3.5} as Vector3, this.#color, this.#name 
+		);
+		this.#siblings = this.initCellSublings(this.#name);
+	}
 
-    getTopSibling(figureColor: FigureColor) {
-        return figureColor === 'black' ? this.#siblings.top : this.#siblings.bottom;
-    }
+	getTopSibling(figureColor: FigureColor) {
+		return figureColor === 'black' ? this.#siblings.top : this.#siblings.bottom;
+	}
 
-    getBottomSibling(figureColor: FigureColor) {
-        return figureColor === 'black' ? this.#siblings.bottom : this.#siblings.top ;
-    }
+	getBottomSibling(figureColor: FigureColor) {
+		return figureColor === 'black' ? this.#siblings.bottom : this.#siblings.top ;
+	}
 
-    getTopLeftSibling(figureColor: FigureColor) {
-        return figureColor === 'black' ? this.#siblings.topLeft : this.#siblings.bottomRight;
-    }
+	getTopLeftSibling(figureColor: FigureColor) {
+		return figureColor === 'black' ? this.#siblings.topLeft : this.#siblings.bottomRight;
+	}
 
-    getTopRightSibling(figureColor: FigureColor) {
-        return figureColor === 'black' ? this.#siblings.topRight : this.#siblings.bottomLeft;
-    }
+	getTopRightSibling(figureColor: FigureColor) {
+		return figureColor === 'black' ? this.#siblings.topRight : this.#siblings.bottomLeft;
+	}
 
-    getBottomLeftSibling(figureColor: FigureColor) {
-        return figureColor === 'black' ? this.#siblings.bottomLeft : this.#siblings.topRight ;
-    }
+	getBottomLeftSibling(figureColor: FigureColor) {
+		return figureColor === 'black' ? this.#siblings.bottomLeft : this.#siblings.topRight ;
+	}
 
-    getBottomRightSibling(figureColor: FigureColor) {
-        return figureColor === 'black' ? this.#siblings.bottomRight : this.#siblings.topLeft;
-    }
+	getBottomRightSibling(figureColor: FigureColor) {
+		return figureColor === 'black' ? this.#siblings.bottomRight : this.#siblings.topLeft;
+	}
 
-    getLeftSibling(figureColor: FigureColor) {
-        return figureColor === 'black' ?  this.#siblings.left : this.#siblings.right;
-    }
+	getLeftSibling(figureColor: FigureColor) {
+		return figureColor === 'black' ?  this.#siblings.left : this.#siblings.right;
+	}
 
-    getRightSibling(figureColor: FigureColor) {
-        return figureColor === 'black' ? this.#siblings.right : this.#siblings.left;
-    }
+	getRightSibling(figureColor: FigureColor) {
+		return figureColor === 'black' ? this.#siblings.right : this.#siblings.left;
+	}
 
-    getCanMove() {
-        return this.#canmove;
-    }
+	getCanMove() {
+		return this.#canmove;
+	}
 
-    setDefualtColor() {
-        this.changeColor(BOARD_CELL_COLOR[this.#color]);
-    }
+	setDefualtColor() {
+		this.changeColor(BOARD_CELL_COLOR[this.#color]);
+	}
 
-    setCanMove(canMove: boolean) {
-        this.#canmove = canMove;
-        
-        if(this.#canmove && this.hasFigure()) {
-            this.changeColor(BOARD_CELL_COLOR.capture);
-            return;
-        }
+	setCanMove(canMove: boolean) {
+		this.#canmove = canMove;
+		
+		if(this.#canmove && this.hasFigure()) {
+			this.changeColor(BOARD_CELL_COLOR.capture);
+			return;
+		}
 
-        if(this.#canmove) {
-            this.changeColor(BOARD_CELL_COLOR.canMove);
-            return;
-        }
+		if(this.#canmove) {
+			this.changeColor(BOARD_CELL_COLOR.canMove);
+			return;
+		}
 
-        this.setDefualtColor();
-    }
+		this.setDefualtColor();
+	}
 
-    changeColor(color: number) {
-        const mesh = this.getMesh();
-        mesh.material.color.setHex(color);
-    }
+	changeColor(color: number) {
+		const mesh = this.getMesh();
+		mesh.material.color.setHex(color);
+	}
 
-    setFigure(figure: Figure | null) {
-        this.#figure = figure;
-    }
+	setFigure(figure: Figure | null) {
+		this.#figure = figure;
+	}
 
-    hasFigure() {
-        return this.#figure !== null;
-    }
+	hasFigure() {
+		return this.#figure !== null;
+	}
 
-    hasFigureColor() {
-       return this.#figure?.getColor() ?? '';
-    }
+	hasFigureColor() {
+	   return this.#figure?.getColor() ?? '';
+	}
 
-    getFigure(): Figure | null {
-        return this.#figure;
-    }
+	getFigure(): Figure | null {
+		return this.#figure;
+	}
 
-    getMesh() {
-        return this.#cellGeometry.getMesh();
-    }
+	getMesh() {
+		return this.#cellGeometry.getMesh();
+	}
 
-    getCellName() {
-        return this.#name;
-    }
+	getCellName() {
+		return this.#name;
+	}
 
-    getCellRow() {
-        return this.#row;
-    }
+	getCellRow() {
+		return this.#row;
+	}
 	
 	getCellColumn() {
 		return this.#column;
 	}
 
-    getCellPosition() {
-        return this.#cellGeometry.getPosition();
-    }
+	getCellPosition() {
+		return this.#cellGeometry.getPosition();
+	}
 
-    canEnPassantCupture(figureColor: FigureColor) {
-        if(!this.hasFigure() || !this.#figure) {
-            return false;
-        }
-        const figure = this.getFigure();
-        if(!figure) {
-            return false;
-        }
-        return figure.getType() === 'Pawn'
-             && figure.getColor() !== figureColor
-             && figure.getStepNumber() === 1 
-    }
+	canEnPassantCupture(figureColor: FigureColor) {
+		if(!this.hasFigure() || !this.#figure) {
+			return false;
+		}
+		const figure = this.getFigure();
+		if(!figure) {
+			return false;
+		}
+		return figure.getType() === 'Pawn'
+			 && figure.getColor() !== figureColor
+			 && figure.getStepNumber() === 1 
+	}
 
 	private initCellSublings(cellName: string): TSiblings {
 		let cellI = 0 , cellJ = 0;
