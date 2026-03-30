@@ -28,7 +28,6 @@ class IndexedDbWrapper {
 	}
 
 	async initGame(mode: 'single' | 'multi', botColor: 'black' | 'white' | undefined) {
-		await this.#game.clear();
 		await this.#game.add({
 			mode,
 			botColor,
@@ -59,11 +58,11 @@ class IndexedDbWrapper {
 	}
 
 	async clearGameData() {
-		return await this.#game.clear();
+		await this.#game.clear();
 	}
 
 	async clearEvents() {
-		return await this.#events.clear();
+		await this.#events.clear();
 	}
 }
 

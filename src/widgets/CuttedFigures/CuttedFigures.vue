@@ -17,11 +17,11 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import FigureList from './FigureList.vue';
-import { useStepsStore } from '../ChessStore';
+import { useChessStore } from '../ChessStore';
 
-const stepStore = useStepsStore();
+const chessStore = useChessStore();
 
-const cupturedFigures = computed(() => stepStore.items.filter(item => item.capture))
+const cupturedFigures = computed(() => chessStore.items.filter(item => item.capture))
 
 const cupturedWhite = computed(() => cupturedFigures.value.filter(figure => figure.figureColor === 'white'));
 const cupturedBlack = computed(() => cupturedFigures.value.filter(figure => figure.figureColor === 'black'));

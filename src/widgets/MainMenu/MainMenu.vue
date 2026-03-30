@@ -93,7 +93,6 @@ onMounted(() => {
 		if(!gamedata.length) {
 			return;
 		}
-
 		chessStore.closeMainMenu();
 	})()
 });
@@ -104,14 +103,21 @@ watch(isMainMenuOpened, () => {
   }
 })
 
-function onGameStart() {
+async function clearGameData() {
 	while(chessStore.steps.length > 0) {
-		chessStore.revert();
+		await chessStore.revert();
 	}
+	await indexedDbWrapper.clearGameData();
+	await indexedDbWrapper.clearEvents();
+}
+
+async function onGameStart() {
+	await clearGameData();
+	await indexedDbWrapper.initGame(selectedMode.value, botColor.value);
 	eventBus.dispatchEvent(eventTypes.gameModeSelect, {
 		selectedMode: selectedMode.value,
 		AIBotPlayerColor: botColor.value });
-	indexedDbWrapper.initGame(selectedMode.value, botColor.value);
+
 	chessStore.closeMainMenu();
 }
 

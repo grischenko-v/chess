@@ -73,6 +73,10 @@ export class GameManager {
 		this.#moves.pop();
 	}
 
+	resetMovesCount() {
+		this.#moves = [];
+	}
+
 	getMovesCount() {
 		return this.#moves.length;
 	}
