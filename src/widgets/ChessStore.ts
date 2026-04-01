@@ -89,22 +89,22 @@ function addItem(item: FigureMoveEventDTO) {
 }
 
 async function  revert() {
-	revertFigureMove();
+	revertFigureMove(false);
 	
 	const gamedata = await indexedDbWrapper.getGame();
 
 	if(gamedata[0].mode === 'single') {
-		revertFigureMove();
+		revertFigureMove(false);
 	}
 }
 
-function revertFigureMove() {
+function revertFigureMove(reveterdAll: boolean) {
 	if(!items.value.length) {
 		return;
 	}
 
 	const figureMoveForRevert = items.value.pop();
-	eventBus.dispatchEvent(eventTypes.revertFigureMove, figureMoveForRevert);
+	eventBus.dispatchEvent(eventTypes.revertFigureMove, {figuremove: figureMoveForRevert, reveterdAll: reveterdAll});
 }
 
 return {
@@ -112,6 +112,7 @@ return {
 	steps,
 	addItem,
 	revert,
+	revertFigureMove,
 	isBotInited,
 	toggleTransformMenu,
 	isTransformMenuOpen,

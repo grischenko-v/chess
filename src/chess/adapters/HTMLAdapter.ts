@@ -24,8 +24,8 @@ export class HTMLAdapter {
 	}
 
 	private onRevertFigureMove(data: unknown) {
-		const { detail } = data as { detail: FigureMoveEventDTO };
-		if(detail.gameend) {
+		const { detail } = data as { detail: {figuremove: FigureMoveEventDTO }};
+		if(detail.figuremove.gameend) {
 			 this.#body.classList.remove('finished');
 		}
 	}

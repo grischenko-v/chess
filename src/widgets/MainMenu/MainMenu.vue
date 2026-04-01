@@ -105,7 +105,7 @@ watch(isMainMenuOpened, () => {
 
 async function clearGameData() {
 	while(chessStore.steps.length > 0) {
-		await chessStore.revert();
+		await chessStore.revertFigureMove(true);
 	}
 	await indexedDbWrapper.clearGameData();
 	await indexedDbWrapper.clearEvents();

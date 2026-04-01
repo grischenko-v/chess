@@ -139,12 +139,15 @@ export class Application {
 	}	
 
 	private async onRevertFigureMove(data: unknown) {
-		const { detail } = data as { detail: FigureMoveEventDTO};
+		const { detail } = data as { detail: {figuremove: FigureMoveEventDTO, reveterdAll: boolean}};
 		this.#gameManager.removeMove();
-		this.#revertFigureMove.execute(detail);
+		this.#revertFigureMove.execute(detail.figuremove);
 		await indexedDbWrapper.revertMoveEvent();
 		eventBus.dispatchEvent('chagePlayer', {currentPlayer: this.#gameManager.getCurrentPlayer()});
-		this.requestFirstWhiteStep();
+
+		if(!detail.reveterdAll) {
+			this.requestFirstWhiteStep();
+		}
 	}
 
 	private requestFirstWhiteStep() {
