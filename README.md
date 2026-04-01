@@ -29,3 +29,4 @@ Features
 TODO:
 - fix Pawn transforamtion
 - fix ask help after reload
+- move history should scroll to bottom
