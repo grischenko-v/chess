@@ -28,3 +28,4 @@ Features
 
 TODO:
 - fix Pawn transforamtion
+- fix ask help after reload
