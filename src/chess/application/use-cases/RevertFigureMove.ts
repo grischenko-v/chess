@@ -21,6 +21,7 @@ export class RevertFigureMove {
 		const currentCell = cellRepository.getCell(data.currentCell);
 		const cupturedFigure = null;
 				
+		this.gameManager.unhighliteMoves();
 		this.gameManager.toggleCurrentPlayer();
 		
 		if(destinationCellFigure) {
