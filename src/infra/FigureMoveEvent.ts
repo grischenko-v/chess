@@ -19,7 +19,7 @@ type RoqueData = {
 }
 
 // for pawn transform q - queen, r - rook, b - bishop, n - knight
-type TransformType = FigureType | undefined;
+export type TransformType = FigureType | undefined;
 
 export class FigureMoveEvent {
 	#figureType: FigureType;

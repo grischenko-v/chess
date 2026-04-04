@@ -2,7 +2,7 @@ import { eventBus, eventTypes } from "@/infra/EventBus";
 import type { BoardCell } from "../domain/BoardCell";
 import type { Figure } from "../domain/Figure";
 import type { UIAdater } from "../adapters/SceneAdapter";
-import type { FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
+import type { TransformType } from "@/infra/FigureMoveEvent";
 
 export class PawnTrasformationController {
 	#transformation = false;
@@ -26,17 +26,18 @@ export class PawnTrasformationController {
 		this.#transformation = false;
 	}
 
-	animate(figuremoveEvent: FigureMoveEventDTO, selectedFigure?: Figure) {
+	animate(transformType: TransformType, selectedFigure: Figure) {
 		if(!selectedFigure) {
 			return;
 		}
+
 		const figure = selectedFigure.getFigure();
 		setTimeout(() =>{
-			if(figuremoveEvent.transform) {
+			if(transformType) {
 				this.#UIAdater.initFigure(
-					figuremoveEvent.destinationCell,
-					figuremoveEvent.figureColor,
-					figuremoveEvent.transform
+					selectedFigure.getCurrentCell().getCellName(),
+					selectedFigure.getColor(),
+					transformType
 				);
 				this.#UIAdater.remove(figure);
 			}
@@ -76,7 +77,7 @@ export class PawnTrasformationController {
 		return false;
 	}
 
-	private async isTransforamtionCompilte () {
+	async isTransforamtionCompilte () {
 		return new Promise<void>((resolve) => {
 			const checkIsTransformationComplite = () => {
 				if(!this.#transformation) {

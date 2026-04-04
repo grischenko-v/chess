@@ -84,7 +84,6 @@ export class FigureMove {
 			destinationCell.getCellName());
 		
 		await this.pawnTrasformationController.pawnTransformation(destinationCell, selectedFigure);
-		
 		if(this.tryEnPassantCapture(destinationCell, currentCell)) {
 			return this.figureMoveEvent;
 		}

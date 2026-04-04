@@ -3,7 +3,7 @@ import type { UIAdater } from "../adapters/SceneAdapter";
 import { type FigureColor, type FigureType } from "../domain/Figure";
 import { eventBus, eventTypes } from "../../infra/EventBus";
 import { GameManager, type gameMode } from "./GameManager";
-import { FigureMoveEvent, type FigureMoveEventDTO } from "@/infra/FigureMoveEvent";
+import { FigureMoveEvent, type FigureMoveEventDTO, type TransformType } from "@/infra/FigureMoveEvent";
 import { PawnTrasformationController } from "./PawnTransformationController";
 import indexedDbWrapper from "@/infra/IndexedDb";
 import { RevertFigureMove } from "./use-cases/RevertFigureMove";
@@ -19,6 +19,7 @@ export class Application {
 	#isHistoryLoaded = false;
 	#revertFigureMove: RevertFigureMove;
 	#figureMove: FigureMove;
+	#transformType: TransformType;
 
     constructor(UIAdater: UIAdater) {
         this.#UIAdater = UIAdater;
@@ -79,9 +80,13 @@ export class Application {
 	private onPawnTransformResponse(data: unknown) {
 		const { detail } = data as { detail: { figureType: FigureType, figureName: string }};
 		const selectedFigure = this.#gameManager.getSelectedFigure();
-		selectedFigure?.setType(detail.figureType);
+		if(!selectedFigure) {
+			return;
+		}
+		selectedFigure.setType(detail.figureType);
+		this.#transformType = detail.figureType
+		this.#pawnTrasformationController.animate(detail.figureType, selectedFigure);
 		this.#pawnTrasformationController.transformationComplite();
-		this.#figureMoveEvent?.setTransform(detail.figureType)
 	}
 
     private async onNextStepResponse(data: unknown) {
@@ -92,7 +97,6 @@ export class Application {
 
 	private async makeMove(data: {from: string, to: string}) {
 		const figuremove = await this.#figureMove.execute(data);
-
 		if(!figuremove) {
 			return;
 		}
@@ -205,14 +209,12 @@ export class Application {
         if(this.#gameManager.isGameFinished()) {
 			this.#figureMoveEvent.isGameEnd(true);
         };
+		this.#figureMoveEvent.setTransform(this.#transformType);
 		const figuremoveEvent = this.#figureMoveEvent.toJson();
-		
 		if(this.#isHistoryLoaded) {
 			eventBus.dispatchEvent('figureMove', { value: figuremoveEvent});
 			indexedDbWrapper.addEvent(figuremoveEvent);
 		}
-		
-		this.#pawnTrasformationController.animate(figuremoveEvent, selectedFigure);
 
 		if(this.#gameManager.getCurrentPlayer() === this.#AIBotPlayerColor && this.#gameManager.modeIsSingle() && this.#isHistoryLoaded) {
 			setTimeout(() => {
@@ -221,6 +223,7 @@ export class Application {
 		
 
 		this.#figureMoveEvent = null;
+		this.#transformType = undefined;
 		this.#gameManager.unselectFigure();
 	}
 }
