@@ -30,9 +30,12 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { useChessStore } from '../ChessStore';
 import HistoryStep from './HistoryStep.vue';
+import { storeToRefs } from 'pinia';
 
 const wrapperDiv = ref<HTMLDivElement | null>(null);
 const chessStore = useChessStore();
+
+const { items } = storeToRefs(chessStore);
 
 const stepsData = computed(() => chessStore.steps
 	.filter((_, index) => index % 2 === 0)
@@ -56,5 +59,5 @@ const scrollToBottom = () => {
   });
 }
 
-watch(chessStore.items, () => scrollToBottom()); 
+watch(() => items.value.length, () => scrollToBottom()); 
 </script>
