@@ -60,8 +60,14 @@ export class Application {
 	}
 
 	private onGameModeSelect(data: unknown) {
-		const { detail } = data as { detail: { selectedMode:  gameMode, AIBotPlayerColor: Omit<FigureColor, 'selected'>}};
-		this.#gameManager.resetMovesCount()
+		const { detail } = data as { detail: {
+			selectedMode:  gameMode,
+			AIBotPlayerColor: Omit<FigureColor, 'selected'>
+			startNewGame: boolean,
+		}};
+		if(detail.startNewGame) {
+			this.#gameManager.resetMovesCount()
+		}
 		this.#gameManager.setMode(detail.selectedMode);
 		this.setAIBotColor(detail.AIBotPlayerColor);
 		if(this.#gameManager.modeIsSingle() && this.#AIBotPlayerColor === 'white' && this.#gameManager.getMovesCount() === 0) {

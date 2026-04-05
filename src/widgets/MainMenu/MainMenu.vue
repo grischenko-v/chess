@@ -116,7 +116,9 @@ async function onGameStart() {
 	await indexedDbWrapper.initGame(selectedMode.value, botColor.value);
 	eventBus.dispatchEvent(eventTypes.gameModeSelect, {
 		selectedMode: selectedMode.value,
-		AIBotPlayerColor: botColor.value });
+		AIBotPlayerColor: botColor.value,
+		startNewGame: true,
+	});
 
 	chessStore.closeMainMenu();
 }
