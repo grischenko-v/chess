@@ -27,4 +27,4 @@ Features
 
 
 TODO:
-- sometime happen somthing strange with game mode  after reload(single-multi) need fix
+- sometime happen somthing strange with game mode  after reload(single-multi) need fix, problem with state load from indexeddb
