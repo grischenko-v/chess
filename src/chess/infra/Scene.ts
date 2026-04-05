@@ -131,7 +131,7 @@ class Scene implements IScene{
 		this.#renderer.setSize(window.innerWidth, window.innerHeight, false);
 		this.#renderer.shadowMap.enabled = true
 		this.#renderer.render(this.#scene, this.#camera);
-		// this.#renderer.setPixelRatio(window.devicePixelRatio);
+		this.#renderer.setPixelRatio(window.devicePixelRatio);
 	}
 
 	addObject(mesh: Object3D) {
