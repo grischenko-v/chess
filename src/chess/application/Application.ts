@@ -47,7 +47,7 @@ export class Application {
 			return;
 		}
 		for(const event of events) {
-			await this.makeMove({from: event.currentCell, to: event.destinationCell});
+			await this.makeMove({from: event.currentCell, to: event.destinationCell, transform: event.transform});
 			this.#gameManager.addMove(`${event.currentCell}${event.destinationCell}`)
 		}
 		const gamedata = await indexedDbWrapper.getGame();
@@ -95,7 +95,7 @@ export class Application {
 		await this.makeMove(detail.nextStep);
     }
 
-	private async makeMove(data: {from: string, to: string}) {
+	private async makeMove(data: {from: string, to: string, transform?: TransformType}) {
 		const figuremove = await this.#figureMove.execute(data);
 		if(!figuremove) {
 			return;

@@ -27,7 +27,6 @@ Features
 
 
 TODO:
-- fix ask help after reload
 - fix enpasant revert
 - move history should scroll to bottom
 - sometime happen somthing strange with game mode  after reload(single-multi) need fix

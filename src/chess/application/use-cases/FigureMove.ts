@@ -1,6 +1,6 @@
 import type { BoardCell } from "@/chess/domain/BoardCell";
 import type { GameManager } from "../GameManager";
-import { FigureMoveEvent } from "@/infra/FigureMoveEvent";
+import { FigureMoveEvent, type TransformType } from "@/infra/FigureMoveEvent";
 import type { Figure } from "@/chess/domain/Figure";
 import type { PawnTrasformationController } from "../PawnTransformationController";
 import { cellRepository } from "@/chess/repository/CellRepository";
@@ -19,7 +19,7 @@ export class FigureMove {
 		this.pawnTrasformationController = pawnTrasformationController;
 	}
 
-	async execute(data: {from: string, to: string}) {
+	async execute(data: {from: string, to: string, transform?: TransformType}) {
 		const currentCell = cellRepository.getCell(data.from);
 		const currentFigure = currentCell.getFigure();
 		const destinationCell = cellRepository.getCell(data.to);
@@ -29,10 +29,9 @@ export class FigureMove {
 			}
 		})
 		await this.onCellClick( {detail: {
-			clickedCell: destinationCell
-		}});	
-
-
+			clickedCell: destinationCell,
+			transform: data.transform,
+		}});
 		return this.figureMoveEvent;
 	}
 
@@ -69,7 +68,7 @@ export class FigureMove {
 	}
 
 	async onCellClick(data: unknown) {
-		const { detail } = data as { detail: { clickedCell: BoardCell }};
+		const { detail } = data as { detail: { clickedCell: BoardCell, transform?: TransformType }};
 		const { clickedCell: destinationCell } = detail;
 		const selectedFigure = this.gameManager.getSelectedFigure();
 		
@@ -83,7 +82,7 @@ export class FigureMove {
 			currentCell.getCellName(),
 			destinationCell.getCellName());
 		
-		await this.pawnTrasformationController.pawnTransformation(destinationCell, selectedFigure);
+		await this.pawnTrasformationController.pawnTransformation(destinationCell, selectedFigure, detail.transform);
 		if(this.tryEnPassantCapture(destinationCell, currentCell)) {
 			return this.figureMoveEvent;
 		}
