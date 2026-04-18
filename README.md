@@ -7,8 +7,6 @@ Tech stack:
 - VueJS/Pinia
 - AI: wasm/stockfish17.1-light-singlecore
 
-Now in progress:
-
 ![Progress](https://github.com/grischenko-v/chess/blob/main/resultgif.gif)
 
 Features
